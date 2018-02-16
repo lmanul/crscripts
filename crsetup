@@ -1,0 +1,110 @@
+#!/usr/bin/python
+
+import os
+import socket
+import sys
+
+from optparse import OptionParser
+
+BASE_DIR = "chromium"
+DEPOT_TOOLS = "depot_tools"
+TRY_VERBOSE_MESSAGE = ("Please try calling me again with the verbose (-v) "
+                       "option to see what's going on.")
+
+def system_silent(command):
+  global options
+  os.system(command + ("" if options.verbose else " > /dev/null 2>&1"))
+
+# Options
+
+parser = OptionParser()
+parser.add_option("-f", "--full-history", dest="history",
+                  action="store_true",
+                  help="Download the full repo history (longer fetch)")
+parser.add_option("-v", "--verbose", dest="verbose",
+                  action="store_true",
+                  help="Show verbose messages")
+
+# Base variables
+
+(options, args) = parser.parse_args()
+# Testing for "corp.google.com" in the hostname is unreliable, doesn't work for 
+# laptops.
+google_machine = os.path.exists("/usr/local/google/")
+home = os.path.expanduser("~")
+dir_name = ""
+
+os.chdir(home)
+
+# Fetch depot_tools
+
+if not os.path.exists(DEPOT_TOOLS):
+  print("Fetching " + DEPOT_TOOLS + "...")
+  system_silent("git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git")
+
+if not os.path.exists(DEPOT_TOOLS):
+  print("I wasn't able to fetch the depot tools. Aborting.")
+  if not options.verbose:
+    print(TRY_VERBOSE_MESSAGE)
+  sys.exit(1)
+
+# Create base directory
+
+if not os.path.exists(BASE_DIR):
+  os.mkdir(BASE_DIR)
+
+# Print info about PATH
+
+shell = os.environ['SHELL'].rsplit('/', 1) [-1]
+rc_file = os.path.join(home, "." + shell + "rc")
+rc_file_contents = open(rc_file, "r").read()
+if "depot_tools" not in rc_file_contents:
+  print("We recommend adding this line to your file '" + rc_file + "':\n\n\t"
+        "export PATH=$PATH:" + os.path.join(home, "depot_tools") + "\n")
+
+# Fetch the source code
+
+os.chdir(BASE_DIR)
+if os.path.exists("src"):
+  print("Code seems already checked out, skipping that part.")
+else:
+  print("Fetching the source code. This will take a while...")
+  # The fetch script is part of the external-facing documentation but doesn't 
+  # work at all on a non-Google machine. We need to branch here until this is 
+  # resolved.
+  if google_machine:
+    flags = ["--nohooks"]
+    if not options.history:
+      flags.append("--no-history")
+    fetch_command = "" + os.path.join(home, DEPOT_TOOLS, "fetch") + " " + \
+        " ".join(flags) + " " + "chromium"
+    if options.verbose:
+      print(fetch_command)
+  else:
+    fetch_command = "git clone https://chromium.googlesource.com/chromium/src"
+  system_silent(fetch_command)
+
+if not os.path.exists("src"):
+  print("Fetching the code has failed, aborting. Sorry about that. ")
+  if not options.verbose:
+   print(TRY_VERBOSE_MESSAGE)
+  sys.exit(1)
+
+# Run the hooks
+
+os.chdir("src")
+print(os.getcwd())
+print("Installing build dependencies...")
+system_silent("build/install-build-deps.sh --no-prompt")
+print("Running the hooks...")
+system_silent("gclient runhooks")
+
+# Build
+
+print("Doing the first build...")
+system_silent("gn gen out/Default")
+system_silent("ninja -C out/Default chrome")
+
+# The end
+
+print("\nAll done! Your Chromium directory is " + os.path.join(home, BASE_DIR))

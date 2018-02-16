@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import multiprocessing
 import os
 import re
 import subprocess
@@ -14,14 +15,19 @@ def is_process_running(process):
 
 # TODO: hide compilation output, provide verbose flag.
 
-home = os.path.expanduser("~")
-
-GOMA_DIR = os.path.join(home, "goma")
+HOME = os.path.expanduser("~")
+GOMA_DIR = os.path.join(HOME, "goma")
+TEST_USER_PROFILE_PATH = os.path.join(HOME, "throwaway", "test-sandbox")
 GN_ARGS = ("target_os = \"chromeos\""
           "is_component_build = true "
           "enable_nacl = false "
           "use_goma = true "
           "goma_dir=\"" + GOMA_DIR  + "\"")
+
+n_cpus = multiprocessing.cpu_count()
+# Leave one CPU so that we don't bring the machine completely to its knees...
+n_threads = max(1, n_cpus - 1)
+
 print("Running gn gen...")
 os.system("gn gen out_cros/Release --args='" + GN_ARGS + "'")
 
@@ -29,4 +35,14 @@ os.system("gn gen out_cros/Release --args='" + GN_ARGS + "'")
 if not is_process_running("compiler_proxy"):
   print("Warning: goma is not running, the build will be slower")
 print("Compiling, this might take a while...")
-os.system("ninja -C out_cros/Release -j1000 chrome chrome_sandbox")
+os.system("ninja -C out_cros/Release -j" + str(n_threads) +
+          " chrome chrome_sandbox")
+
+sbin_target = "/usr/local/sbin/chrome-devel-sandbox"
+if not os.path.exists(sbin_target):
+  os.system("sudo cp out_cros/Release/chrome_sandbox " + sbin_target)
+  os.system("sudo chown root:root /usr/local/sbin/chrome-devel-sandbox")
+  os.system("sudo chmod 4755 /usr/local/sbin/chrome-devel-sandbox")
+
+#TODO: Make those configurable
+os.system("out_cros/Release/chrome --user-data-dir=" + TEST_USER_PROFILE_PATH)

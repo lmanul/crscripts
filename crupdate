@@ -1,0 +1,11 @@
+#!/usr/bin/python
+
+import os
+import sys
+
+if "src" not in os.getcwd():
+  "Please run me from the src/ directory. Aborting."
+  sys.exit(1)
+
+os.system("git rebase-update")
+os.system("gclient sync")

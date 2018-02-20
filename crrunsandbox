@@ -17,25 +17,33 @@ def is_process_running(process):
 
 HOME = os.path.expanduser("~")
 GOMA_DIR = os.path.join(HOME, "goma")
-TEST_USER_PROFILE_PATH = os.path.join(HOME, "throwaway", "test-sandbox")
+TEST_USER_PROFILE_PATH = os.path.join(HOME, "tmp", "test-sandbox")
 GN_ARGS = ("target_os = \"chromeos\""
           "is_component_build = true "
           "enable_nacl = false "
           "use_goma = true "
           "goma_dir=\"" + GOMA_DIR  + "\"")
 
-n_cpus = multiprocessing.cpu_count()
-# Leave one CPU so that we don't bring the machine completely to its knees...
-n_threads = max(1, n_cpus - 1)
 
+# TODO: install goma if it's not available
+if not os.path.exists(GOMA_DIR) or len(os.listdir(GOMA_DIR)) == 0:
+  print("Goma doesn't seem to be installed, aborting.")
+  sys.exit(1)
+
+n_cpus = multiprocessing.cpu_count()
+n_threads = max(1, n_cpus - 1)
+n_jobs = 10 * n_threads
+
+os.chdir(os.path.join(HOME, "chromium", "src"))
 print("Running gn gen...")
 os.system("gn gen out_cros/Release --args='" + GN_ARGS + "'")
 
 # TODO: Run goma if it's not running.
 if not is_process_running("compiler_proxy"):
-  print("Warning: goma is not running, the build will be slower")
+  print("\n\n~~~ Warning: goma is not running, the build will be "
+        "slower and may not work ~~~\n\n")
 print("Compiling, this might take a while...")
-os.system("ninja -C out_cros/Release -j" + str(n_threads) +
+os.system("ninja -C out_cros/Release -j" + str(n_jobs) +
           " chrome chrome_sandbox")
 
 sbin_target = "/usr/local/sbin/chrome-devel-sandbox"

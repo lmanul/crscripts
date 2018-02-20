@@ -18,13 +18,13 @@ def is_process_running(process):
 HOME = os.path.expanduser("~")
 GOMA_DIR = os.path.join(HOME, "goma")
 TEST_USER_PROFILE_PATH = os.path.join(HOME, "tmp", "test-sandbox")
-GN_ARGS = (
+GN_ARGS = [
   "target_os = \"chromeos\""
   "is_component_build = true"
   "enable_nacl = false"
   "use_goma = true"
   "goma_dir=\"" + GOMA_DIR  + "\""
-)
+]
 
 
 # TODO: install goma if it's not available

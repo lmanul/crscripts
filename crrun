@@ -9,9 +9,9 @@ import sys
 HOME = os.path.expanduser("~")
 GOMA_DIR = os.path.join(HOME, "goma")
 TEST_USER_PROFILE_PATH = os.path.join(HOME, "tmp", "test-chromium")
-GN_ARGS = (
+GN_ARGS = [
   "enable_nacl = false"
-)
+]
 
 os.chdir(os.path.join(HOME, "chromium", "src"))
 print("Running gn gen...")

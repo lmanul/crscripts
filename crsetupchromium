@@ -93,7 +93,6 @@ if not os.path.exists("src"):
 # Run the hooks
 
 os.chdir("src")
-print(os.getcwd())
 print("Installing build dependencies...")
 system_silent("build/install-build-deps.sh --no-prompt")
 print("Running the hooks...")

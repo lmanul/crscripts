@@ -1,0 +1,21 @@
+#!/usr/bin/python
+
+import multiprocessing
+import os
+import re
+import subprocess
+import sys
+
+HOME = os.path.expanduser("~")
+GOMA_DIR = os.path.join(HOME, "goma")
+TEST_USER_PROFILE_PATH = os.path.join(HOME, "tmp", "test-chromium")
+GN_ARGS = (
+  "enable_nacl = false"
+)
+
+os.chdir(os.path.join(HOME, "chromium", "src"))
+print("Running gn gen...")
+os.system("gn gen out/Default --args='" + " ".join(GN_ARGS) + "'")
+
+#TODO: Make those configurable
+os.system("./out/Default/chrome --user-data-dir=" + TEST_USER_PROFILE_PATH)

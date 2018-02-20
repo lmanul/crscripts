@@ -18,11 +18,13 @@ def is_process_running(process):
 HOME = os.path.expanduser("~")
 GOMA_DIR = os.path.join(HOME, "goma")
 TEST_USER_PROFILE_PATH = os.path.join(HOME, "tmp", "test-sandbox")
-GN_ARGS = ("target_os = \"chromeos\""
-          "is_component_build = true "
-          "enable_nacl = false "
-          "use_goma = true "
-          "goma_dir=\"" + GOMA_DIR  + "\"")
+GN_ARGS = (
+  "target_os = \"chromeos\""
+  "is_component_build = true"
+  "enable_nacl = false"
+  "use_goma = true"
+  "goma_dir=\"" + GOMA_DIR  + "\""
+)
 
 
 # TODO: install goma if it's not available
@@ -36,7 +38,7 @@ n_jobs = 10 * n_threads
 
 os.chdir(os.path.join(HOME, "chromium", "src"))
 print("Running gn gen...")
-os.system("gn gen out_cros/Release --args='" + GN_ARGS + "'")
+os.system("gn gen out_cros/Release --args='" + " ".joiN(GN_ARGS) + "'")
 
 # TODO: Run goma if it's not running.
 if not is_process_running("compiler_proxy"):

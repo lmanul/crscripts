@@ -26,13 +26,16 @@ parser.add_option("-d", "--dryrun", dest="dryrun",
 HOME = os.path.expanduser("~")
 GOMA_DIR = os.path.join(HOME, "goma")
 TEST_USER_PROFILE_PATH = os.path.join(HOME, "tmp", "test-sandbox")
-GN_ARGS = [
+gn_args = [
   'target_os = "chromeos"',
   'is_component_build = true',
   'enable_nacl = false',
-  'use_goma = true',
-  'goma_dir="' + GOMA_DIR  + '"',
 ]
+if util.is_google_machine():
+  gn_args.append('use_goma = true')
+  gn_args.append('goma_dir="' + GOMA_DIR  + '"')
+else:
+  gn_args.append('use_goma = false')
 
 util.ensure_goma_installed()
 
@@ -41,7 +44,7 @@ n_threads = max(1, n_cpus - 1)
 n_jobs = 10 * n_threads
 
 os.chdir(os.path.join(HOME, "chromium", "src"))
-cmd = "gn gen out_cros/Release --args='" + " ".join(GN_ARGS) + "'"
+cmd = "gn gen out_cros/Release --args='" + " ".join(gn_args) + "'"
 print("Running gn gen...")
 os.system(cmd)
 

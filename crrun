@@ -8,10 +8,9 @@ import sys
 import util
 
 HOME = os.path.expanduser("~")
-GOMA_DIR = os.path.join(HOME, "goma")
 TEST_USER_PROFILE_PATH = os.path.join(HOME, "tmp", "test-chromium")
 GN_ARGS = [
-  "enable_nacl = false"
+  "enable_nacl = false",
 ]
 
 os.chdir(os.path.join(HOME, "chromium", "src"))

@@ -1,5 +1,6 @@
 import os
 import re
+import shlex
 import socket
 import subprocess
 import sys
@@ -30,11 +31,12 @@ def is_online():
     return False
 
 def is_google_machine():
-  # Testing for "corp.google.com" in the hostname doesn't always work.
+  # Testing for "corp.google.com" in the hostname isn't sufficient.
   hostname = socket.gethostname()
   if "corp.google.com" in hostname:
     return True
-  if os.path.exists("/usr/local/google/"):
+  lsb = subprocess.check_output(shlex.split("lsb_release")).decode()
+  if "rodete" in lsb.lower():
     return True
   return False
 

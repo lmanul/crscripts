@@ -37,3 +37,13 @@ def is_google_machine():
   if os.path.exists("/usr/local/google/"):
     return True
   return False
+
+def install_goma():
+  goma_dir = os.path.join(os.path.expanduser("~"), "goma")
+  if not os.path.exists(goma_dir):
+    os.mkdir(goma_dir)
+  if not os.path.exists(os.path.join(goma_dir, "compiler_proxy")):
+    os.chdir(goma_dir)
+    os.system("curl https://clients5.google.com/cxx-compiler-service/download/goma_ctl.py "
+              "-o goma_ctl.py")
+    os.system("python goma_ctl.py update")

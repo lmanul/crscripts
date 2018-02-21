@@ -38,7 +38,7 @@ n_jobs = 10 * n_threads
 
 os.chdir(os.path.join(HOME, "chromium", "src"))
 print("Running gn gen...")
-os.system("gn gen out_cros/Release --args='" + " ".joiN(GN_ARGS) + "'")
+os.system("gn gen out_cros/Release --args='" + " ".join(GN_ARGS) + "'")
 
 # TODO: Run goma if it's not running.
 if not is_process_running("compiler_proxy"):

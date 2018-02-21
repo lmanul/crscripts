@@ -21,6 +21,9 @@ parser.add_option("-f", "--full-history", dest="history",
 parser.add_option("-v", "--verbose", dest="verbose",
                   action="store_true",
                   help="Show verbose messages")
+parser.add_option("-d", "--dryrun", dest="dryrun",
+                  action="store_true",
+                  help="dry run, log what we plan to do but don't actually do anything")
 
 # Base variables
 

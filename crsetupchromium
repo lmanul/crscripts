@@ -39,7 +39,8 @@ os.chdir(home)
 if not os.path.exists(DEPOT_TOOLS):
   print("Fetching " + DEPOT_TOOLS + "...")
   util.system_silent("git clone "
-                     "https://chromium.googlesource.com/chromium/tools/depot_tools.git")
+                     "https://chromium.googlesource.com/chromium/tools/depot_tools.git",
+                     options)
 
 if not os.path.exists(DEPOT_TOOLS):
   print("I wasn't able to fetch the depot tools. Aborting.")
@@ -78,7 +79,7 @@ else:
       print(fetch_command)
   else:
     fetch_command = "git clone https://chromium.googlesource.com/chromium/src"
-  util.system_silent(fetch_command)
+  util.system_silent(fetch_command, options)
 
 if not os.path.exists("src"):
   print("Fetching the code has failed, aborting. Sorry about that. ")
@@ -92,15 +93,15 @@ util.ensure_goma_installed()
 
 os.chdir("src")
 print("Installing build dependencies...")
-util.system_silent("build/install-build-deps.sh --no-prompt")
+util.system_silent("build/install-build-deps.sh --no-prompt", options)
 print("Running the hooks...")
-util.system_silent("gclient runhooks")
+util.system_silent("gclient runhooks", options)
 
 # Build
 
 print("Doing the first build...")
-util.system_silent("gn gen out/Default")
-util.system_silent("ninja -C out/Default chrome")
+util.system_silent("gn gen out/Default", options)
+util.system_silent("ninja -C out/Default chrome", options)
 
 # The end
 

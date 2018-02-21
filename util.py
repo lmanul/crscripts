@@ -4,6 +4,12 @@ import socket
 import subprocess
 import sys
 
+def system_silent(command, options):
+  if options.verbose:
+    print("Running '" + command + "'...")
+  if not options.dryrun:
+    os.system(command + ("" if options.verbose else " > /dev/null 2>&1"))
+
 # Returns whether a process containing the given name is running.
 def is_process_running(process):
   s = subprocess.Popen(["ps", "axw"],stdout=subprocess.PIPE)
@@ -24,9 +30,10 @@ def is_online():
     return False
 
 def is_google_machine():
+  # Testing for "corp.google.com" in the hostname doesn't always work.
   hostname = socket.gethostname()
   if "corp.google.com" in hostname:
     return True
-  if hostname == "manu":
+  if os.path.exists("/usr/local/google/"):
     return True
   return False

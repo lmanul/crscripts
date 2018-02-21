@@ -12,10 +12,6 @@ DEPOT_TOOLS = "depot_tools"
 TRY_VERBOSE_MESSAGE = ("Please try calling me again with the verbose (-v) "
                        "option to see what's going on.")
 
-def system_silent(command):
-  global options
-  os.system(command + ("" if options.verbose else " > /dev/null 2>&1"))
-
 # Options
 
 parser = OptionParser()
@@ -29,11 +25,12 @@ parser.add_option("-v", "--verbose", dest="verbose",
 # Base variables
 
 (options, args) = parser.parse_args()
-# Testing for "corp.google.com" in the hostname is unreliable, doesn't work for 
-# laptops.
-google_machine = os.path.exists("/usr/local/google/")
 home = os.path.expanduser("~")
 dir_name = ""
+
+is not util.is_online():
+  print("You seem to be offline. I won't be able to do much. Aborting.")
+  sys.exit(1)
 
 os.chdir(home)
 
@@ -70,10 +67,7 @@ if os.path.exists("src"):
   print("Code seems already checked out, skipping that part.")
 else:
   print("Fetching the source code. This will take a while...")
-  # The fetch script is part of the external-facing documentation but doesn't 
-  # work at all on a non-Google machine. We need to branch here until this is 
-  # resolved.
-  if google_machine:
+  if util.is_google_machine():
     flags = ["--nohooks"]
     if not options.history:
       flags.append("--no-history")

@@ -34,7 +34,6 @@ GN_ARGS = [
   'goma_dir="' + GOMA_DIR  + '"',
 ]
 
-
 # TODO: install goma if it's not available
 if not os.path.exists(GOMA_DIR) or len(os.listdir(GOMA_DIR)) == 0:
   print("Goma doesn't seem to be installed, aborting.")
@@ -46,12 +45,8 @@ n_jobs = 10 * n_threads
 
 os.chdir(os.path.join(HOME, "chromium", "src"))
 cmd = "gn gen out_cros/Release --args='" + " ".join(GN_ARGS) + "'"
-if options.verbose:
-  print("Running: " + cmd + "...")
-else:
-  print("Running gn gen...")
-if not options.dryrun:
-  os.system(cmd)
+print("Running gn gen...")
+os.system(cmd)
 
 # TODO: Run goma if it's not running.
 if not util.is_process_running("compiler_proxy"):
@@ -59,12 +54,8 @@ if not util.is_process_running("compiler_proxy"):
          "slower and may not work. Start goma with ~/goma/compiler_proxy --\n\n")
 cmd = ("ninja -C out_cros/Release -j" + str(n_jobs) +
        " chrome chrome_sandbox")
-if options.verbose:
-  print("Running: " + cmd)
-else:
-  print("Compiling, this might take a while...")
-if not options.dryrun:
-  os.system(cmd)
+print("Compiling, this might take a while...")
+util.system_silent(cmd, options)
 
 sbin_target = "/usr/local/sbin/chrome-devel-sandbox"
 if not os.path.exists(sbin_target):
@@ -74,9 +65,5 @@ if not os.path.exists(sbin_target):
 
 #TODO: Make the data dir configurable
 cmd = "out_cros/Release/chrome --user-data-dir=" + TEST_USER_PROFILE_PATH
-if options.verbose:
-  print("Running: " + cmd)
-else:
-  print("Running chrome...")
-if not options.dryrun:
-  os.system(cmd)
+print("Running chrome...")
+util.system_silent(cmd, options)

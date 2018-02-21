@@ -28,7 +28,7 @@ parser.add_option("-v", "--verbose", dest="verbose",
 home = os.path.expanduser("~")
 dir_name = ""
 
-is not util.is_online():
+if not util.is_online():
   print("You seem to be offline. I won't be able to do much. Aborting.")
   sys.exit(1)
 

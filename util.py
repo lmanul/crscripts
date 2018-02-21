@@ -35,7 +35,7 @@ def is_google_machine():
   hostname = socket.gethostname()
   if "corp.google.com" in hostname:
     return True
-  lsb = subprocess.check_output(shlex.split("lsb_release")).decode()
+  lsb = subprocess.check_output(shlex.split("lsb_release -a")).decode()
   if "rodete" in lsb.lower():
     return True
   return False

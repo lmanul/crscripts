@@ -85,6 +85,8 @@ if not os.path.exists("src"):
    print(TRY_VERBOSE_MESSAGE)
   sys.exit(1)
 
+util.ensure_goma_installed()
+
 # Run the hooks
 
 os.chdir("src")

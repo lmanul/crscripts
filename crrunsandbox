@@ -34,10 +34,7 @@ GN_ARGS = [
   'goma_dir="' + GOMA_DIR  + '"',
 ]
 
-# TODO: install goma if it's not available
-if not os.path.exists(GOMA_DIR) or len(os.listdir(GOMA_DIR)) == 0:
-  print("Goma doesn't seem to be installed, aborting.")
-  sys.exit(1)
+util.ensure_goma_installed()
 
 n_cpus = multiprocessing.cpu_count()
 n_threads = max(1, n_cpus - 1)

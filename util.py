@@ -38,7 +38,7 @@ def is_google_machine():
     return True
   return False
 
-def install_goma():
+def ensure_goma_installed():
   goma_dir = os.path.join(os.path.expanduser("~"), "goma")
   if not os.path.exists(goma_dir):
     os.mkdir(goma_dir)

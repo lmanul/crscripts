@@ -6,6 +6,17 @@ import re
 import subprocess
 import sys
 
+from optparse import OptionParser
+
+# Options
+
+parser = OptionParser()
+parser.add_option("-v", "--verbose", dest="verbose",
+                  action="store_true",
+                  help="Show verbose messages")
+
+(options, args) = parser.parse_args()
+
 def is_process_running(process):
   s = subprocess.Popen(["ps", "axw"], stdout=subprocess.PIPE)
   for x in s.stdout:
@@ -19,11 +30,11 @@ HOME = os.path.expanduser("~")
 GOMA_DIR = os.path.join(HOME, "goma")
 TEST_USER_PROFILE_PATH = os.path.join(HOME, "tmp", "test-sandbox")
 GN_ARGS = [
-  "target_os = \"chromeos\""
-  "is_component_build = true"
-  "enable_nacl = false"
-  "use_goma = true"
-  "goma_dir=\"" + GOMA_DIR  + "\""
+  'target_os = "chromeos"',
+  'is_component_build = true',
+  'enable_nacl = false',
+  'use_goma = true',
+  'goma_dir="' + GOMA_DIR  + '"',
 ]
 
 
@@ -37,13 +48,17 @@ n_threads = max(1, n_cpus - 1)
 n_jobs = 10 * n_threads
 
 os.chdir(os.path.join(HOME, "chromium", "src"))
-print("Running gn gen...")
-os.system("gn gen out_cros/Release --args='" + " ".join(GN_ARGS) + "'")
+cmd = "gn gen out_cros/Release --args='" + " ".join(GN_ARGS) + "'"
+if options.verbose:
+  print("Running: " + cmd + "...")
+else:
+  print("Running gn gen...")
+os.system(cmd)
 
 # TODO: Run goma if it's not running.
 if not is_process_running("compiler_proxy"):
-  print("\n\n~~~ Warning: goma is not running, the build will be "
-        "slower and may not work ~~~\n\n")
+  print("\n\n-- Warning: goma is not running, the build will be "
+        "slower and may not work. Start goma with ~/goma/compiler_proxy --\n\n")
 print("Compiling, this might take a while...")
 os.system("ninja -C out_cros/Release -j" + str(n_jobs) +
           " chrome chrome_sandbox")

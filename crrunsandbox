@@ -5,6 +5,7 @@ import os
 import re
 import subprocess
 import sys
+import util
 
 from optparse import OptionParser
 
@@ -13,18 +14,14 @@ from optparse import OptionParser
 parser = OptionParser()
 parser.add_option("-v", "--verbose", dest="verbose",
                   action="store_true",
-                  help="Show verbose messages")
+                  help="show verbose messages")
+parser.add_option("-d", "--dryrun", dest="dryrun",
+                  action="store_true",
+                  help="dry run, log what we plan to do it but don't actually do anything")
 
 (options, args) = parser.parse_args()
 
-def is_process_running(process):
-  s = subprocess.Popen(["ps", "axw"], stdout=subprocess.PIPE)
-  for x in s.stdout:
-    if re.search(process, x.decode()):
-      return True
-    return False
-
-# TODO: hide compilation output, provide verbose flag.
+# TODO: hide compilation output.
 
 HOME = os.path.expanduser("~")
 GOMA_DIR = os.path.join(HOME, "goma")
@@ -53,15 +50,21 @@ if options.verbose:
   print("Running: " + cmd + "...")
 else:
   print("Running gn gen...")
-os.system(cmd)
+if not options.dryrun:
+  os.system(cmd)
 
 # TODO: Run goma if it's not running.
-if not is_process_running("compiler_proxy"):
+if not util.is_process_running("compiler_proxy"):
   print("\n\n-- Warning: goma is not running, the build will be "
-        "slower and may not work. Start goma with ~/goma/compiler_proxy --\n\n")
-print("Compiling, this might take a while...")
-os.system("ninja -C out_cros/Release -j" + str(n_jobs) +
-          " chrome chrome_sandbox")
+         "slower and may not work. Start goma with ~/goma/compiler_proxy --\n\n")
+cmd = ("ninja -C out_cros/Release -j" + str(n_jobs) +
+       " chrome chrome_sandbox")
+if options.verbose:
+  print("Running: " + cmd)
+else:
+  print("Compiling, this might take a while...")
+if not options.dryrun:
+  os.system(cmd)
 
 sbin_target = "/usr/local/sbin/chrome-devel-sandbox"
 if not os.path.exists(sbin_target):
@@ -69,5 +72,11 @@ if not os.path.exists(sbin_target):
   os.system("sudo chown root:root /usr/local/sbin/chrome-devel-sandbox")
   os.system("sudo chmod 4755 /usr/local/sbin/chrome-devel-sandbox")
 
-#TODO: Make those configurable
-os.system("out_cros/Release/chrome --user-data-dir=" + TEST_USER_PROFILE_PATH)
+#TODO: Make the data dir configurable
+cmd = "out_cros/Release/chrome --user-data-dir=" + TEST_USER_PROFILE_PATH
+if options.verbose:
+  print("Running: " + cmd)
+else:
+  print("Running chrome...")
+if not options.dryrun:
+  os.system(cmd)

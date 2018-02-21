@@ -3,6 +3,7 @@
 import os
 import socket
 import sys
+import util
 
 from optparse import OptionParser
 

@@ -5,6 +5,7 @@ import os
 import re
 import subprocess
 import sys
+import util
 
 HOME = os.path.expanduser("~")
 GOMA_DIR = os.path.join(HOME, "goma")

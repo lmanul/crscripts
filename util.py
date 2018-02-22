@@ -52,3 +52,7 @@ def ensure_goma_installed():
     os.system("curl https://clients5.google.com/cxx-compiler-service/download/goma_ctl.py "
               "-o goma_ctl.py")
     os.system("python goma_ctl.py update")
+
+def show_goma_warning():
+  print("\n\n-- Warning: goma is not running, the build will be "
+        "slower. Start goma with ~/goma/compiler_proxy --\n\n")

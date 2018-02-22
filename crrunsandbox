@@ -54,8 +54,7 @@ os.system(cmd)
 
 # TODO: Run goma if it's not running.
 if not util.is_process_running("compiler_proxy"):
-  print("\n\n-- Warning: goma is not running, the build will be "
-         "slower and may not work. Start goma with ~/goma/compiler_proxy --\n\n")
+  util.show_goma_warning()
 cmd = ("ninja -C out_cros/Release -j" + str(n_jobs) +
        " chrome chrome_sandbox")
 print("Compiling, this might take a while...")

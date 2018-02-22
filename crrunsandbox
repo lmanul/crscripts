@@ -18,6 +18,10 @@ parser.add_option("-v", "--verbose", dest="verbose",
 parser.add_option("-d", "--dryrun", dest="dryrun",
                   action="store_true",
                   help="dry run, log what we plan to do but don't actually do anything")
+parser.add_option("-l", "--login-manager", dest="loginmanager",
+                  action="store_true",
+                  help="use the login manager so that the out-of-box " + \
+                       "experience is included")
 
 (options, args) = parser.parse_args()
 
@@ -64,6 +68,7 @@ if not os.path.exists(sbin_target):
   os.system("sudo chmod 4755 /usr/local/sbin/chrome-devel-sandbox")
 
 #TODO: Make the data dir configurable
-cmd = "out_cros/Release/chrome --user-data-dir=" + TEST_USER_PROFILE_PATH
+cmd = "out_cros/Release/chrome --user-data-dir=" + TEST_USER_PROFILE_PATH + \
+    (" --login-manager" if options.loginmanager else "")
 print("Running chrome...")
 util.system_silent(cmd, options)

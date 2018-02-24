@@ -72,16 +72,13 @@ if os.path.exists("src"):
   print("Code seems already checked out, skipping that part.")
 else:
   print("Fetching the source code. This will take a while...")
-  if util.is_google_machine():
-    flags = ["--nohooks"]
-    if not options.history:
-      flags.append("--no-history")
-    fetch_command = "" + os.path.join(home, DEPOT_TOOLS, "fetch") + " " + \
-        " ".join(flags) + " " + "chromium"
-    if options.verbose:
-      print(fetch_command)
-  else:
-    fetch_command = "git clone https://chromium.googlesource.com/chromium/src"
+  flags = ["--nohooks"]
+  if not options.history:
+    flags.append("--no-history")
+  fetch_command = "" + os.path.join(home, DEPOT_TOOLS, "fetch") + " " + \
+      " ".join(flags) + " " + "chromium"
+  if options.verbose:
+    print(fetch_command)
   util.system_silent(fetch_command, options)
 
 if not os.path.exists("src"):

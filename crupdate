@@ -2,11 +2,15 @@
 
 import os
 import sys
+import util
+
+if util.is_google_machine():
+  os.system("glogin")
 
 # TODO: Be a little smarter, detect where we are, what we are updating and do it 
 # automatically.
 if "src" not in os.getcwd():
-  "Please run me from the src/ directory. Aborting."
+  print("Please run me from the src/ directory. Aborting.")
   sys.exit(1)
 
 os.system("git rebase-update")

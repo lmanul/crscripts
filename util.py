@@ -54,5 +54,8 @@ def ensure_goma_installed():
     os.system("python goma_ctl.py update")
 
 def show_goma_warning():
+  if not is_google_machine():
+    # No Goma.
+    return
   print("\n\n-- Warning: goma is not running, the build will be "
         "slower. Start goma with ~/goma/compiler_proxy --\n\n")

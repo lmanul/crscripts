@@ -84,7 +84,7 @@ else:
 if not os.path.exists("src"):
   print("Fetching the code has failed, aborting. Sorry about that. ")
   if not options.verbose:
-   print(TRY_VERBOSE_MESSAGE)
+    print(TRY_VERBOSE_MESSAGE)
   sys.exit(1)
 
 util.ensure_goma_installed()
@@ -100,8 +100,14 @@ util.system_silent("gclient runhooks", options)
 # Build
 
 print("Doing the first build...")
-util.system_silent("gn gen out/Default", options)
+sc = util.system_silent("gn gen out/Default", options)
+if sc != 0:
+  print("gn step failed, aborting.")
+  sys.exit(sc)
 util.system_silent("ninja -C out/Default chrome", options)
+if sc != 0:
+  print("Compilation failed, aborting.")
+  sys.exit(sc)
 
 # The end
 

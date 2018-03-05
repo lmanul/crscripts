@@ -50,7 +50,10 @@ n_jobs = 10 * n_threads
 os.chdir(os.path.join(HOME, "chromium", "src"))
 cmd = "gn gen out_cros/Release --args='" + " ".join(gn_args) + "'"
 print("Running gn gen...")
-os.system(cmd)
+status_code = os.system(cmd)
+if status_code != 0:
+  print("gn step failed, aborting.")
+  sys.exit(status_code)
 
 # TODO: Run goma if it's not running.
 if not util.is_process_running("compiler_proxy"):
@@ -58,7 +61,10 @@ if not util.is_process_running("compiler_proxy"):
 cmd = ("ninja -C out_cros/Release -j" + str(n_jobs) +
        " chrome chrome_sandbox")
 print("Compiling, this might take a while...")
-util.system_silent(cmd, options)
+status_code = util.system_silent(cmd, options)
+if status_code != 0:
+  print("Compilation failed, aborting.")
+  sys.exit(status_code)
 
 sbin_target = "/usr/local/sbin/chrome-devel-sandbox"
 if not os.path.exists(sbin_target):

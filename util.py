@@ -9,7 +9,7 @@ def system_silent(command, options):
   if options.verbose:
     print("Running '" + command + "'...")
   if not options.dryrun:
-    os.system(command + ("" if options.verbose else " > /dev/null 2>&1"))
+    return os.system(command + ("" if options.verbose else " > /dev/null 2>&1"))
 
 # Returns whether a process containing the given name is running.
 def is_process_running(process):

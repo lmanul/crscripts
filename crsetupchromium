@@ -104,6 +104,10 @@ sc = util.system_silent("gn gen out/Default", options)
 if sc != 0:
   print("gn step failed, aborting.")
   sys.exit(sc)
+
+# TODO: Run goma if it's not running.
+if not util.is_process_running("compiler_proxy"):
+  util.show_goma_warning()
 util.system_silent("ninja -C out/Default chrome", options)
 if sc != 0:
   print("Compilation failed, aborting.")

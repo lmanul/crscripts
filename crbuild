@@ -13,6 +13,24 @@ GN_ARGS = [
   "enable_nacl = false",
 ]
 
+from optparse import OptionParser
+
+# Options
+
+parser = OptionParser()
+parser.add_option("-v", "--verbose", dest="verbose",
+                  action="store_true",
+                  help="show verbose messages")
+parser.add_option("-d", "--dryrun", dest="dryrun",
+                  action="store_true",
+                  help="dry run, log what we plan to do but don't actually do anything")
+
+(options, args) = parser.parse_args()
+
+n_cpus = multiprocessing.cpu_count()
+n_threads = max(1, n_cpus - 1)
+n_jobs = 10 * n_threads
+
 os.chdir(os.path.join(HOME, "chromium", "src"))
 print("Running gn gen...")
 os.system("gn gen out/Default --args='" + " ".join(GN_ARGS) + "'")
@@ -20,12 +38,9 @@ os.system("gn gen out/Default --args='" + " ".join(GN_ARGS) + "'")
 # TODO: Run goma if it's not running.
 if not util.is_process_running("compiler_proxy"):
   util.show_goma_warning()
-cmd = ("ninja -C out/Release -j" + str(n_jobs) + " chrome")
+cmd = ("ninja -C out/Default -j" + str(n_jobs) + " chrome unit_tests")
 print("Compiling, this might take a while...")
 status_code = util.system_silent(cmd, options)
 if status_code != 0:
   print("Compilation failed, aborting.")
   sys.exit(status_code)
-
-#TODO: Make those configurable
-os.system("./out/Default/chrome --user-data-dir=" + TEST_USER_PROFILE_PATH)

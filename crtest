@@ -1,0 +1,53 @@
+#!/usr/bin/python
+
+import multiprocessing
+import os
+import re
+import subprocess
+import sys
+import util
+
+from optparse import OptionParser
+
+if len(sys.argv) < 2:
+  print("I need the name of a test as an argument, for instance 'base_unittests'")
+  sys.exit(1)
+target = sys.argv[1]
+
+# Options
+
+parser = OptionParser()
+parser.add_option("-v", "--verbose", dest="verbose",
+                  action="store_true",
+                  help="show verbose messages")
+parser.add_option("-d", "--dryrun", dest="dryrun",
+                  action="store_true",
+                  help="dry run, log what we plan to do but don't actually do anything")
+
+(options, args) = parser.parse_args()
+
+n_cpus = multiprocessing.cpu_count()
+n_threads = max(1, n_cpus - 1)
+n_jobs = 10 * n_threads
+
+HOME = os.path.expanduser("~")
+TEST_USER_PROFILE_PATH = os.path.join(HOME, "tmp", "test-chromium")
+GN_ARGS = [
+  "enable_nacl = false",
+]
+
+os.chdir(os.path.join(HOME, "chromium", "src"))
+print("Running gn gen...")
+os.system("gn gen out/Default --args='" + " ".join(GN_ARGS) + "'")
+
+# TODO: Run goma if it's not running.
+if not util.is_process_running("compiler_proxy"):
+  util.show_goma_warning()
+cmd = ("ninja -C out/Default " + target + " -j" + str(n_jobs) + " ")
+print("Compiling, this might take a while...")
+status_code = util.system_silent(cmd, options)
+if status_code != 0:
+  print("Compilation failed, aborting.")
+  sys.exit(status_code)
+
+os.system("./out/Default/" + target)

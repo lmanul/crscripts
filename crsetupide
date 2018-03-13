@@ -34,15 +34,3 @@ os.chdir(os.path.join(home, BASE_DIR, "src"))
 
 print("Generating IDE project...")
 os.system("gn gen out/Release --ide=qtcreator")
-
-# Build
-
-print("Doing the first build...")
-sc = util.system_silent("gn gen out/Default", options)
-if sc != 0:
-  print("gn step failed, aborting.")
-  sys.exit(sc)
-
-# The end
-
-#print("\nAll done! Your Chromium directory is " + os.path.join(home, BASE_DIR))

@@ -48,7 +48,7 @@ n_threads = max(1, n_cpus - 1)
 n_jobs = 10 * n_threads
 
 os.chdir(os.path.join(HOME, "chromium", "src"))
-cmd = "gn gen out_cros/Release --args='" + " ".join(gn_args) + "'"
+cmd = "gn gen out/Release --args='" + " ".join(gn_args) + "'"
 print("Running gn gen...")
 status_code = os.system(cmd)
 if status_code != 0:
@@ -58,7 +58,7 @@ if status_code != 0:
 # TODO: Run goma if it's not running.
 if not util.is_process_running("compiler_proxy"):
   util.show_goma_warning()
-cmd = ("ninja -C out_cros/Release -j" + str(n_jobs) +
+cmd = ("ninja -C out/Release -j" + str(n_jobs) +
        " chrome chrome_sandbox")
 print("Compiling, this might take a while...")
 status_code = util.system_silent(cmd, options)
@@ -68,12 +68,12 @@ if status_code != 0:
 
 sbin_target = "/usr/local/sbin/chrome-devel-sandbox"
 if not os.path.exists(sbin_target):
-  os.system("sudo cp out_cros/Release/chrome_sandbox " + sbin_target)
+  os.system("sudo cp out/Release/chrome_sandbox " + sbin_target)
   os.system("sudo chown root:root /usr/local/sbin/chrome-devel-sandbox")
   os.system("sudo chmod 4755 /usr/local/sbin/chrome-devel-sandbox")
 
 #TODO: Make the data dir configurable
-cmd = "out_cros/Release/chrome --user-data-dir=" + TEST_USER_PROFILE_PATH + \
+cmd = "out/Release/chrome --user-data-dir=" + TEST_USER_PROFILE_PATH + \
     (" --login-manager" if options.loginmanager else "")
 print("Running chrome, a new window will open...")
 util.system_silent(cmd, options)

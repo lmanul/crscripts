@@ -108,7 +108,7 @@ if sc != 0:
 # TODO: Run goma if it's not running.
 if not util.is_process_running("compiler_proxy"):
   util.show_goma_warning()
-util.system_silent("ninja -C out/Default chrome", options)
+util.system_silent("autoninja -C out/Default chrome", options)
 # TODO: Catch Ctrl-C, abort cleanly.	
 if sc != 0:
   print("Compilation failed, aborting.")

@@ -58,7 +58,7 @@ if status_code != 0:
 # TODO: Run goma if it's not running.
 if not util.is_process_running("compiler_proxy"):
   util.show_goma_warning()
-cmd = ("ninja -C out/Release -j" + str(n_jobs) +
+cmd = ("autoninja -C out/Release -j" + str(n_jobs) +
        " chrome chrome_sandbox")
 print("Compiling, this might take a while...")
 status_code = util.system_silent(cmd, options)

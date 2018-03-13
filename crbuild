@@ -38,7 +38,7 @@ os.system("gn gen out/Default --args='" + " ".join(GN_ARGS) + "'")
 # TODO: Run goma if it's not running.
 if not util.is_process_running("compiler_proxy"):
   util.show_goma_warning()
-cmd = ("ninja -C out/Default -j" + str(n_jobs) + " chrome unit_tests")
+cmd = ("autoninja -C out/Default -j" + str(n_jobs) + " chrome unit_tests")
 print("Compiling, this might take a while...")
 status_code = util.system_silent(cmd, options)
 if status_code != 0:

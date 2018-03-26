@@ -7,7 +7,6 @@ import util
 
 from optparse import OptionParser
 
-BASE_DIR = "chromium"
 DEPOT_TOOLS = "depot_tools"
 TRY_VERBOSE_MESSAGE = ("Please try calling me again with the verbose (-v) "
                        "option to see what's going on.")
@@ -28,14 +27,15 @@ parser.add_option("-d", "--dryrun", dest="dryrun",
 # Base variables
 
 (options, args) = parser.parse_args()
-home = os.path.expanduser("~")
+HOME = os.path.expanduser("~")
+BASE_DIR = os.path.join(HOME, "chromium")
 dir_name = ""
 
 if not util.is_online():
   print("You seem to be offline. I won't be able to do much. Aborting.")
   sys.exit(1)
 
-os.chdir(home)
+os.chdir(HOME)
 
 # Fetch depot_tools
 
@@ -59,11 +59,11 @@ if not os.path.exists(BASE_DIR):
 # Print info about PATH
 
 shell = os.environ['SHELL'].rsplit('/', 1) [-1]
-rc_file = os.path.join(home, "." + shell + "rc")
+rc_file = os.path.join(HOME, "." + shell + "rc")
 rc_file_contents = open(rc_file, "r").read()
 if "depot_tools" not in rc_file_contents:
   print("We recommend adding this line to your file '" + rc_file + "':\n\n\t"
-        "export PATH=$PATH:" + os.path.join(home, "depot_tools") + "\n")
+        "export PATH=$PATH:" + os.path.join(HOME, "depot_tools") + "\n")
 
 # Fetch the source code
 
@@ -75,7 +75,7 @@ else:
   flags = ["--nohooks"]
   if not options.history:
     flags.append("--no-history")
-  fetch_command = "" + os.path.join(home, DEPOT_TOOLS, "fetch") + " " + \
+  fetch_command = "" + os.path.join(HOME, DEPOT_TOOLS, "fetch") + " " + \
       " ".join(flags) + " " + "chromium"
   if options.verbose:
     print(fetch_command)
@@ -91,8 +91,9 @@ util.ensure_goma_installed()
 
 # Run the hooks
 
+os.chdir(BASE_DIR)
 os.chdir("src")
-print("Installing build dependencies...")
+print("Installing build dependencies... I may need your sudo password.")
 util.system_silent("build/install-build-deps.sh --no-prompt", options)
 print("Running the hooks...")
 util.system_silent("gclient runhooks", options)
@@ -116,4 +117,4 @@ if sc != 0:
 
 # The end
 
-print("\nAll done! Your Chromium directory is " + os.path.join(home, BASE_DIR))
+print("\nAll done! Your Chromium directory is " + BASE_DIR)

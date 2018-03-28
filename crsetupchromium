@@ -39,14 +39,19 @@ os.chdir(HOME)
 
 # Fetch depot_tools
 
-if not os.path.exists(DEPOT_TOOLS):
+if os.path.exists(DEPOT_TOOLS):
+  print(DEPOT_TOOLS + " is already checked out, updating it...")
+  os.chdir(DEPOT_TOOLS)
+  os.system("git pull")
+  os.chdir("..")
+else:
   print("Fetching " + DEPOT_TOOLS + "...")
   util.system_silent("git clone "
                      "https://chromium.googlesource.com/chromium/tools/depot_tools.git",
                      options)
 
 if not os.path.exists(DEPOT_TOOLS):
-  print("I wasn't able to fetch the depot tools. Aborting.")
+  print("I wasn't able to fetch the depot tools. Aborting. Potential fix: delete your ~/.gitcookies")
   if not options.verbose:
     print(TRY_VERBOSE_MESSAGE)
   sys.exit(1)
@@ -68,6 +73,12 @@ if "depot_tools" not in rc_file_contents:
 # Fetch the source code
 
 os.chdir(BASE_DIR)
+
+if os.path.exists(".gclient") and not os.path.exists("src"):
+  print("I see remnants of a checkout attempt, but not checkout. " + \
+      "I am going to delete the .gclient directory.")
+  os.system("rm -rf .gclient")
+
 if os.path.exists("src"):
   print("Code seems already checked out, skipping that part.")
 else:

@@ -9,3 +9,5 @@ Typical workflow:
 * `crrunsandbox`: run the Chromium OS version of Chromium (including window manager, etc.)
   in a sandbox.
 * `crupdate`: update your existing checkout.
+* `crtest`: run the set of tests given as argument, for instance 
+`base_unittests`.

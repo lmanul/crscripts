@@ -9,5 +9,7 @@ Typical workflow:
 * `crrunsandbox`: run the Chromium OS version of Chromium (including window manager, etc.)
   in a sandbox.
 * `crupdate`: update your existing checkout.
+* `creditfilesfromcl`: opens all files opened by the given CL in the given 
+  editor (or in `$EDITOR`).
 * `crtest`: run the set of tests given as argument, for instance 
 `base_unittests`.

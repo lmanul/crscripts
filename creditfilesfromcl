@@ -11,6 +11,9 @@ if len(sys.argv) < 2:
 
 cl = int(sys.argv[1])
 
+print("Known issue: I will fetch the list of edited files from the first " + \
+    "revision of this CL. I will soon fetch the last revision instead!")
+
 if len(sys.argv) > 2:
   editor = sys.argv[2]
 else:

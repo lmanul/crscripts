@@ -52,6 +52,8 @@ def ensure_goma_installed():
     os.system("curl https://clients5.google.com/cxx-compiler-service/download/goma_ctl.py "
               "-o goma_ctl.py")
     os.system("python goma_ctl.py update")
+    if not os.path.exists("compiler_proxy"):
+      print("!!!!!\n\ngoma installation failed. Are there network/auth issues?\n\n!!!!!")
 
 def show_goma_warning():
   if not is_google_machine():

@@ -43,11 +43,13 @@ os.system("gn gen out/Default --args='" + " ".join(GN_ARGS) + "'")
 # TODO: Run goma if it's not running.
 if not util.is_process_running("compiler_proxy"):
   util.show_goma_warning()
-cmd = ("autoninja -C out/Default " + target + " -j" + str(n_jobs) + " ")
+# cmd = ("autoninja -C out/Default " + target + " -j" + str(n_jobs) + " ")
+cmd = ("autoninja -C out/Default unit_tests -j" + str(n_jobs) + " ")
 print("Compiling, this might take a while...")
 status_code = util.system_silent(cmd, options)
 if status_code != 0:
   print("Compilation failed, aborting.")
   sys.exit(status_code)
 
-os.system("./out/Default/" + target)
+# os.system("./out/Default/" + target)
+os.system("./out/Default/unit_tests --gtest_filter='*" + target + "*'")

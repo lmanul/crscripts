@@ -37,8 +37,10 @@ GN_ARGS = [
 ]
 
 os.chdir(os.path.join(HOME, "chromium", "src"))
-print("Running gn gen...")
-os.system("gn gen out/Default --args='" + " ".join(GN_ARGS) + "'")
+cmd = "gn gen out/Default --args='" + " ".join(GN_ARGS) + "'"
+if options.verbose:
+  print("Running '" + cmd + "'..")
+os.system(cmd)
 
 # TODO: Run goma if it's not running.
 if not util.is_process_running("compiler_proxy"):

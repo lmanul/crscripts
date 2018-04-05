@@ -60,4 +60,5 @@ def show_goma_warning():
     # No Goma.
     return
   print("\n\n-- Warning: goma is not running, the build will be "
-        "slower. Start goma with ~/goma/compiler_proxy --\n\n")
+        "slower. Start goma with ~/goma/compiler_proxy --\n"
+        "In a future version, goma will be started automatically.\n\n")

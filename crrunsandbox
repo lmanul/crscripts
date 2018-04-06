@@ -30,10 +30,9 @@ parser.add_option("-l", "--login-manager", dest="loginmanager",
 HOME = os.path.expanduser("~")
 GOMA_DIR = os.path.join(HOME, "goma")
 TEST_USER_PROFILE_PATH = os.path.join(HOME, "tmp", "test-sandbox")
-gn_args = [
+gn_args = util.common_gn_args + [
   'target_os = "chromeos"',
   'is_component_build = true',
-  'enable_nacl = false',
 ]
 if util.is_google_machine():
   gn_args.append('use_goma = true')

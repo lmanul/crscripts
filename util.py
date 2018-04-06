@@ -62,3 +62,10 @@ def show_goma_warning():
   print("\n\n-- Warning: goma is not running, the build will be "
         "slower. Start goma with ~/goma/compiler_proxy --\n"
         "In a future version, goma will be started automatically.\n\n")
+
+def common_gn_args():
+  return  [
+    "enable_nacl = false",
+    "remove_webcore_debug_symbols = true",
+  ]
+

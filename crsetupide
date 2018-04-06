@@ -33,4 +33,4 @@ os.system("sudo apt-get install qtcreator")
 os.chdir(os.path.join(home, BASE_DIR, "src"))
 
 print("Generating IDE project...")
-os.system("gn gen out/Release --ide=qtcreator")
+os.system("gn gen out/Release --ide=qtcreator  --args='" + " ".join(util.common_gn_args()) + "'")

@@ -9,9 +9,6 @@ import util
 
 HOME = os.path.expanduser("~")
 TEST_USER_PROFILE_PATH = os.path.join(HOME, "tmp", "test-chromium")
-GN_ARGS = [
-  "enable_nacl = false",
-]
 
 from optparse import OptionParser
 
@@ -33,7 +30,7 @@ n_jobs = 10 * n_threads
 
 os.chdir(os.path.join(HOME, "chromium", "src"))
 print("Running gn gen...")
-os.system("gn gen out/Default --args='" + " ".join(GN_ARGS) + "'")
+os.system("gn gen out/Default --args='" + " ".join(util.common_gn_args()) + "'")
 
 # TODO: Run goma if it's not running.
 if not util.is_process_running("compiler_proxy"):

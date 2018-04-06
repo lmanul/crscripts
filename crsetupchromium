@@ -112,7 +112,7 @@ util.system_silent("gclient runhooks", options)
 # Build
 
 print("Doing the first build...")
-sc = util.system_silent("gn gen out/Default", options)
+sc = util.system_silent("gn gen out/Default --args='" + " ".join(util.common_gn_args()) + "'", options)
 if sc != 0:
   print("gn step failed, aborting.")
   sys.exit(sc)

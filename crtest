@@ -1,8 +1,10 @@
 #!/usr/bin/python
 
 import multiprocessing
+import ntpath
 import os
 import re
+import shlex
 import subprocess
 import sys
 import util
@@ -32,29 +34,82 @@ n_jobs = 10 * n_threads
 
 HOME = os.path.expanduser("~")
 TEST_USER_PROFILE_PATH = os.path.join(HOME, "tmp", "test-chromium")
-GN_ARGS = [
-  "enable_nacl = false",
+# Even though our target OS isn't necessarily actually Chrome OS, adding this
+# gives access to more build targets.
+gn_args = util.common_gn_args() + [
+  'target_os = "chromeos"',
 ]
 
+MAPPINGS_FROM_DIRECTORY_TO_TARGETS = {
+  "ash": ["ash_unittests"],
+  # TODO: Add more as I go.
+}
+
+if options.dryrun:
+  print("Dry run, not actually running any tests.")
+
 os.chdir(os.path.join(HOME, "chromium", "src"))
-cmd = "gn gen out/Default --args='" + " ".join(GN_ARGS) + "'"
+
+sys.stdout.write("Looking for test files... ")
+all_test_files = subprocess.check_output(shlex.split(
+    'find . -name "*test.cc" -not -path "./third_party/*" -not -path "./out/*" -print')).split("\n")
+sys.stdout.write("Found " + str(len(all_test_files)) + " files.\n")
+sys.stdout.flush()
+
+# If the argument matches exactly one test file name, it's a pretty strong 
+# signal that the user wants exactly that one test.
+
+matching_test_files = []
+for f in all_test_files:
+  base_name = ntpath.basename(f)
+  if target == base_name or target + ".cc" == base_name:
+    matching_test_files = [f]
+
+if len(matching_test_files) == 0:
+  matching_test_files = [f for f in all_test_files if \
+      f.strip() != "" and os.path.exists(f) and (target in f or target in open(f, "r").read())]
+
+if len(matching_test_files) == 0:
+    print("I didn't find any matching test files.")
+else:
+  print("Found the following matching test files: ")
+  for f in matching_test_files:
+    print("\t" + f)
+
+cmd = "gn gen out/Default --args='" + " ".join(gn_args) + "'"
 if options.verbose:
   print("Running '" + cmd + "'..")
-os.system(cmd)
+if not options.dryrun:
+  os.system(cmd)
+
+# Now let's try to infere the test target(s).
+test_targets = set()
+for f in matching_test_files:
+  els = f.split("/")
+  subdir = els[1]  # Skip the "./"
+  if subdir in MAPPINGS_FROM_DIRECTORY_TO_TARGETS:
+    test_targets.update(MAPPINGS_FROM_DIRECTORY_TO_TARGETS[subdir])
+
+print("I'm going to run these test targets:")
+for t in test_targets:
+  print("\t" + t)
 
 # TODO: Run goma if it's not running.
 if not util.is_process_running("compiler_proxy"):
   util.show_goma_warning()
-# cmd = ("autoninja -C out/Default " + target + " -j" + str(n_jobs) + " ")
-cmd = ("autoninja -C out/Default unit_tests -j" + str(n_jobs) + " ")
-print("Compiling, this might take a while...")
-status_code = util.system_silent(cmd, options)
+cmd = ("autoninja -C out/Default " + " ".join(test_targets))
+print("Compiling, this might take a while... Command: " + cmd)
+status_code = 0
+if not options.dryrun:
+  status_code = util.system_silent(cmd, options)
 if status_code != 0:
   print("Compilation failed, aborting.")
   sys.exit(status_code)
 
-# os.system("./out/Default/" + target)
-cmd = "./out/Default/unit_tests --gtest_filter='*" + target + "*'"
+# TODO: Also use --gtest_filter="*pattern*"
+for t in test_targets:
+  cmd = "./out/Default/" + t
 if options.verbose:
   print(cmd)
-os.system(cmd)
+if not options.dryrun:
+  os.system(cmd)

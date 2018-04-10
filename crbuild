@@ -24,20 +24,23 @@ parser.add_option("-d", "--dryrun", dest="dryrun",
 
 (options, args) = parser.parse_args()
 
-n_cpus = multiprocessing.cpu_count()
-n_threads = max(1, n_cpus - 1)
-n_jobs = 10 * n_threads
-
 os.chdir(os.path.join(HOME, "chromium", "src"))
-print("Running gn gen...")
-os.system("gn gen out/Default --args='" + " ".join(util.common_gn_args()) + "'")
+cmd = "gn gen out/Default --args='" + " ".join(util.common_gn_args()) + "'"
+print("Running '" + cmd + "'...")
+if not options.dryrun:
+  os.system(cmd)
 
 # TODO: Run goma if it's not running.
 if not util.is_process_running("compiler_proxy"):
   util.show_goma_warning()
-cmd = ("autoninja -C out/Default -j" + str(n_jobs) + " chrome unit_tests")
-print("Compiling, this might take a while...")
-status_code = util.system_silent(cmd, options)
+cmd = ("autoninja -C out/Default chrome unit_tests")
+if options.verbose:
+  print("Running '" + cmd + "'...")
+else:
+  print("Compiling, this might take a while...")
+status_code = 0
+if not options.dryrun:
+  status_code = util.system_silent(cmd, options)
 if status_code != 0:
   print("Compilation failed, aborting.")
   sys.exit(status_code)

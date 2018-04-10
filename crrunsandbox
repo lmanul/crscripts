@@ -43,7 +43,10 @@ util.ensure_goma_installed()
 
 os.chdir(os.path.join(HOME, "chromium", "src"))
 cmd = "gn gen out/Release --args='" + " ".join(gn_args) + "'"
-print("Running gn gen...")
+if options.verbose:
+  print("Running '" + cmd + "'...")
+else:
+  print("Preparing to build...")
 status_code = os.system(cmd)
 if status_code != 0:
   print("gn step failed, aborting.")

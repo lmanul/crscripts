@@ -26,7 +26,10 @@ parser.add_option("-d", "--dryrun", dest="dryrun",
 
 os.chdir(os.path.join(HOME, "chromium", "src"))
 cmd = "gn gen out/Default --args='" + " ".join(util.common_gn_args()) + "'"
-print("Running '" + cmd + "'...")
+if options.verbose:
+  print("Running '" + cmd + "'...")
+else:
+  print("Preparing for build...")
 if not options.dryrun:
   os.system(cmd)
 
@@ -41,6 +44,8 @@ else:
 status_code = 0
 if not options.dryrun:
   status_code = util.system_silent(cmd, options)
-if status_code != 0:
-  print("Compilation failed, aborting.")
-  sys.exit(status_code)
+if status_code == 0:
+  print("All done.")
+else:
+  print("Compilation failed. Please use '-v' to see actual failures.")
+sys.exit(status_code)

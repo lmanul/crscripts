@@ -6,14 +6,31 @@ import socket
 import subprocess
 import sys
 
+from optparse import OptionParser
+
+def get_options_and_args():
+  parser = OptionParser()
+  parser.add_option("-v", "--verbose", dest="verbose",
+                    action="store_true",
+                    help="show verbose messages")
+  parser.add_option("-d", "--dryrun", dest="dryrun",
+                    action="store_true",
+                    help="dry run, log what we plan to do but don't actually do anything")
+
+  return parser.parse_args()
+
 def system_silent(command, options):
-  return os.system(command + ("" if options.verbose else " > /dev/null 2>&1"))
+  return os.system(command +
+    ("" if options.verbose else " > /dev/null 2>&1"))
 
 def run(command, description, options):
   print(description)
+  print("options is " + str(options))
   if options.verbose:
     print("Running '" + command + "'...")
-  if not options.dryrun:
+  if options.dryrun:
+    return 0
+  else:
     return system_silent(command, options)
 
 # Returns whether a process containing the given name is running.

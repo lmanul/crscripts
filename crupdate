@@ -7,11 +7,13 @@ import util
 if util.is_google_machine():
   os.system("glogin")
 
+(options, args) = util.get_options_and_args()
+
 # TODO: Be a little smarter, detect where we are, what we are updating and do it 
 # automatically.
 if "src" not in os.getcwd():
   print("Please run me from the src/ directory. Aborting.")
   sys.exit(1)
 
-os.system("git rebase-update")
-os.system("gclient sync")
+cmd = "git rebase-update && gclient sync"
+util.run(cmd, "Updating...", options)

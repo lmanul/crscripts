@@ -11,26 +11,13 @@ import util
 
 from optparse import OptionParser
 
-if len(sys.argv) < 2:
+
+(options, args) = util.get_options_and_args()
+
+if len(args) < 1:
   print("I need the name of a test as an argument, for instance 'base_unittests'")
   sys.exit(1)
-target = sys.argv[1]
-
-# Options
-
-parser = OptionParser()
-parser.add_option("-v", "--verbose", dest="verbose",
-                  action="store_true",
-                  help="show verbose messages")
-parser.add_option("-d", "--dryrun", dest="dryrun",
-                  action="store_true",
-                  help="dry run, log what we plan to do but don't actually do anything")
-
-(options, args) = parser.parse_args()
-
-n_cpus = multiprocessing.cpu_count()
-n_threads = max(1, n_cpus - 1)
-n_jobs = 10 * n_threads
+target = args[0]
 
 HOME = os.path.expanduser("~")
 TEST_USER_PROFILE_PATH = os.path.join(HOME, "tmp", "test-chromium")
@@ -77,10 +64,7 @@ else:
     print("\t" + f)
 
 cmd = "gn gen out/Default --args='" + " ".join(gn_args) + "'"
-if options.verbose:
-  print("Running '" + cmd + "'..")
-if not options.dryrun:
-  os.system(cmd)
+util.run(cmd, "Preparing to build...", options)
 
 # Now let's try to infere the test target(s).
 test_targets = set()
@@ -97,11 +81,9 @@ for t in test_targets:
 # TODO: Run goma if it's not running.
 if not util.is_process_running("compiler_proxy"):
   util.show_goma_warning()
+
 cmd = ("autoninja -C out/Default " + " ".join(test_targets))
-print("Compiling, this might take a while... Command: " + cmd)
-status_code = 0
-if not options.dryrun:
-  status_code = util.system_silent(cmd, options)
+status_code = util.run(cmd, "Compiling, this may take a while...", options)
 if status_code != 0:
   print("Compilation failed, aborting.")
   sys.exit(status_code)

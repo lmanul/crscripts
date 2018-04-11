@@ -13,14 +13,19 @@ GN_ARGS = [
   "enable_nacl = false",
 ]
 
+options = {}
+
 os.chdir(os.path.join(HOME, "chromium", "src"))
-print("Running gn gen...")
-os.system("gn gen out/Default --args='" + " ".join(GN_ARGS) + "'")
+
+cmd = "gn gen out/Default --args='" + " ".join(GN_ARGS) + "'"
+util.run(cmd, "Preparing to build...", options)
 
 # TODO: Run goma if it's not running.
 if not util.is_process_running("compiler_proxy"):
   util.show_goma_warning()
+
 cmd = ("autoninja -C out/Release -j" + str(n_jobs) + " chrome")
+status_code = util.run(cmd, "Compiling, this may take a while...", options)
 print("Compiling, this might take a while...")
 status_code = util.system_silent(cmd, options)
 if status_code != 0:

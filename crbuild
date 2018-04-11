@@ -32,7 +32,6 @@ util.run(cmd, "Preparing for build...", options)
 if not util.is_process_running("compiler_proxy"):
   util.show_goma_warning()
 cmd = ("autoninja -C out/Default chrome unit_tests")
-status_code = 0
 status_code = util.run(cmd, "Compiling, this may take a while...", options)
 if status_code == 0:
   print("All done.")

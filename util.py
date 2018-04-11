@@ -8,8 +8,9 @@ import sys
 
 from optparse import OptionParser
 
-def get_options_and_args():
-  parser = OptionParser()
+def get_options_and_args(parser):
+  if not parser:
+    parser = OptionParser()
   parser.add_option("-v", "--verbose", dest="verbose",
                     action="store_true",
                     help="show verbose messages")
@@ -25,7 +26,6 @@ def system_silent(command, options):
 
 def run(command, description, options):
   print(description)
-  print("options is " + str(options))
   if options.verbose:
     print("Running '" + command + "'...")
   if options.dryrun:

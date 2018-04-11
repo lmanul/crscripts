@@ -15,5 +15,4 @@ if "src" not in os.getcwd():
   print("Please run me from the src/ directory. Aborting.")
   sys.exit(1)
 
-cmd = "git rebase-update && gclient sync"
-util.run(cmd, "Updating...", options)
+util.run(cmd"git rebase-update && gclient sync", "Updating...", options)

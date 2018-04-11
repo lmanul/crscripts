@@ -11,22 +11,16 @@ DEPOT_TOOLS = "depot_tools"
 TRY_VERBOSE_MESSAGE = ("Please try calling me again with the verbose (-v) "
                        "option to see what's going on.")
 
-# Options
-
 parser = OptionParser()
 parser.add_option("-f", "--full-history", dest="history",
                   action="store_true",
                   help="Download the full repo history (longer fetch)")
-parser.add_option("-v", "--verbose", dest="verbose",
-                  action="store_true",
-                  help="Show verbose messages")
-parser.add_option("-d", "--dryrun", dest="dryrun",
-                  action="store_true",
-                  help="dry run, log what we plan to do but don't actually do anything")
+
+(options, args) = util.get_options_and_args(parser)
+
 
 # Base variables
 
-(options, args) = parser.parse_args()
 HOME = os.path.expanduser("~")
 BASE_DIR = os.path.join(HOME, "chromium")
 dir_name = ""
@@ -82,15 +76,12 @@ if os.path.exists(".gclient") and not os.path.exists("src"):
 if os.path.exists("src"):
   print("Code seems already checked out, skipping that part.")
 else:
-  print("Fetching the source code. This will take a while...")
   flags = ["--nohooks"]
   if not options.history:
     flags.append("--no-history")
   fetch_command = "" + os.path.join(HOME, DEPOT_TOOLS, "fetch") + " " + \
       " ".join(flags) + " " + "chromium"
-  if options.verbose:
-    print(fetch_command)
-  util.system_silent(fetch_command, options)
+  util.run(fetch_command, "Fetching the source code...", options)
 
 if not os.path.exists("src"):
   print("Fetching the code has failed, aborting. Sorry about that. ")
@@ -104,10 +95,11 @@ util.ensure_goma_installed()
 
 os.chdir(BASE_DIR)
 os.chdir("src")
-print("Installing build dependencies... I may need your sudo password.")
-util.system_silent("build/install-build-deps.sh --no-prompt", options)
+cmd = "build/install-build-deps.sh --no-prompt"
+util.run(cmd, "Installing build deps... I may need your sudo password.", options)
+
+util.run("gclient runhooks", "Running the hooks...", options)
 print("Running the hooks...")
-util.system_silent("gclient runhooks", options)
 
 # Build
 
@@ -120,7 +112,7 @@ if sc != 0:
 # TODO: Run goma if it's not running.
 if not util.is_process_running("compiler_proxy"):
   util.show_goma_warning()
-util.system_silent("autoninja -C out/Default chrome", options)
+sc = util.system_silent("autoninja -C out/Default chrome", options)
 # TODO: Catch Ctrl-C, abort cleanly.	
 if sc != 0:
   print("Compilation failed, aborting.")

@@ -12,19 +12,7 @@ DEPOT_TOOLS = "depot_tools"
 TRY_VERBOSE_MESSAGE = ("Please try calling me again with the verbose (-v) "
                        "option to see what's going on.")
 
-# Options
-
-parser = OptionParser()
-parser.add_option("-v", "--verbose", dest="verbose",
-                  action="store_true",
-                  help="Show verbose messages")
-parser.add_option("-d", "--dryrun", dest="dryrun",
-                  action="store_true",
-                  help="dry run, log what we plan to do but don't actually do anything")
-
-# Base variables
-
-(options, args) = parser.parse_args()
+(options, args) = util.get_options_and_args()
 home = os.path.expanduser("~")
 dir_name = ""
 

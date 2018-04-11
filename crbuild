@@ -26,24 +26,14 @@ parser.add_option("-d", "--dryrun", dest="dryrun",
 
 os.chdir(os.path.join(HOME, "chromium", "src"))
 cmd = "gn gen out/Default --args='" + " ".join(util.common_gn_args()) + "'"
-if options.verbose:
-  print("Running '" + cmd + "'...")
-else:
-  print("Preparing for build...")
-if not options.dryrun:
-  os.system(cmd)
+util.run(cmd, "Preparing for build...", options)
 
 # TODO: Run goma if it's not running.
 if not util.is_process_running("compiler_proxy"):
   util.show_goma_warning()
 cmd = ("autoninja -C out/Default chrome unit_tests")
-if options.verbose:
-  print("Running '" + cmd + "'...")
-else:
-  print("Compiling, this might take a while...")
 status_code = 0
-if not options.dryrun:
-  status_code = util.system_silent(cmd, options)
+status_code = util.run(cmd, "Compiling, this may take a while...", options)
 if status_code == 0:
   print("All done.")
 else:

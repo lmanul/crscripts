@@ -7,10 +7,14 @@ import subprocess
 import sys
 
 def system_silent(command, options):
+  return os.system(command + ("" if options.verbose else " > /dev/null 2>&1"))
+
+def run(command, description, options):
+  print(description)
   if options.verbose:
     print("Running '" + command + "'...")
   if not options.dryrun:
-    return os.system(command + ("" if options.verbose else " > /dev/null 2>&1"))
+    return system_silent(command, options)
 
 # Returns whether a process containing the given name is running.
 def is_process_running(process):

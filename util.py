@@ -105,4 +105,4 @@ def monitor_compile_progress(child_process):
       progress_ten_thousandths = int(float(parsed.group(1)) / float(parsed.group(2)) * 10000)
       sys.stdout.write("\033[F") # Clear the previous print
       # Print in green
-      print('\033[92m' + str(float(progress_ten_thousandths)/100.0) + "%" + '\033[92m')
+      print('\033[92m' + str(float(progress_ten_thousandths)/100.0) + "%" + '\033[0m')

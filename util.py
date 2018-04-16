@@ -33,7 +33,7 @@ def run(command, description, options):
   if options.dryrun:
     return 0
   else:
-    if "ninja" in command:
+    if "ninja" in command and not options.verbose:
       child = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, universal_newlines=True)
       monitor_compile_progress(child)
       return child.wait()

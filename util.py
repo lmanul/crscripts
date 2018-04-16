@@ -8,7 +8,9 @@ import sys
 
 from optparse import OptionParser
 
-def get_options_and_args(parser):
+SILENT = " > /dev/null 2>&1"
+
+def get_options_and_args(parser=None):
   if not parser:
     parser = OptionParser()
   parser.add_option("-v", "--verbose", dest="verbose",
@@ -22,7 +24,7 @@ def get_options_and_args(parser):
 
 def system_silent(command, options):
   return os.system(command +
-    ("" if options.verbose else " > /dev/null 2>&1"))
+    ("" if options.verbose else SILENT))
 
 def run(command, description, options):
   print(description)
@@ -31,6 +33,10 @@ def run(command, description, options):
   if options.dryrun:
     return 0
   else:
+    if "ninja" in command:
+      child = subprocess.Popen(shlex.split(command), stdout=subprocess.PIPE, universal_newlines=True)
+      monitor_compile_progress(child)
+      return child.wait()
     return system_silent(command, options)
 
 # Returns whether a process containing the given name is running.
@@ -81,7 +87,8 @@ def show_goma_warning():
     # No Goma.
     return
   print("\n\n-- Warning: goma is not running, the build will be "
-        "slower. Start goma with ~/goma/compiler_proxy --\n"
+        "slower. Start goma with ~/goma/compiler_proxy -- we suggest running "
+        "that in a 'screen' session\n"
         "In a future version, goma will be started automatically.\n\n")
 
 def common_gn_args():
@@ -90,3 +97,12 @@ def common_gn_args():
     "remove_webcore_debug_symbols = true",
   ]
 
+def monitor_compile_progress(child_process):
+  print("")
+  for stdout_line in iter(child_process.stdout.readline, ""):
+    parsed = re.match(r"\[(.+)/(.+)\]", stdout_line)
+    if parsed:
+      progress_ten_thousandths = int(float(parsed.group(1)) / float(parsed.group(2)) * 10000)
+      sys.stdout.write("\033[F") # Clear the previous print
+      # Print in green
+      print('\033[92m' + str(float(progress_ten_thousandths)/100.0) + "%" + '\033[92m')

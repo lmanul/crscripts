@@ -133,3 +133,25 @@ def get_open_files_for_cl(cl):
   data = "\n".join(data.split("\n")[1:])
   parsed_data = json.loads(data)
   return [f for f in parsed_data if not "COMMIT_MSG" in f]
+
+def read_config_from_file():
+  PATH = os.path.expanduser("~") + "/.crrc"
+  config = {}
+  if os.path.exists(PATH):
+    lines = open(PATH, "r").readlines()
+    for l in lines:
+      parts = l.split("=", 1)
+      config[parts[0].strip()] = parts[1].strip()
+    print(config)
+  return config
+  
+def save_config(config):
+  PATH = os.path.expanduser("~") + "/.crrc"
+  if not os.path.exists(PATH):
+    os.system("touch " + PATH)
+  f = open(PATH, "w")
+  buffer = ""
+  for k in config:
+    buffer += str(k) + "=" + str(config[k]) + "\n"
+  f.write(buffer)
+  f.close()

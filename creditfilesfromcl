@@ -4,18 +4,30 @@ import os
 import sys
 import util
 
-if len(sys.argv) < 2:
-  print("I need a CL number as an argument. Thanks!")
-  sys.exit(1)
+config = util.read_config_from_file()
+print("config is " + str(config))
 
-cl = int(sys.argv[1])
+if len(sys.argv) > 1:
+  cl = int(sys.argv[1])
+  config["cl"] = cl
+else:
+  if "cl" in config:
+    cl = config["cl"]
+  else:
+    print("No CL specified in argument and no 'cl' value in ~/.crrc, bailing out.")
+    sys.exit(1)
 
 if len(sys.argv) > 2:
   editor = sys.argv[2]
+  config["editor"] = editor
 else:
-  editor = os.getenv("EDITOR").strip()
+  if "editor" in config:
+    editor = config["editor"]
+  else:
+    editor = os.getenv("EDITOR").strip()
   if editor == "":
-    print("No editor was specified and $EDITOR is empty, bailing out.")
+    print("No editor was specified as an argument or "
+          "in ~/.crrc and $EDITOR is empty, bailing out.")
     sys.exit(1)
   print("No editor specified, using '" + editor + "' = $EDITOR")
 
@@ -25,6 +37,9 @@ os.chdir(cr_dir)
 files_to_edit = " ".join(util.get_open_files_for_cl(cl))
 command = editor + " " + files_to_edit
 if editor in ['gedit', 'qtcreator']:
-  command += "&"
+  # gedit creates spurious stderr stuff
+  command += " 2> /dev/null &"
 print(command)
 os.system(command)
+
+util.save_config(config)

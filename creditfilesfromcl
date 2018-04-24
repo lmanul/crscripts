@@ -1,18 +1,14 @@
 #!/usr/bin/python3
 
-import json
 import os
 import sys
-import urllib.request
+import util
 
 if len(sys.argv) < 2:
   print("I need a CL number as an argument. Thanks!")
   sys.exit(1)
 
 cl = int(sys.argv[1])
-
-print("Known issue: I will fetch the list of edited files from the first " + \
-    "revision of this CL. I will soon fetch the last revision instead!")
 
 if len(sys.argv) > 2:
   editor = sys.argv[2]
@@ -23,22 +19,10 @@ else:
     sys.exit(1)
   print("No editor specified, using '" + editor + "' = $EDITOR")
 
-files_url = "https://chromium-review.googlesource.com/changes/chromium%2Fsrc~" + \
-    str(cl) + "/revisions/1/files"
-print("Fetching " + files_url + "...")
-
-# TODO: Fetch last revision.
-response = urllib.request.urlopen(files_url)
-data = response.read().decode("utf8")
-# For soem reason, the first line contains spurious brackets
-data = "\n".join(data.split("\n")[1:])
-print(data)
-parsed_data = json.loads(data)
-
 home = os.path.expanduser("~")
 cr_dir = os.path.join(home, "chromium", "src")
 os.chdir(cr_dir)
-files_to_edit = " ".join([f for f in parsed_data if not "COMMIT_MSG" in f])
+files_to_edit = " ".join(util.get_open_files_for_cl(cl))
 command = editor + " " + files_to_edit
 if editor in ['gedit', 'qtcreator']:
   command += "&"

@@ -1,3 +1,4 @@
+import json
 import os
 import platform
 import re
@@ -5,6 +6,7 @@ import shlex
 import socket
 import subprocess
 import sys
+import urllib.request
 
 from optparse import OptionParser
 
@@ -106,3 +108,28 @@ def monitor_compile_progress(child_process):
       sys.stdout.write("\033[F") # Clear the previous print
       # Print in green
       print('\033[92m' + str(float(progress_ten_thousandths)/100.0) + "%" + '\033[0m')
+
+def get_last_revision_number_for_cl(cl):
+  url = "https://chromium-review.googlesource.com/changes/chromium%2Fsrc~" + str(cl) + "/detail"
+  print("Fetching '" + url + "'...")
+  response = urllib.request.urlopen(url)
+  data = response.read().decode("utf8")
+  data = "\n".join(data.split("\n")[1:])
+  parsed_data = json.loads(data)
+  messages = parsed_data["messages"]
+  latest_revision = 0
+  for m in messages:
+    if "_revision_number" in m:
+      latest_revision = max(latest_revision, int(m["_revision_number"]))
+  return latest_revision
+
+def get_open_files_for_cl(cl):
+  revision = int(get_last_revision_number_for_cl(cl))
+  print("Last revision is " + str(revision))
+  url = "https://chromium-review.googlesource.com/changes/chromium%2Fsrc~" + str(cl) + "/revisions/" + str(revision) + "/files"
+  response = urllib.request.urlopen(url)
+  data = response.read().decode("utf8")
+  # For some reason, the first line contains spurious brackets
+  data = "\n".join(data.split("\n")[1:])
+  parsed_data = json.loads(data)
+  return [f for f in parsed_data if not "COMMIT_MSG" in f]

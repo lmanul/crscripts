@@ -12,6 +12,9 @@ from optparse import OptionParser
 
 SILENT = " > /dev/null 2>&1"
 
+def get_chromium_src_dir():
+  return os.path.join(os.path.expanduser("~"), "chromium", "src")
+
 def get_options_and_args(parser=None):
   if not parser:
     parser = OptionParser()
@@ -111,7 +114,6 @@ def monitor_compile_progress(child_process):
 
 def get_last_revision_number_for_cl(cl):
   url = "https://chromium-review.googlesource.com/changes/chromium%2Fsrc~" + str(cl) + "/detail"
-  print("Fetching '" + url + "'...")
   response = urllib.request.urlopen(url)
   data = response.read().decode("utf8")
   data = "\n".join(data.split("\n")[1:])

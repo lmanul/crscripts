@@ -27,6 +27,8 @@ gn_args = util.common_gn_args() + [
   'target_os = "chromeos"',
 ]
 
+# TODO: This is not scalable. Try something by first listing targets:
+# gn ls out/Default | grep unittests
 MAPPINGS_FROM_DIRECTORY_TO_TARGETS = {
   "ash": ["ash_unittests"],
   # TODO: Add more as I go.

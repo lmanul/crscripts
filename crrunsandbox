@@ -34,7 +34,7 @@ else:
 util.ensure_goma_installed()
 
 os.chdir(os.path.join(HOME, "chromium", "src"))
-cmd = "gn gen out/Release --args='" + " ".join(gn_args) + "'"
+cmd = "gn gen out/Default --args='" + " ".join(gn_args) + "'"
 status_code = util.run(cmd, "Preparing to build...", options)
 if status_code != 0:
   print("gn step failed, aborting.")
@@ -44,7 +44,7 @@ if status_code != 0:
 if not util.is_process_running("compiler_proxy"):
   util.show_goma_warning()
 
-cmd = ("autoninja -C out/Release chrome chrome_sandbox")
+cmd = ("autoninja -C out/Default chrome chrome_sandbox")
 status_code = util.run(cmd, "Compiling, this may take a while", options)
 if status_code != 0:
   print("Compilation failed, aborting. Please use -v to see failures.")
@@ -52,12 +52,12 @@ if status_code != 0:
 
 sbin_target = "/usr/local/sbin/chrome-devel-sandbox"
 if not os.path.exists(sbin_target):
-  os.system("sudo cp out/Release/chrome_sandbox " + sbin_target)
+  os.system("sudo cp out/Default/chrome_sandbox " + sbin_target)
   os.system("sudo chown root:root /usr/local/sbin/chrome-devel-sandbox")
   os.system("sudo chmod 4755 /usr/local/sbin/chrome-devel-sandbox")
 
 #TODO: Make the data dir configurable
-cmd = "out/Release/chrome --user-data-dir=" + TEST_USER_PROFILE_PATH + \
+cmd = "out/Default/chrome --user-data-dir=" + TEST_USER_PROFILE_PATH + \
     (" --login-manager" if options.loginmanager else "")
 print("Running chrome, a new window will open...")
 util.system_silent(cmd, options)

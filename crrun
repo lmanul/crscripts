@@ -24,7 +24,7 @@ util.run(cmd, "Preparing to build...", options)
 if not util.is_process_running("compiler_proxy"):
   util.show_goma_warning()
 
-cmd = ("autoninja -C out/Release -j" + str(n_jobs) + " chrome")
+cmd = ("autoninja -C out/Default -j" + str(n_jobs) + " chrome")
 status_code = util.run(cmd, "Compiling, this may take a while...", options)
 if status_code != 0:
   print("Compilation failed, aborting.")

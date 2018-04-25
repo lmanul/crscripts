@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import multiprocessing
 import ntpath
@@ -39,7 +39,7 @@ os.chdir(os.path.join(HOME, "chromium", "src"))
 
 sys.stdout.write("Looking for test files... ")
 all_test_files = subprocess.check_output(shlex.split(
-    'find . -name "*test.cc" -not -path "./third_party/*" -not -path "./out/*" -print')).split("\n")
+    'find . -name "*test.cc" -not -path "./third_party/*" -not -path "./out/*" -print')).decode("utf-8").split("\n")
 sys.stdout.write("Found " + str(len(all_test_files)) + " files.\n")
 sys.stdout.flush()
 

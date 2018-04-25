@@ -11,5 +11,5 @@ Typical workflow:
 * `crupdate`: update your existing checkout.
 * `creditfilesfromcl`: opens all files opened by the given CL in the given 
   editor (or in `$EDITOR`).
-* `crtest`: run the set of tests given as argument, for instance 
-`base_unittests`.
+* `crpatch`: patch an existing CL (simpler and quicker than `git cl patch`).
+* `crtest`: run the set of tests given as argument, for instance `base_unittests`.

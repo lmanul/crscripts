@@ -23,9 +23,10 @@ unzipped = "patch_" + str(cl) + ".diff"
 zip = "patch.zip"
 os.system("curl '" + url + "' > " + zip)
 
-current_branch = subprocess.check_output(shlex.split("git rev-parse --abbrev-ref HEAD"))
+current_branch = subprocess.check_output(shlex.split(
+  "git rev-parse --abbrev-ref HEAD")).decode("utf-8").strip()
 if current_branch == "master":
-  print("Warning: you are on the master branch. You might want to git checkout -b before committing anything.")
+  print("\nWarning: you are on the master branch. You might want to git checkout -b before committing anything.\n")
 
 # The URL doesn't let us know what the patch file will be called, so we'll just 
 # diff the contents of the directory.

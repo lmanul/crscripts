@@ -21,6 +21,9 @@ parser.add_option("-v", "--verbose", dest="verbose",
 parser.add_option("-d", "--dryrun", dest="dryrun",
                   action="store_true",
                   help="dry run, log what we plan to do but don't actually do anything")
+parser.add_option("-t", "--tests_only", dest="testsonly",
+                  action="store_true",
+                  help="Only build unit tests")
 
 (options, args) = parser.parse_args()
 
@@ -31,7 +34,11 @@ util.run(cmd, "Preparing for build...", options)
 # TODO: Run goma if it's not running.
 if not util.is_process_running("compiler_proxy"):
   util.show_goma_warning()
-cmd = ("autoninja -C out/Default chrome unit_tests")
+if options.testsonly:
+  target = "unit_tests"
+else:
+  target = "chrome unit_tests"
+cmd = ("autoninja -C out/Default " + target)
 status_code = util.run(cmd, "Compiling, this may take a while...", options)
 if status_code == 0:
   print("All done.")

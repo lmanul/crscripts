@@ -28,7 +28,7 @@ else:
     print("No editor was specified as an argument or "
           "in ~/.crrc and $EDITOR is empty, bailing out.")
     sys.exit(1)
-  print("No editor specified, using '" + editor + "' = $EDITOR")
+  print("No editor specified, using '" + editor + "'")
 
 home = os.path.expanduser("~")
 cr_dir = os.path.join(home, "chromium", "src")

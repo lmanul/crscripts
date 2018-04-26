@@ -99,6 +99,8 @@ def show_goma_warning():
 def common_gn_args():
   return  [
     "enable_nacl = false",
+    # Not strictly true, but this unlocks more targets
+    'target_os = "chromeos"',
     "remove_webcore_debug_symbols = true",
   ]
 

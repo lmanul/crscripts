@@ -9,10 +9,5 @@ if util.is_google_machine():
 
 (options, args) = util.get_options_and_args()
 
-# TODO: Be a little smarter, detect where we are, what we are updating and do it 
-# automatically.
-if "src" not in os.getcwd():
-  print("Please run me from the src/ directory. Aborting.")
-  sys.exit(1)
-
+os.chdir(util.get_chromium_src_dir())
 util.run("git rebase-update && gclient sync", "Updating...", options)

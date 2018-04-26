@@ -134,7 +134,7 @@ def get_open_files_for_cl(cl):
   # For some reason, the first line contains spurious brackets
   data = "\n".join(data.split("\n")[1:])
   parsed_data = json.loads(data)
-  return [f for f in parsed_data if not "COMMIT_MSG" in f]
+  return sorted([f for f in parsed_data if not "COMMIT_MSG" in f])
 
 def read_config_from_file():
   PATH = os.path.expanduser("~") + "/.crrc"

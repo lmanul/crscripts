@@ -80,10 +80,8 @@ if camel_case and matching_test_file != "":
   path_length = len(els) - 1
   while (path_length > 1):
     query = "/".join(els[1:path_length])
-    print("Looking for " + query)
     for t in all_test_targets:
-      if query in t:
-        print("Settling for " + t)
+      if query + "_unittests" in t:
         test_targets = [t]
         break
     path_length -= 1
@@ -124,7 +122,7 @@ if status_code != 0:
 for t in test_targets:
   cmd = "./out/Default/" + \
       (t.split(":")[1] if ":" in t else t) + \
-      (' --gtest_filter="*" + target + "*"' if camel_case else "")
+      (' --gtest_filter="*' + target + '*"' if camel_case else "")
   if options.verbose:
     print(cmd)
   if not options.dryrun:

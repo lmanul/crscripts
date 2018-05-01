@@ -13,6 +13,10 @@ from optparse import OptionParser
 
 (options, args) = util.get_options_and_args()
 
+def print_rebuild_warning():
+  print("If this isn't what you expected, consider re-building unit tests? " + \
+      "That would be 'crbuild --tests_only'")
+
 if len(args) < 1:
   print("I need the name of a test as an argument, for instance 'base_unittests'")
   sys.exit(1)
@@ -96,14 +100,15 @@ else:
       test_targets.add(t)
 
 if len(test_targets) == 0:
-  print("Sorry, I didn't find any matching targets. Aborting. " + \
-      "Consider re-building unit tests? That would be 'crbuild --tests_only'")
+  print("Sorry, I didn't find any matching targets. Aborting. ")
+  print_rebuild_warning()
   sys.exit(0)
 
 print("\nI'm going to run these test targets:")
 for t in test_targets:
   print("\t" + t)
 print("")
+print_rebuild_warning()
 
 cmd = "gn gen out/Default --args='" + " ".join(gn_args) + "'"
 util.run(cmd, "Preparing to build...", options)

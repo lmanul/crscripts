@@ -99,7 +99,6 @@ cmd = "build/install-build-deps.sh --no-prompt"
 util.run(cmd, "Installing build deps... I may need your sudo password.", options)
 
 util.run("gclient runhooks", "Running the hooks...", options)
-print("Running the hooks...")
 
 # Build
 

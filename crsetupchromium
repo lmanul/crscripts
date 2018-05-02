@@ -108,8 +108,8 @@ util.run("gclient runhooks", "Running the hooks...", options)
 
 # Build
 
-print("Doing the first build...")
-sc = util.system_silent("gn gen out/Default --args='" + " ".join(util.common_gn_args()) + "'", options)
+sc = util.run("gn gen out/Default --args='" + " ".join(util.common_gn_args()) + "'",
+    "Preparing for the first build...", options)
 if sc != 0:
   print("gn step failed, aborting.")
   sys.exit(sc)
@@ -117,7 +117,7 @@ if sc != 0:
 # TODO: Run goma if it's not running.
 if not util.is_process_running("compiler_proxy"):
   util.show_goma_warning()
-sc = util.system_silent("autoninja -C out/Default chrome", options)
+sc = util.run("autoninja -C out/Default chrome", "Doing the first build...", options)
 # TODO: Catch Ctrl-C, abort cleanly.	
 if sc != 0:
   print("Compilation failed, aborting.")

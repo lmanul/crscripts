@@ -89,6 +89,12 @@ if not os.path.exists("src"):
     print(TRY_VERBOSE_MESSAGE)
   sys.exit(1)
 
+# Now for a (hopefully) temporary fix.
+os.chdir(BASE_DIR)
+os.system("echo 'target_os=[\"chromeos\"]' >> .gclient")
+os.chdir("src")
+os.system("gclient sync")
+
 util.ensure_goma_installed()
 
 # Run the hooks

@@ -16,6 +16,8 @@ parser.add_option("-l", "--login-manager", dest="loginmanager",
 
 (options, args) = util.get_options_and_args(parser)
 
+config = util.read_config_from_file()
+
 # TODO: hide compilation output.
 
 HOME = os.path.expanduser("~")
@@ -58,6 +60,6 @@ if not os.path.exists(sbin_target):
 
 #TODO: Make the data dir configurable
 cmd = "out/Default/chrome --user-data-dir=" + TEST_USER_PROFILE_PATH + \
-    (" --login-manager" if options.loginmanager else "")
-print("Running chrome, a new window will open...")
-util.system_silent(cmd, options)
+    (" --login-manager" if options.loginmanager else "") + \
+    ("--enable-features=" + ",".join(config["enabled_features"].split(",")) if "enabled_features" in config else "")
+util.run(cmd, "Running chrome, a new window will open...", options)

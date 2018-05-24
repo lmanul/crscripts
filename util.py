@@ -1,4 +1,5 @@
 import json
+import ntpath
 import os
 import platform
 import re
@@ -6,6 +7,7 @@ import shlex
 import socket
 import subprocess
 import sys
+import time
 import urllib.request
 
 from optparse import OptionParser
@@ -106,13 +108,41 @@ def common_gn_args():
 
 def monitor_compile_progress(child_process):
   print("")
+  now_ms = int(time.time() * 1000)
+  last_ms = now_ms
+  where_time_is_spent = {}
   for stdout_line in iter(child_process.stdout.readline, ""):
-    parsed = re.match(r"\[(.+)/(.+)\]", stdout_line)
+    parsed = re.match(r"^\[(.+)/(.+)\] [A-Z]+ (.*)$", stdout_line)
     if parsed:
       progress_ten_thousandths = int(float(parsed.group(1)) / float(parsed.group(2)) * 10000)
+      what = ntpath.dirname(parsed.group(3))
+      if what.startswith("obj/"):
+        what = what[4:]
+      if what.startswith("//"):
+        what = what[2:]
+      if ":" in what:
+        what = what[:what.index(":")]
+      path_parts = what.split("/")
+      if len(path_parts) > 2:
+        what = "/".join(path_parts[0:2])
+      if what not in where_time_is_spent:
+        where_time_is_spent[what] = 0
       sys.stdout.write("\033[F") # Clear the previous print
       # Print in green
       print('\033[92m' + str(float(progress_ten_thousandths)/100.0) + "%" + '\033[0m')
+      now_ms = int(time.time() * 1000)
+      spent = now_ms - last_ms
+      #print("Spent " + str(spent) + "ms on " + what)
+      where_time_is_spent[what] += spent
+      last_ms = now_ms
+  print("\n")
+  flattened = []
+  for key, value in where_time_is_spent.items():
+    temp = [key, value]
+    flattened.append(temp)
+  flattened = sorted(flattened, reverse=True, key = lambda el : el[1])
+  for i in range(min(10, len(where_time_is_spent))):
+    print(str(round(flattened[i][1] / 1000, 1)) + "s spent on " + flattened[i][0])
 
 def get_last_revision_number_for_cl(cl):
   url = "https://chromium-review.googlesource.com/changes/chromium%2Fsrc~" + str(cl) + "/detail"

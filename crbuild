@@ -37,7 +37,7 @@ if not util.is_process_running("compiler_proxy"):
 if options.testsonly:
   target = "unit_tests"
 else:
-  target = "chrome unit_tests"
+  target = "chrome"
 cmd = ("autoninja -C out/Default " + target)
 status_code = util.run(cmd, "Compiling, this may take a while...", options)
 if status_code == 0:

@@ -61,5 +61,6 @@ if not os.path.exists(sbin_target):
 #TODO: Make the data dir configurable
 cmd = "out/Default/chrome --user-data-dir=" + TEST_USER_PROFILE_PATH + \
     (" --login-manager" if options.loginmanager else "") + \
-    ("--enable-features=" + ",".join(config["enabled_features"].split(",")) if "enabled_features" in config else "")
+    (" " + config["extra_flags"] if "extra_flags" in config else "") + \
+    (" --enable-features=" + ",".join(config["enabled_features"].split(",")) if "enabled_features" in config else "")
 util.run(cmd, "Running chrome, a new window will open...", options)

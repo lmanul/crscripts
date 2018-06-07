@@ -49,7 +49,9 @@ if not util.is_process_running("compiler_proxy"):
 cmd = ("autoninja -C out/Default chrome chrome_sandbox")
 status_code = util.run(cmd, "Compiling, this may take a while", options)
 if status_code != 0:
-  print("Compilation failed, aborting. Please use -v to see failures.")
+  print("Compilation failed, aborting.")
+  if not options.verbose:
+    print("Please use -v to see failures.")
   sys.exit(status_code)
 
 sbin_target = "/usr/local/sbin/chrome-devel-sandbox"

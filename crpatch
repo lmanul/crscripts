@@ -41,3 +41,8 @@ print("Applying '" + unzipped  + "'...")
 os.system("patch -p1 < " + unzipped)
 print("Cleaning up...")
 os.system("rm " + zip + " " + unzipped)
+
+print("Committing changes locally...")
+os.system("git commit -a -m 'Applying patch " + str(cl) + "'")
+print("Calling 'git cl issue'...")
+os.system("git cl issue " + str(cl))

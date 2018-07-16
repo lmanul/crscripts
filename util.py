@@ -175,6 +175,8 @@ def read_config_from_file():
   if os.path.exists(PATH):
     lines = open(PATH, "r").readlines()
     for l in lines:
+      if l.startswith("#"):
+        continue
       parts = l.split("=", 1)
       config[parts[0].strip()] = parts[1].strip()
     print(config)

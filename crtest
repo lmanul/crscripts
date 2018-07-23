@@ -14,7 +14,7 @@ from optparse import OptionParser
 (options, args) = util.get_options_and_args()
 
 def print_rebuild_warning():
-  print("If this isn't what you expected, consider re-building unit tests? " + \
+  print("If this isn't what you expected, consider re-building unit tests. " + \
       "That would be 'crbuild --tests_only'")
 
 if len(args) < 1:

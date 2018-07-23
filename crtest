@@ -53,6 +53,10 @@ if options.dryrun:
   print("Dry run, not actually running any tests.\n")
 
 all_test_targets = find_all_test_targets()
+if list_only:
+  print("This is what I know about:\n\t" + "\n\t".join(all_test_targets))
+  sys.exit(0)
+
 os.chdir(os.path.join(HOME, "chromium", "src"))
 
 camel_case = (target != target.lower())

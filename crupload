@@ -2,6 +2,7 @@
 
 import os
 import util
+import subprocess
 import sys
 
 os.chdir(util.get_chromium_src_dir())

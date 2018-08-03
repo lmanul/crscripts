@@ -1,0 +1,8 @@
+#!/usr/bin/python3
+
+import os
+import sys
+import util
+
+cl = util.get_issue_number()
+os.system("creditopenfilesincl " + cl)

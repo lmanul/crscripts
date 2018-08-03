@@ -192,3 +192,10 @@ def save_config(config):
     buffer += str(k) + "=" + str(config[k]) + "\n"
   f.write(buffer)
   f.close()
+
+def get_issue_number():
+  os.chdir(get_chromium_src_dir())
+  output = subprocess.check_output(shlex.split("git cl issue")).decode().strip()
+  if "Issue number" not in output:
+    return None
+  return re.match("Issue number: (\d+) .*", output).group(1)

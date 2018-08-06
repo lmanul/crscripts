@@ -129,8 +129,13 @@ def monitor_compile_progress(child_process):
         where_time_is_spent[what] = 0
       sys.stdout.write("\033[F") # Clear the previous print
       # Print in green
-      print('\033[92m{0:.2f}%\033[0m'.format(
-          float(progress_ten_thousandths)/100.0)) 
+      sys.stdout.write('\033[92m{0:.2f}%\033[0m'.format(
+          float(progress_ten_thousandths)/100.0))
+      sys.stdout.write("  ")
+      sys.stdout.write(what)
+      sys.stdout.write(" " * (80 - 6 - 1))
+      sys.stdout.write("\n")
+      sys.stdout.flush()
       now_ms = int(time.time() * 1000)
       spent = now_ms - last_ms
       #print("Spent " + str(spent) + "ms on " + what)

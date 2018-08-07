@@ -23,7 +23,7 @@ rc = child.returncode
 
 if rc != 0:
   print("Committing format changes...")
-  os.system("commit --all --amend --no-edit")
+  os.system("git commit --all --amend --no-edit")
 
 print("Uploading...")
 os.system("git cl upload")

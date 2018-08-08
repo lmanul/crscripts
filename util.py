@@ -131,9 +131,11 @@ def monitor_compile_progress(child_process):
       # Print in green
       sys.stdout.write('\033[92m{0:.2f}%\033[0m'.format(
           float(progress_ten_thousandths)/100.0))
+      filler_size = 72 - len("xx.xx% ") - len(what)
       sys.stdout.write("  ")
       sys.stdout.write(what)
-      sys.stdout.write(" " * (80 - 6 - 1))
+      if filler_size > 0:
+        sys.stdout.write(" " * filler_size)
       sys.stdout.write("\n")
       sys.stdout.flush()
       now_ms = int(time.time() * 1000)

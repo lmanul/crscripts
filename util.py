@@ -14,6 +14,12 @@ from optparse import OptionParser
 
 SILENT = " > /dev/null 2>&1"
 
+COLOR_FORMAT_PREF = '\033['
+COLOR_FORMAT_SUFF = 'm{0:.2f}%\033[0m'
+COLOR_FORMAT_RED    = COLOR_FORMAT_PREF + str(91) + COLOR_FORMAT_SUFF
+COLOR_FORMAT_YELLOW = COLOR_FORMAT_PREF + str(33) + COLOR_FORMAT_SUFF
+COLOR_FORMAT_GREEN  = COLOR_FORMAT_PREF + str(92) + COLOR_FORMAT_SUFF
+
 def get_chromium_src_dir():
   return os.path.join(os.path.expanduser("~"), "chromium", "src")
 
@@ -128,9 +134,15 @@ def monitor_compile_progress(child_process):
       if what not in where_time_is_spent:
         where_time_is_spent[what] = 0
       sys.stdout.write("\033[F") # Clear the previous print
-      # Print in green
-      sys.stdout.write('\033[92m{0:.2f}%\033[0m'.format(
-          float(progress_ten_thousandths)/100.0))
+      # Print in color
+      percent = float(progress_ten_thousandths)/100.
+      if percent > 66.6:
+        color_format = COLOR_FORMAT_GREEN
+      elif percent > 33.3:
+        color_format = COLOR_FORMAT_YELLOW
+      else:
+        color_format = COLOR_FORMAT_RED
+      sys.stdout.write(color_format.format(percent))
       filler_size = 72 - len("xx.xx% ") - len(what)
       sys.stdout.write("  ")
       sys.stdout.write(what)

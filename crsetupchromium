@@ -61,8 +61,12 @@ shell = os.environ['SHELL'].rsplit('/', 1) [-1]
 rc_file = os.path.join(HOME, "." + shell + "rc")
 rc_file_contents = open(rc_file, "r").read()
 if "depot_tools" not in rc_file_contents:
-  print("We recommend adding this line to your file '" + rc_file + "':\n\n\t"
-        "export PATH=$PATH:" + os.path.join(HOME, "depot_tools") + "\n")
+  print("We recommend adding this line to your file '" + rc_file + "':\n"
+  new_path = "PATH=$PATH:" + os.path.join(HOME, "depot_tools")
+  if shell == 'bash':
+    print("\t" + new_path + "\n")
+  else:
+    print("\texport " + new_path + "\n")
 
 # Fetch the source code
 

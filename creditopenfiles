@@ -5,4 +5,5 @@ import sys
 import util
 
 cl = util.get_issue_number()
-os.system("creditopenfilesincl " + cl)
+if cl:
+  os.system("creditopenfilesincl " + cl)

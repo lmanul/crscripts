@@ -217,4 +217,9 @@ def get_issue_number():
   output = subprocess.check_output(shlex.split("git cl issue")).decode().strip()
   if "Issue number" not in output:
     return None
-  return re.match("Issue number: (\d+) .*", output).group(1)
+  matches = re.match("Issue number: (\d+) .*", output)
+  if matches:
+    return matches.group(1)
+  else:
+    print("This branch isn't associated with any CL. " + \
+        "Please run 'crupload' to create a CL.")

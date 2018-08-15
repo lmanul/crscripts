@@ -20,12 +20,13 @@ Typical workflow:
 
 `crupdate # update your existing checkout
 
-`creditfilesfromcl CL_NUMBER gedit # open all files opened by the given CL in the given editor (or in $EDITOR)`
+`creditfiles gedit # open all files opened in the current CL with the 
+given editor (or $EDITOR, or whichever editor was used last time)`
 
-Can also be just:
+Can also be:
 
-`creditfilesfromcl`
+`creditfilesfromcl CL_NUMBER`
 
-which will open the same editor and CL as last time.
+where the CL number is explicit.
 
 `crpatch # patch an existing CL (simpler and quicker than git cl patch)`

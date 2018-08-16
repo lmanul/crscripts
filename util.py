@@ -99,10 +99,11 @@ def show_goma_warning():
   if not is_google_machine():
     # No Goma.
     return
-  print("\n\n-- Warning: goma is not running, the build will be "
-        "slower. Start goma with ~/goma/compiler_proxy -- we suggest running "
-        "that in a 'screen' session\n"
-        "In a future version, goma will be started automatically.\n\n")
+  print("\n\n-- WARNING: goma is not running, the build will be "
+        "slower *and may fail for no good reason*. "
+        "Start goma with ~/goma/compiler_proxy -- we suggest running "
+        "that in a 'screen' session or a separate terminal.\n\n")
+        #"In a future version, goma will be started automatically.\n\n")
 
 def common_gn_args():
   return  [

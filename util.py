@@ -199,7 +199,6 @@ def read_config_from_file():
         continue
       parts = l.split("=", 1)
       config[parts[0].strip()] = parts[1].strip()
-    print(config)
   return config
   
 def save_config(config):

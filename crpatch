@@ -16,9 +16,8 @@ latest_revision = util.get_last_revision_number_for_cl(cl)
 url = "https://chromium-review.googlesource.com/changes/" + \
     str(cl) + "/revisions/" + str(latest_revision) + "/patch?zip"
 
-current_branch = subprocess.check_output(shlex.split(
-    "git rev-parse --abbrev-ref HEAD")).decode().strip()
-if current_branch == "master":
+current_branch = util.get_current_branch()
+if util.get_current_branch() == "master":
   new_branch = "patch_" + str(cl)
   print("The current branch is master, creating branch '" + new_branch + "'...")
   # TODO: Stop if branching out fails.
@@ -30,11 +29,6 @@ files_before = os.listdir(".")
 unzipped = "patch_" + str(cl) + ".diff"
 zip = "patch.zip"
 os.system("curl '" + url + "' > " + zip)
-
-current_branch = subprocess.check_output(shlex.split(
-  "git rev-parse --abbrev-ref HEAD")).decode("utf-8").strip()
-if current_branch == "master":
-  print("\nWarning: you are on the master branch. You might want to git checkout -b before committing anything.\n")
 
 # The URL doesn't let us know what the patch file will be called, so we'll just 
 # diff the contents of the directory.

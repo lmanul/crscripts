@@ -80,6 +80,10 @@ def is_google_machine():
     return True
   return False
 
+def get_current_branch():
+  return subprocess.check_output(shlex.split(
+    "git rev-parse --abbrev-ref HEAD")).decode().strip()
+
 def ensure_goma_installed():
   if not is_google_machine():
     # Installing Goma on a non-Google machine is not supported

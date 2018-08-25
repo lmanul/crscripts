@@ -23,6 +23,9 @@ COLOR_FORMAT_GREEN  = COLOR_FORMAT_PREF + str(92) + COLOR_FORMAT_SUFF
 def get_chromium_src_dir():
   return os.path.join(os.path.expanduser("~"), "chromium", "src")
 
+def get_crscripts_dir():
+  return os.path.dirname(os.path.realpath(__file__))
+
 def get_options_and_args(parser=None):
   if not parser:
     parser = OptionParser()

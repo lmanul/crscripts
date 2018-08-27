@@ -72,33 +72,34 @@ if camel_case:
   sys.stdout.write("" + str(len(all_test_files)) + " files.\n")
   print("")
 
-  matching_test_file = ""
+  matching_test_files = []
   for f in all_test_files:
     if not os.path.exists(f):
       continue
     if "class " + target in open(f, "r").read():
-      matching_test_file = f
+      matching_test_files.append(f)
 
-  if matching_test_file == "":
+  if len(matching_test_files) == 0:
       print("I didn't find any matching test files.")
   else:
-    print("" + target + " is defined in " + matching_test_file)
+    print("" + target + " is defined in " + str(matching_test_files))
 
 # Now let's try to infere the test target(s).
 test_targets = set()
-if camel_case and matching_test_file != "":
+if camel_case and len(matching_test_files) != 0:
   # If the user gave us a camel-cased test name, we just want to find the one
   # target that best matches that. Looking for decreasing sub-paths of the test 
   # file path.
-  els = matching_test_file.split("/")
-  path_length = len(els) - 1
-  while (path_length > 1):
-    query = "/".join(els[1:path_length])
-    for t in all_test_targets:
-      if query + "_unittests" in t:
-        test_targets = [t]
-        break
-    path_length -= 1
+  for matching_test_file in matching_test_files:
+    els = matching_test_file.split("/")
+    path_length = len(els) - 1
+    while (path_length > 1):
+      query = "/".join(els[1:path_length])
+      for t in all_test_targets:
+        if query + "_unittests" in t:
+          test_targets.add(t)
+          break
+      path_length -= 1
 else:
   for t in all_test_targets:
     # Targets are something like path/to/directory:actual_target_unittests

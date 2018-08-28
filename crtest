@@ -13,6 +13,10 @@ from optparse import OptionParser
 
 (options, args) = util.get_options_and_args()
 
+KNOWN_MAPPINGS = {
+  "chrome/browser": "chrome/test:browser_tests",
+}
+
 def print_rebuild_warning():
   print("If this isn't what you expected, consider re-building unit tests. " + \
       "That would be 'crbuild --tests_only'")
@@ -25,7 +29,7 @@ def find_all_test_targets():
   all_targets = subprocess.check_output(shlex.split(
       "gn ls out/Default")).decode("utf-8").split("\n")
   # Remove the leading "//"
-  all_test_targets = sorted([t[2:] for t in all_targets if t.endswith("_unittests")])
+  all_test_targets = sorted([t[2:] for t in all_targets if t.endswith("tests")])
   sys.stdout.write("" + str(len(all_test_targets)) + " targets.")
   print("")
   if options.verbose:
@@ -95,8 +99,13 @@ if camel_case and len(matching_test_files) != 0:
     path_length = len(els) - 1
     while (path_length > 1):
       query = "/".join(els[1:path_length])
+      if options.verbose:
+        print("Trying " + query)
+      if query in KNOWN_MAPPINGS:
+        test_targets.add(KNOWN_MAPPINGS[query])
+        break
       for t in all_test_targets:
-        if query + "_unittests" in t:
+        if query + "_unittests" in t or query + "_tests" in query:
           test_targets.add(t)
           break
       path_length -= 1

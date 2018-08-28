@@ -15,6 +15,7 @@ from optparse import OptionParser
 
 KNOWN_MAPPINGS = {
   "chrome/browser": "chrome/test:browser_tests",
+  "chrome/browser/ui": "chrome/test:interactive_ui_tests",
 }
 
 def print_rebuild_warning():

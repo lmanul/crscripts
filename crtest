@@ -68,6 +68,8 @@ if "." in target:
   parts = target.split(".", 1)
   target = parts[0]
   test_method = parts[1]
+  if options.verbose:
+    print("Method name is " + test_method + ", class is " + target)
 camel_case = (target != target.lower())
 if camel_case:
   if not target.endswith("Test"):
@@ -85,7 +87,8 @@ if camel_case:
   for f in all_test_files:
     if not os.path.exists(f):
       continue
-    if "class " + target in open(f, "r").read():
+    data = open(f, "r").read()
+    if "class " + target in data or "TEST_F(" + target in data:
       matching_test_files.append(f)
 
   if len(matching_test_files) == 0:

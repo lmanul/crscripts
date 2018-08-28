@@ -63,6 +63,11 @@ if list_only:
 
 os.chdir(os.path.join(HOME, "chromium", "src"))
 
+test_method = ""
+if "." in target:
+  parts = target.split(".", 1)
+  target = parts[0]
+  test_method = parts[1]
 camel_case = (target != target.lower())
 if camel_case:
   if not target.endswith("Test"):
@@ -145,9 +150,14 @@ if status_code != 0:
 
 # TODO: Also use --gtest_filter="*pattern*"
 for t in test_targets:
+  test_filter = ""
+  if camel_case:
+    test_filter = "*" + target + "*"
+    if test_method:
+      test_filter = "*" + target + "." + test_method + "*"
   cmd = "./out/Default/" + \
       (t.split(":")[1] if ":" in t else t) + \
-      (' --gtest_filter="*' + target + '*"' if camel_case else "")
+      (' --gtest_filter="' + test_filter + '"' if test_filter else "")
   if options.verbose:
     print(cmd)
   if not options.dryrun:

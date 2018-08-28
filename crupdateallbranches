@@ -2,6 +2,7 @@
 
 import os
 import util
+import sys
 
 os.system(os.path.join(util.get_crscripts_dir(), "crupdate"))
 
@@ -13,3 +14,7 @@ for b in util.get_branches():
   os.system("git merge origin/master --no-edit")
 
 os.system("git checkout master")
+
+if util.get_current_branch() != "master":
+  print("There were some merge issues, please resolve them and try again")
+  sys.exit(1)

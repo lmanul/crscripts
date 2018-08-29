@@ -162,6 +162,7 @@ for t in test_targets:
   cmd = "./out/Default/" + \
       (t.split(":")[1] if ":" in t else t) + \
       (' --gtest_filter="' + test_filter + '"' if test_filter else "")
+      # Don't use '--use-gpu-in-tests' -- it actually makes tests ~10 times slower
   if options.verbose:
     print(cmd)
   if not options.dryrun:

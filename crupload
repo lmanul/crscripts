@@ -26,4 +26,5 @@ if rc != 0:
   os.system("git commit --all --amend --no-edit")
 
 print("Uploading...")
-os.system("git cl upload")
+# Bypass questions
+os.system("git cl upload --force")

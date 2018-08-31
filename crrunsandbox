@@ -61,8 +61,12 @@ if not os.path.exists(sbin_target):
   os.system("sudo chmod 4755 /usr/local/sbin/chrome-devel-sandbox")
 
 #TODO: Make the data dir configurable
+# --ash-debug-shortcuts allows Ctrl-Alt_Shift-T for switching to tablet
+# mode.
 cmd = "out/Default/chrome --user-data-dir=" + TEST_USER_PROFILE_PATH + \
     (" --login-manager" if options.loginmanager else "") + \
+    (" --ash-debug-shortcuts") + \
     (" " + config["extra_flags"] if "extra_flags" in config else "") + \
     (" --enable-features=" + ",".join(config["enabled_features"].split(",")) if "enabled_features" in config else "")
-util.run(cmd, "Running chrome, a new window will open...", options)
+util.run(cmd, "Running chrome, a new window will open. " + \
+              "Use Ctrl-Alt-Shift-T for tablet mode", options)

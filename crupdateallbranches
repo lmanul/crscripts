@@ -8,6 +8,7 @@ os.system(os.path.join(util.get_crscripts_dir(), "crupdate"))
 
 print("Now merging the updated code with all branches...")
 
+os.chdir(util.get_chromium_src_dir())
 for b in util.get_branches():
   print(b + "...")
   os.system("git checkout " + b)

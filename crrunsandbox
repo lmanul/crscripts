@@ -68,5 +68,8 @@ cmd = "out/Default/chrome --user-data-dir=" + TEST_USER_PROFILE_PATH + \
     (" --ash-debug-shortcuts") + \
     (" " + config["extra_flags"] if "extra_flags" in config else "") + \
     (" --enable-features=" + ",".join(config["enabled_features"].split(",")) if "enabled_features" in config else "")
-util.run(cmd, "Running chrome, a new window will open. " + \
-              "Use Ctrl-Alt-Shift-T for tablet mode", options)
+message = ("Running chrome, a new window will open. "
+           "Use Ctrl-Alt-Shift-T for tablet mode. ")
+if not options.verbose:
+  message += "Re-run with '--verbose' to show debug output."
+util.run(cmd, message, options)

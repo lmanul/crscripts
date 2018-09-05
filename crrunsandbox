@@ -22,7 +22,9 @@ config = util.read_config_from_file()
 
 HOME = os.path.expanduser("~")
 GOMA_DIR = os.path.join(HOME, "goma")
-TEST_USER_PROFILE_PATH = os.path.join(HOME, "tmp", "test-sandbox")
+test_user_profile_path = config["test_user_profile_path"]
+if not test_user_profile_path:
+  test_user_profile_path = os.path.join(HOME, "tmp", "test-sandbox")
 gn_args = util.common_gn_args() + [
   'target_os = "chromeos"',
   'is_component_build = true',
@@ -63,7 +65,7 @@ if not os.path.exists(sbin_target):
 #TODO: Make the data dir configurable
 # --ash-debug-shortcuts allows Ctrl-Alt_Shift-T for switching to tablet
 # mode.
-cmd = "out/Default/chrome --user-data-dir=" + TEST_USER_PROFILE_PATH + \
+cmd = "out/Default/chrome --user-data-dir=" + test_user_profile_path + \
     (" --login-manager" if options.loginmanager else "") + \
     (" --ash-debug-shortcuts") + \
     (" " + config["extra_flags"] if "extra_flags" in config else "") + \

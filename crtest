@@ -20,8 +20,8 @@ KNOWN_MAPPINGS = {
 }
 
 def print_rebuild_warning():
-  print("If this isn't what you expected, consider re-building unit tests. " + \
-      "That would be 'crbuild --tests_only'")
+  print("If this isn't what you expected, consider re-building unit tests: " + \
+      "'crbuild --tests_only'")
 
 def find_all_test_targets():
   global options

@@ -74,7 +74,7 @@ if "depot_tools" not in rc_file_contents:
 os.chdir(BASE_DIR)
 
 if os.path.exists(".gclient") and not os.path.exists("src"):
-  print("I see remnants of a checkout attempt, but not checkout. " + \
+  print("I see remnants of a checkout attempt, but no checkout. " + \
       "I am going to delete the .gclient directory.")
   os.system("rm -rf .gclient")
 

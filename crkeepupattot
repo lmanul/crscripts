@@ -2,6 +2,7 @@
 
 import datetime
 import os
+import time
 import util
 
 MIN_INTERVAL_S = 30 * 60
@@ -26,4 +27,4 @@ while True:
     last_compile_time = datetime.datetime.now()
   else:
     print("Not compiling yet, sleeping " + str(SLEEP_INTERVAL_S) + "s...")
-    sleep(SLEEP_INTERVAL_S)
+    time.sleep(SLEEP_INTERVAL_S)

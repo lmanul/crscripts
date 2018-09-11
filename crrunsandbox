@@ -45,7 +45,7 @@ if status_code != 0:
   sys.exit(status_code)
 
 # TODO: Run goma if it's not running.
-if not util.is_process_running("compiler_proxy"):
+if not util.is_goma_running():
   util.show_goma_warning()
 
 cmd = ("autoninja -C out/Default chrome chrome_sandbox")

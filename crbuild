@@ -32,7 +32,7 @@ cmd = "gn gen out/Default --args='" + " ".join(util.common_gn_args()) + "'"
 util.run(cmd, "Preparing for build...", options)
 
 # TODO: Run goma if it's not running.
-if not util.is_process_running("compiler_proxy"):
+if not util.is_goma_running():
   util.show_goma_warning()
 if options.testsonly:
   target = "unit_tests"

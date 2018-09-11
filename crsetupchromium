@@ -124,7 +124,7 @@ if sc != 0:
   sys.exit(sc)
 
 # TODO: Run goma if it's not running.
-if not util.is_process_running("compiler_proxy"):
+if not util.is_goma_running():
   util.show_goma_warning()
 sc = util.run("autoninja -C out/Default chrome", "Doing the first build...", options)
 # TODO: Catch Ctrl-C, abort cleanly.

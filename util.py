@@ -107,6 +107,9 @@ def ensure_goma_installed():
     if not os.path.exists("compiler_proxy"):
       print("!!!!!\n\ngoma installation failed. Are there network/auth issues?\n\n!!!!!")
 
+def is_goma_running():
+  return is_process_running("compiler_proxy")
+
 def show_goma_warning():
   if not is_google_machine():
     # No Goma.
@@ -118,12 +121,19 @@ def show_goma_warning():
         #"In a future version, goma will be started automatically.\n\n")
 
 def common_gn_args():
-  return  [
+  args = [
     "enable_nacl = false",
     # Not strictly true, but this unlocks more targets
     'target_os = "chromeos"',
     "remove_webcore_debug_symbols = true",
   ]
+  if is_goma_running():
+    print("Goma is running.")
+    args.append("use_goma = true")
+  else:
+    print("Goma is not running, the build will be slower.")
+    args.append("use_goma = false")
+  return args
 
 def monitor_compile_progress(child_process):
   print("")

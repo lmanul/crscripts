@@ -6,7 +6,7 @@ import time
 import util
 
 MIN_INTERVAL_S = 30 * 60
-SLEEP_INTERVAL_S = 30
+SLEEP_INTERVAL_S = 60
 
 os.chdir(util.get_chromium_src_dir())
 

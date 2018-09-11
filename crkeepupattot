@@ -14,6 +14,7 @@ last_compile_time = None
 while True:
   should_compile = False
   if not last_compile_time:
+    print("First sync & compilation...")
     should_compile = True
   elif (datetime.datetime.now() - last_compile_time).seconds > MIN_INTERVAL_S:
     print("It's time to sync & compile!")

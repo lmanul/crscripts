@@ -21,7 +21,6 @@ config = util.read_config_from_file()
 # TODO: hide compilation output.
 
 HOME = os.path.expanduser("~")
-GOMA_DIR = os.path.join(HOME, "goma")
 test_user_profile_path = config["test_user_profile_path"]
 if not test_user_profile_path:
   test_user_profile_path = os.path.join(HOME, "tmp", "test-sandbox")
@@ -29,11 +28,6 @@ gn_args = util.common_gn_args() + [
   'target_os = "chromeos"',
   'is_component_build = true',
 ]
-if util.is_google_machine():
-  gn_args.append('use_goma = true')
-  gn_args.append('goma_dir="' + GOMA_DIR  + '"')
-else:
-  gn_args.append('use_goma = false')
 
 util.ensure_goma_installed()
 

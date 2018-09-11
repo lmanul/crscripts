@@ -120,6 +120,9 @@ def show_goma_warning():
         "that in a 'screen' session or a separate terminal.\n\n")
         #"In a future version, goma will be started automatically.\n\n"
 
+def get_goma_dir():
+  return os.path.join(os.path.expanduser("~"), "goma")
+
 def common_gn_args():
   args = [
     "enable_nacl = false",
@@ -130,6 +133,7 @@ def common_gn_args():
   if is_goma_running():
     print("Goma is running.")
     args.append("use_goma = true")
+    args.append('goma_dir = "' + get_goma_dir() + '"')
   else:
     print("Goma is not running, the build will be slower.")
     args.append("use_goma = false")

@@ -118,7 +118,7 @@ def show_goma_warning():
         "slower *and may fail for no good reason*. "
         "Start goma with ~/goma/compiler_proxy -- we suggest running "
         "that in a 'screen' session or a separate terminal.\n\n")
-        #"In a future version, goma will be started automatically.\n\n")
+        #"In a future version, goma will be started automatically.\n\n"
 
 def common_gn_args():
   args = [

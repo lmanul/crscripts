@@ -5,6 +5,7 @@ import os
 import util
 
 MIN_INTERVAL_S = 30 * 60
+SLEEP_INTERVAL_S = 30
 
 os.chdir(util.get_chromium_src_dir())
 
@@ -23,5 +24,5 @@ while True:
     os.system(os.path.join(util.get_crscripts_dir(), "crbuild"))
     last_compile_time = datetime.datetime.now()
   else:
-    print("Not compiling yet, sleeping half a minute...")
-    sleep(30)
+    print("Not compiling yet, sleeping " + str(SLEEP_INTERVAL_S) + "s...")
+    sleep(SLEEP_INTERVAL_S)

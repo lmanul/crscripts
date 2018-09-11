@@ -1,0 +1,27 @@
+#!/usr/bin/python3
+
+import datetime
+import os
+import util
+
+MIN_INTERVAL_S = 30 * 60
+
+os.chdir(util.get_chromium_src_dir())
+
+last_compile_time = None
+
+while True:
+  should_compile = False
+  if not last_compile_time:
+    should_compile = True
+  elif (datetime.datetime.now() - last_compile_time).seconds > MIN_INTERVAL_S:
+    print("It's time to sync & compile!")
+    should_compile = True
+
+  if should_compile:
+    os.system(os.path.join(util.get_crscripts_dir(), "crupdateallbranches"))
+    os.system(os.path.join(util.get_crscripts_dir(), "crbuild"))
+    last_compile_time = datetime.datetime.now()
+  else:
+    print("Not compiling yet, sleeping half a minute...")
+    sleep(30)

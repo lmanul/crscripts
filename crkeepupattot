@@ -23,9 +23,11 @@ while True:
     should_compile = True
 
   if should_compile:
+    # Set the new timestamp first, so that if the compilation takes more than
+    # the min interval, we will start again immediately after finishing.
+    last_compile_time = datetime.datetime.now()
     os.system(os.path.join(util.get_crscripts_dir(), "crupdateallbranches"))
     os.system(os.path.join(util.get_crscripts_dir(), "crbuild"))
-    last_compile_time = datetime.datetime.now()
     sys.stdout.write("\nSleeping until next compilation.")
     sys.stdout.flush()
   else:

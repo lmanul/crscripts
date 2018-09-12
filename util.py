@@ -135,7 +135,7 @@ def common_gn_args():
     args.append("use_goma = true")
     args.append('goma_dir = "' + get_goma_dir() + '"')
   else:
-    print("Goma is not running, the build will be slower.")
+    print("Goma is not running, the build may be slower.")
     args.append("use_goma = false")
   return args
 

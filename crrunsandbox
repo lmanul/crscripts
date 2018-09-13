@@ -62,6 +62,7 @@ if not os.path.exists(sbin_target):
 cmd = "out/Default/chrome --user-data-dir=" + test_user_profile_path + \
     (" --login-manager" if options.loginmanager else "") + \
     (" --ash-debug-shortcuts") + \
+    (" --use-first-display-as-internal") + \
     (" " + config["extra_flags"] if "extra_flags" in config else "") + \
     (" --enable-features=" + ",".join(config["enabled_features"].split(",")) if "enabled_features" in config else "")
 message = ("Running chrome, a new window will open. "

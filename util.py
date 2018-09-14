@@ -4,6 +4,7 @@ import os
 import platform
 import re
 import shlex
+import shutil
 import socket
 import subprocess
 import sys
@@ -139,7 +140,23 @@ def common_gn_args():
     args.append("use_goma = false")
   return args
 
-def display_progress(percent, what):
+def format_remaining_time(seconds):
+  m, s = divmod(seconds, 60)
+  h, m = divmod(m, 60)
+  output = ""
+  if h > 0:
+    output += str(h) + "h "
+    if m < 10:
+      output += "0"
+  if m > 0:
+    output += str(m) + "m "
+    if s < 10:
+      output += "0"
+  output += str(s) + "s"
+  return output
+
+def display_progress(percent, what, eta_seconds):
+  cols = shutil.get_terminal_size().columns
   sys.stdout.write("\033[F") # Clear the previous print
   if percent > 66.6:
     color_format = COLOR_FORMAT_GREEN
@@ -147,18 +164,22 @@ def display_progress(percent, what):
     color_format = COLOR_FORMAT_YELLOW
   else:
     color_format = COLOR_FORMAT_RED
+
+  eta = "(" + format_remaining_time(eta_seconds) + " remaining)"
+
   sys.stdout.write(color_format.format(percent))
-  filler_size = 72 - len("xx.xx% ") - len(what)
-  sys.stdout.write("  ")
+  filler_size = cols - len("xx.xx% ") - len(what) - len(eta)
+  sys.stdout.write(" ")
   sys.stdout.write(what)
   if filler_size > 0:
     sys.stdout.write(" " * filler_size)
-  sys.stdout.write("\n")
+  sys.stdout.write(eta + "\n")
   sys.stdout.flush()
 
 def monitor_compile_progress(child_process):
   print("")
   now_ms = int(time.time() * 1000)
+  start_ms = now_ms
   last_ms = now_ms
   where_time_is_spent = {}
   for stdout_line in iter(child_process.stdout.readline, ""):
@@ -178,8 +199,11 @@ def monitor_compile_progress(child_process):
       if what not in where_time_is_spent:
         where_time_is_spent[what] = 0
       percent = float(progress_ten_thousandths)/100.
-      display_progress(percent, what)
       now_ms = int(time.time() * 1000)
+      percent_per_second = percent / ((now_ms - start_ms) / 1000)
+      estimated_remaining_seconds = \
+          int((100.0 - percent) / percent_per_second)
+      display_progress(percent, what, estimated_remaining_seconds)
       spent = now_ms - last_ms
       where_time_is_spent[what] += spent
       last_ms = now_ms

@@ -189,7 +189,9 @@ def monitor_compile_progress(child_process):
   flattened = []
   for key, value in where_time_is_spent.items():
     temp = [key, value]
-    flattened.append(temp)
+    # Time spent on "." is not helpful.
+    if key != ".":
+      flattened.append(temp)
   flattened = sorted(flattened, reverse=True, key = lambda el : el[1])
   for i in range(min(5, len(where_time_is_spent))):
     print(str(round(flattened[i][1] / 1000, 1)) + "s spent on " + flattened[i][0])

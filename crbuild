@@ -43,7 +43,7 @@ status_code = util.run(cmd, "Compiling, this may take a while...", options)
 if status_code == 0:
   print("All done.")
 else:
-  print("Compilation failed., aborting.")
+  print("Compilation failed, aborting.")
   if not options.verbose:
     print("Please use '-v' to see actual failures.")
 sys.exit(status_code)

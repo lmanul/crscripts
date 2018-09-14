@@ -208,7 +208,7 @@ def monitor_compile_progress(child_process):
       where_time_is_spent[what] += spent
       last_ms = now_ms
   # We're done. Show that we're at 100%.
-  display_progress(100, ".")
+  display_progress(100, ".", 0)
   print("\n")
   flattened = []
   for key, value in where_time_is_spent.items():

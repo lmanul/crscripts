@@ -177,12 +177,10 @@ def monitor_compile_progress(child_process):
         what = "/".join(path_parts[0:2])
       if what not in where_time_is_spent:
         where_time_is_spent[what] = 0
-      # Print in color
       percent = float(progress_ten_thousandths)/100.
       display_progress(percent, what)
       now_ms = int(time.time() * 1000)
       spent = now_ms - last_ms
-      #print("Spent " + str(spent) + "ms on " + what)
       where_time_is_spent[what] += spent
       last_ms = now_ms
   print("\n")

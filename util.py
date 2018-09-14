@@ -139,6 +139,23 @@ def common_gn_args():
     args.append("use_goma = false")
   return args
 
+def display_progress(percent, what):
+  sys.stdout.write("\033[F") # Clear the previous print
+  if percent > 66.6:
+    color_format = COLOR_FORMAT_GREEN
+  elif percent > 33.3:
+    color_format = COLOR_FORMAT_YELLOW
+  else:
+    color_format = COLOR_FORMAT_RED
+  sys.stdout.write(color_format.format(percent))
+  filler_size = 72 - len("xx.xx% ") - len(what)
+  sys.stdout.write("  ")
+  sys.stdout.write(what)
+  if filler_size > 0:
+    sys.stdout.write(" " * filler_size)
+  sys.stdout.write("\n")
+  sys.stdout.flush()
+
 def monitor_compile_progress(child_process):
   print("")
   now_ms = int(time.time() * 1000)
@@ -160,23 +177,9 @@ def monitor_compile_progress(child_process):
         what = "/".join(path_parts[0:2])
       if what not in where_time_is_spent:
         where_time_is_spent[what] = 0
-      sys.stdout.write("\033[F") # Clear the previous print
       # Print in color
       percent = float(progress_ten_thousandths)/100.
-      if percent > 66.6:
-        color_format = COLOR_FORMAT_GREEN
-      elif percent > 33.3:
-        color_format = COLOR_FORMAT_YELLOW
-      else:
-        color_format = COLOR_FORMAT_RED
-      sys.stdout.write(color_format.format(percent))
-      filler_size = 72 - len("xx.xx% ") - len(what)
-      sys.stdout.write("  ")
-      sys.stdout.write(what)
-      if filler_size > 0:
-        sys.stdout.write(" " * filler_size)
-      sys.stdout.write("\n")
-      sys.stdout.flush()
+      display_progress(percent, what)
       now_ms = int(time.time() * 1000)
       spent = now_ms - last_ms
       #print("Spent " + str(spent) + "ms on " + what)

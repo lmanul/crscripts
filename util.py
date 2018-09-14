@@ -141,6 +141,8 @@ def common_gn_args():
   return args
 
 def format_remaining_time(seconds):
+  if seconds < 2:
+    return "< 1s"
   m, s = divmod(seconds, 60)
   h, m = divmod(m, 60)
   output = ""
@@ -169,6 +171,8 @@ def display_progress(percent, what, eta_seconds):
 
   sys.stdout.write(color_format.format(percent))
   filler_size = cols - len("xx.xx% ") - len(what) - len(eta)
+  if percent == 100:
+    filler_size -= 1
   sys.stdout.write(" ")
   sys.stdout.write(what)
   if filler_size > 0:
@@ -201,6 +205,8 @@ def monitor_compile_progress(child_process):
       percent = float(progress_ten_thousandths)/100.
       now_ms = int(time.time() * 1000)
       percent_per_second = percent / ((now_ms - start_ms) / 1000)
+      if percent_per_second == 0:
+        percent_per_second = 0.0001
       estimated_remaining_seconds = \
           int((100.0 - percent) / percent_per_second)
       display_progress(percent, what, estimated_remaining_seconds)

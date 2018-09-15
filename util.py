@@ -223,8 +223,11 @@ def monitor_compile_progress(child_process):
     if key != ".":
       flattened.append(temp)
   flattened = sorted(flattened, reverse=True, key = lambda el : el[1])
-  for i in range(min(5, len(where_time_is_spent))):
-    print(str(round(flattened[i][1] / 1000)) + "s spent on " + flattened[i][0])
+  if len(flattened) > 0:
+    for i in range(min(5, len(where_time_is_spent))):
+      if len(flattened) > i:
+        print(str(round(
+            flattened[i][1] / 1000)) + "s spent on " + flattened[i][0])
 
 def get_last_revision_number_for_cl(cl):
   url = "https://chromium-review.googlesource.com/changes/chromium%2Fsrc~" + str(cl) + "/detail"

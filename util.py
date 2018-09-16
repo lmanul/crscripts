@@ -167,16 +167,18 @@ def display_progress(percent, what, eta_seconds):
   else:
     color_format = COLOR_FORMAT_RED
 
-  eta = "(" + format_remaining_time(eta_seconds) + " remaining)"
+  eta = " (" + format_remaining_time(eta_seconds) + " remaining)"
 
   sys.stdout.write(color_format.format(percent))
-  filler_size = cols - len("xx.xx% ") - len(what) - len(eta)
+  filler_size = cols - len("xx.xx% ") - len(eta)
   if percent == 100:
     filler_size -= 1
   sys.stdout.write(" ")
-  sys.stdout.write(what)
+  filler_done_size = int(percent / 100.0 * float(filler_size))
+  filler_todo_size = filler_size - filler_done_size
   if filler_size > 0:
-    sys.stdout.write(" " * filler_size)
+    sys.stdout.write("#" * filler_done_size)
+    sys.stdout.write("." * filler_todo_size)
   sys.stdout.write(eta + "\n")
   sys.stdout.flush()
 
@@ -225,7 +227,7 @@ def monitor_compile_progress(child_process):
   flattened = sorted(flattened, reverse=True, key = lambda el : el[1])
   if len(flattened) > 0:
     for i in range(min(5, len(where_time_is_spent))):
-      if len(flattened) > i:
+      if len(flattened) > i and flattened[i][1] > 0:
         print(str(round(
             flattened[i][1] / 1000)) + "s spent on " + flattened[i][0])
 

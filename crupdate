@@ -12,8 +12,7 @@ if util.is_google_machine():
 os.chdir(util.get_chromium_src_dir())
 
 if util.get_current_branch() != "master":
-  print("Switching to 'master' before updating... "
-        "Please run 'crupdateallbranches' to update everything.")
+  print("Switching to 'master' before updating...")
   os.system("git checkout master")
 
 # This will try to update all branches and print some benign error messages

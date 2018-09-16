@@ -167,7 +167,7 @@ def display_progress(percent, what, eta_seconds):
   else:
     color_format = COLOR_FORMAT_RED
 
-  eta = " (" + format_remaining_time(eta_seconds) + " remaining)"
+  eta = " " + format_remaining_time(eta_seconds)
 
   sys.stdout.write(color_format.format(percent))
   filler_size = cols - len("xx.xx% ") - len(eta)

@@ -16,4 +16,7 @@ if util.get_current_branch() != "master":
         "Please run 'crupdateallbranches' to update everything.")
   os.system("git checkout master")
 
-util.run("git rebase-update && gclient sync", "Updating...", options)
+# This will try to update all branches and print some benign error messages
+# that we can safely ignore and hide from the user.
+util.run("git rebase-update | grep -v 'No upstream specified' && gclient sync",
+         "Updating...", options)

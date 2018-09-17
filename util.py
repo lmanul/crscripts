@@ -16,10 +16,14 @@ from optparse import OptionParser
 SILENT = " > /dev/null 2>&1"
 
 COLOR_FORMAT_PREF = '\033['
-COLOR_FORMAT_SUFF = 'm{0:.2f}%\033[0m'
-COLOR_FORMAT_RED    = COLOR_FORMAT_PREF + str(91) + COLOR_FORMAT_SUFF
-COLOR_FORMAT_YELLOW = COLOR_FORMAT_PREF + str(33) + COLOR_FORMAT_SUFF
-COLOR_FORMAT_GREEN  = COLOR_FORMAT_PREF + str(92) + COLOR_FORMAT_SUFF
+COLOR_FORMAT_SUFF_PERCENT = 'm{0:.2f}%\033[0m'
+COLOR_FORMAT_SUFF_STRING = 'm{}\033[0m'
+COLOR_FORMAT_RED_PERCENT    = COLOR_FORMAT_PREF + str(91) + COLOR_FORMAT_SUFF_PERCENT
+COLOR_FORMAT_YELLOW_PERCENT = COLOR_FORMAT_PREF + str(33) + COLOR_FORMAT_SUFF_PERCENT
+COLOR_FORMAT_GREEN_PERCENT  = COLOR_FORMAT_PREF + str(92) + COLOR_FORMAT_SUFF_PERCENT
+COLOR_FORMAT_RED_STRING    = COLOR_FORMAT_PREF + str(91) + COLOR_FORMAT_SUFF_STRING
+COLOR_FORMAT_YELLOW_STRING = COLOR_FORMAT_PREF + str(33) + COLOR_FORMAT_SUFF_STRING
+COLOR_FORMAT_GREEN_STRING  = COLOR_FORMAT_PREF + str(92) + COLOR_FORMAT_SUFF_STRING
 
 def get_chromium_src_dir():
   return os.path.join(os.path.expanduser("~"), "chromium", "src")
@@ -132,11 +136,12 @@ def common_gn_args():
     "remove_webcore_debug_symbols = true",
   ]
   if is_goma_running():
-    print("Goma is running.")
+    print(COLOR_FORMAT_GREEN_STRING.format("Goma is running."))
     args.append("use_goma = true")
     args.append('goma_dir = "' + get_goma_dir() + '"')
   else:
-    print("Goma is not running, the build may be slower.")
+    print(COLOR_FORMAT_YELLOW_STRING.format(
+        "Goma is not running, the build may be slower."))
     args.append("use_goma = false")
   return args
 
@@ -161,11 +166,11 @@ def display_progress(percent, what, eta_seconds):
   cols = shutil.get_terminal_size().columns
   sys.stdout.write("\033[F") # Clear the previous print
   if percent > 66.6:
-    color_format = COLOR_FORMAT_GREEN
+    color_format = COLOR_FORMAT_GREEN_PERCENT
   elif percent > 33.3:
-    color_format = COLOR_FORMAT_YELLOW
+    color_format = COLOR_FORMAT_YELLOW_PERCENT
   else:
-    color_format = COLOR_FORMAT_RED
+    color_format = COLOR_FORMAT_RED_PERCENT
 
   eta = " " + format_remaining_time(eta_seconds)
 

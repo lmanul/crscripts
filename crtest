@@ -143,10 +143,6 @@ print_rebuild_warning()
 cmd = "gn gen out/Default --args='" + " ".join(gn_args) + "'"
 util.run(cmd, "Preparing to build...", options)
 
-# TODO: Run goma if it's not running.
-if not util.is_goma_running():
-  util.show_goma_warning()
-
 cmd = ("autoninja -C out/Default " + " ".join(test_targets))
 status_code = util.run(cmd, "Compiling, this may take a while...", options)
 if status_code != 0:

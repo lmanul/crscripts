@@ -38,10 +38,6 @@ if status_code != 0:
   print("gn step failed, aborting.")
   sys.exit(status_code)
 
-# TODO: Run goma if it's not running.
-if not util.is_goma_running():
-  util.show_goma_warning()
-
 cmd = ("autoninja -C out/Default chrome chrome_sandbox")
 status_code = util.run(cmd, "Compiling, this may take a while", options)
 if status_code != 0:

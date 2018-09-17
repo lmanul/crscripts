@@ -115,16 +115,6 @@ def ensure_goma_installed():
 def is_goma_running():
   return is_process_running("compiler_proxy")
 
-def show_goma_warning():
-  if not is_google_machine():
-    # No Goma.
-    return
-  print("\n\n-- WARNING: goma is not running, the build will be "
-        "slower *and may fail for no good reason*. "
-        "Start goma with ~/goma/compiler_proxy -- we suggest running "
-        "that in a 'screen' session or a separate terminal.\n\n")
-        #"In a future version, goma will be started automatically.\n\n"
-
 def get_goma_dir():
   return os.path.join(os.path.expanduser("~"), "goma")
 

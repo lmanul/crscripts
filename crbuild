@@ -36,7 +36,7 @@ if options.testsonly:
 else:
   target = "chrome"
 cmd = ("autoninja -C out/Default " + target)
-status_code = util.run(cmd, "Compiling, this may take a while...", options)
+status_code = util.run(cmd, "Compiling, this may take a while...\n", options)
 if status_code == 0:
   print("All done.")
 else:

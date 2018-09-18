@@ -1,0 +1,2 @@
+* Use some of Python's magic __name__ and __main__ stuff to distinguish between 
+  "crupdate" and "crupdateallbranches".

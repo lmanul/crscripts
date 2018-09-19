@@ -1,0 +1,8 @@
+#!/usr/bin/python3
+
+import os
+import util
+
+goma_dir = util.get_goma_dir()
+
+os.system(os.path.join(goma_dir, "goma_ctl.py") + " ensure_start")

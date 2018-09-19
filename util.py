@@ -31,6 +31,9 @@ def get_chromium_src_dir():
 def get_crscripts_dir():
   return os.path.dirname(os.path.realpath(__file__))
 
+def get_goma_dir():
+  return os.path.join(os.path.expanduser("~"), "goma")
+
 def get_options_and_args(parser=None):
   if not parser:
     parser = OptionParser()

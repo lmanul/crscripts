@@ -1,12 +1,14 @@
 #!/usr/bin/python3
 
 import os
+import sys
 import util
 
 goma_dir = util.get_goma_dir()
 
 if os.path.exists(goma_dir):
   print(goma_dir + " already exists. Please remove it if you'd like to reinstall.")
+  sys.exit(0)
 
 os.system("cipd install infra/goma/client/linux-amd64 -root " + goma_dir)
 

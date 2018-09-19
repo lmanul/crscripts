@@ -27,6 +27,10 @@ while True:
     # the min interval, we will start again immediately after finishing.
     last_compile_time = datetime.datetime.now()
     os.system(os.path.join(util.get_crscripts_dir(), "crupdateallbranches"))
+    if util.get_current_branch() != "master":
+      print("We should be on master at this point,"
+            " you probably need to resolve conflicts first.")
+      sys.exit(1)
     os.system(os.path.join(util.get_crscripts_dir(), "crbuild"))
     sys.stdout.write("\nSleeping until next compilation.")
     sys.stdout.flush()

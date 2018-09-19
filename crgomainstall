@@ -1,0 +1,15 @@
+#!/usr/bin/python3
+
+import os
+
+home = os.path.expanduser("~")
+goma_dir = os.path.join(home, "goma")
+
+if os.path.exists(goma_dir):
+  print(goma_dir + " already exists. Please remove it if you'd like to reinstall.")
+
+os.chdir(home)
+os.system("cipd install infra/goma/client/linux-amd64 -root " + goma_dir)
+
+print("Logging in...")
+os.system(os.path.join(goma_dir, "goma_auth.py") + " login")

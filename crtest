@@ -147,7 +147,7 @@ util.run(cmd, "Preparing to build...", options)
 cmd = ("autoninja -C  " + util.get_out_dir() + "  " + " ".join(test_targets))
 status_code = util.run(cmd, "Compiling, this may take a while...", options)
 if status_code != 0:
-  print("Compilation failed, aborting.")
+  print("Compilation failed, aborting. Re-run with --verbose to see failures.")
   sys.exit(status_code)
 
 # TODO: Also use --gtest_filter="*pattern*"

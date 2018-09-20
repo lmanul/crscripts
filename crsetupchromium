@@ -117,13 +117,13 @@ os.system("git config user.email " + getpass.getuser() + "@chromium.org")
 
 # Build
 
-sc = util.run("gn gen out/Default --args='" + " ".join(util.common_gn_args()) + "'",
+sc = util.run("gn gen " + util.get_out_dir() + " --args='" + " ".join(util.common_gn_args()) + "'",
     "Preparing for the first build...", options)
 if sc != 0:
   print("gn step failed, aborting.")
   sys.exit(sc)
 
-sc = util.run("autoninja -C out/Default chrome", "Doing the first build...", options)
+sc = util.run("autoninja -C " + util.get_out_dir() + " chrome", "Doing the first build...", options)
 # TODO: Catch Ctrl-C, abort cleanly.
 if sc != 0:
   print("Compilation failed, aborting.")

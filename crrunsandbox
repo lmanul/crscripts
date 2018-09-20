@@ -32,13 +32,13 @@ gn_args = util.common_gn_args() + [
 util.ensure_goma_installed()
 
 os.chdir(os.path.join(HOME, "chromium", "src"))
-cmd = "gn gen out/Default --args='" + " ".join(gn_args) + "'"
+cmd = "gn gen " + util.get_out_dir() + " --args='" + " ".join(gn_args) + "'"
 status_code = util.run(cmd, "Preparing to build...", options)
 if status_code != 0:
   print("gn step failed, aborting.")
   sys.exit(status_code)
 
-cmd = ("autoninja -C out/Default chrome chrome_sandbox")
+cmd = ("autoninja -C " + util.get_out_dir() + " chrome chrome_sandbox")
 status_code = util.run(cmd, "Compiling, this may take a while", options)
 if status_code != 0:
   print("Compilation failed, aborting.")
@@ -48,14 +48,14 @@ if status_code != 0:
 
 sbin_target = "/usr/local/sbin/chrome-devel-sandbox"
 if not os.path.exists(sbin_target):
-  os.system("sudo cp out/Default/chrome_sandbox " + sbin_target)
+  os.system("sudo cp " + util.get_out_dir() + "/chrome_sandbox " + sbin_target)
   os.system("sudo chown root:root /usr/local/sbin/chrome-devel-sandbox")
   os.system("sudo chmod 4755 /usr/local/sbin/chrome-devel-sandbox")
 
 #TODO: Make the data dir configurable
 # --ash-debug-shortcuts allows Ctrl-Alt_Shift-T for switching to tablet
 # mode.
-cmd = "out/Default/chrome --user-data-dir=" + test_user_profile_path + \
+cmd = util.get_out_dir() + "/chrome --user-data-dir=" + test_user_profile_path + \
     (" --login-manager" if options.loginmanager else "") + \
     (" --ash-debug-shortcuts") + \
     (" --use-first-display-as-internal") + \

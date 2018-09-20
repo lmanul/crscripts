@@ -17,6 +17,7 @@ KNOWN_MAPPINGS = {
   "ash/content": "ash:ash_content_unittests",
   "chrome/browser": "chrome/test:browser_tests",
   "chrome/browser/ui": "chrome/test:interactive_ui_tests",
+  "chrome/common/extensions": "chrome/test:unit_tests",
 }
 
 def print_rebuild_warning():

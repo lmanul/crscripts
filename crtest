@@ -29,7 +29,7 @@ def find_all_test_targets():
   sys.stdout.flush()
   os.chdir(util.get_chromium_src_dir())
   all_targets = subprocess.check_output(shlex.split(
-      "gn ls out/Default")).decode("utf-8").split("\n")
+      "gn ls  " + util.get_out_dir())).decode("utf-8").split("\n")
   # Remove the leading "//"
   all_test_targets = sorted([t[2:] for t in all_targets if t.endswith("tests")])
   sys.stdout.write("" + str(len(all_test_targets)) + " targets.")
@@ -140,10 +140,10 @@ for t in test_targets:
 print("")
 print_rebuild_warning()
 
-cmd = "gn gen out/Default --args='" + " ".join(gn_args) + "'"
+cmd = "gn gen  " + util.get_out_dir() + "  --args='" + " ".join(gn_args) + "'"
 util.run(cmd, "Preparing to build...", options)
 
-cmd = ("autoninja -C out/Default " + " ".join(test_targets))
+cmd = ("autoninja -C  " + util.get_out_dir() + "  " + " ".join(test_targets))
 status_code = util.run(cmd, "Compiling, this may take a while...", options)
 if status_code != 0:
   print("Compilation failed, aborting.")
@@ -156,7 +156,7 @@ for t in test_targets:
     test_filter = "*" + target + "*"
     if test_method:
       test_filter = "*" + target + "." + test_method + "*"
-  cmd = "./out/Default/" + \
+  cmd = "./ " + util.get_out_dir() + " /" + \
       (t.split(":")[1] if ":" in t else t) + \
       (' --gtest_filter="' + test_filter + '"' if test_filter else "")
       # Don't use '--use-gpu-in-tests' -- it actually makes tests ~10 times slower

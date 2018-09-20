@@ -34,7 +34,7 @@ util.run(cmd, "Preparing for build...", options)
 if options.testsonly:
   target = "unit_tests"
 else:
-  target = "chrome"
+  target = "chrome unit_tests"
 cmd = ("autoninja -C " + util.get_out_dir() + " " + target)
 status_code = util.run(cmd, "Compiling, this may take a while...\n", options)
 if status_code == 0:

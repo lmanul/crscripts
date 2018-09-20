@@ -32,7 +32,7 @@ while True:
             " you probably need to resolve conflicts first.")
       sys.exit(1)
     os.system(os.path.join(util.get_crscripts_dir(), "crbuild"))
-    sys.stdout.write("\nSleeping until next compilation.")
+    sys.stdout.write("\nSleeping until next compilation (Ctrl-C to stop now).")
     sys.stdout.flush()
   else:
     sys.stdout.write(".")

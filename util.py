@@ -34,6 +34,9 @@ def get_crscripts_dir():
 def get_goma_dir():
   return os.path.join(os.path.expanduser("~"), "goma")
 
+def get_out_dir():
+  return "out/Default"
+
 def get_options_and_args(parser=None):
   if not parser:
     parser = OptionParser()

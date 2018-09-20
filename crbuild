@@ -28,14 +28,14 @@ parser.add_option("-t", "--tests_only", dest="testsonly",
 (options, args) = parser.parse_args()
 
 os.chdir(os.path.join(HOME, "chromium", "src"))
-cmd = "gn gen out/Default --args='" + " ".join(util.common_gn_args()) + "'"
+cmd = "gn gen " + util.get_out_dir() + " --args='" + " ".join(util.common_gn_args()) + "'"
 util.run(cmd, "Preparing for build...", options)
 
 if options.testsonly:
   target = "unit_tests"
 else:
   target = "chrome"
-cmd = ("autoninja -C out/Default " + target)
+cmd = ("autoninja -C " + util.get_out_dir() + " " + target)
 status_code = util.run(cmd, "Compiling, this may take a while...\n", options)
 if status_code == 0:
   print("All done.")

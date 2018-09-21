@@ -18,6 +18,7 @@ KNOWN_MAPPINGS = {
   "chrome/browser": "chrome/test:browser_tests",
   "chrome/browser/ui": "chrome/test:interactive_ui_tests",
   "chrome/common/extensions": "chrome/test:unit_tests",
+  "ui/views": "ui/views:views_unittests",
 }
 
 def print_rebuild_warning():

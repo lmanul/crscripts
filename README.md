@@ -18,7 +18,7 @@ Typical workflow:
 
 (Some time passes.)
 
-`crupdate # update your existing checkout
+`crupdate # update your existing checkout`
 
 `creditfiles gedit # open all files opened in the current CL with the 
 given editor (or $EDITOR, or whichever editor was used last time)`

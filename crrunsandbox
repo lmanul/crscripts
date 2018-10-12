@@ -21,7 +21,9 @@ config = util.read_config_from_file()
 # TODO: hide compilation output.
 
 HOME = os.path.expanduser("~")
-test_user_profile_path = config["test_user_profile_path"]
+TEST_PATH_KEY = "test_user_profile_path"
+
+test_user_profile_path = config[TEST_PATH_KEY] if TEST_PATH_KEY in config else None
 if not test_user_profile_path:
   test_user_profile_path = os.path.join(HOME, "tmp", "test-sandbox")
 gn_args = util.common_gn_args() + [

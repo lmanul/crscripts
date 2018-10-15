@@ -115,11 +115,10 @@ refresh_sudo()
 
 # Run the hooks
 
-refresh_sudo()
 os.chdir(BASE_DIR)
 os.chdir("src")
 cmd = "build/install-build-deps.sh --no-prompt"
-util.run(cmd, "Installing build deps... I may need your sudo password.", options)
+util.run(cmd, "Installing build deps...", options)
 
 util.run("gclient runhooks", "Running the hooks...", options)
 

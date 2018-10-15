@@ -19,6 +19,8 @@ parser.add_option("-f", "--full-history", dest="history",
 
 (options, args) = util.get_options_and_args(parser)
 
+def refresh_sudo():
+  os.system("sudo ls > /dev/null")
 
 # Base variables
 
@@ -29,6 +31,8 @@ dir_name = ""
 if not util.is_online():
   print("You seem to be offline. I won't be able to do much. Aborting.")
   sys.exit(1)
+
+refresh_sudo()
 
 os.chdir(HOME)
 
@@ -51,6 +55,8 @@ if not os.path.exists(DEPOT_TOOLS):
     print(TRY_VERBOSE_MESSAGE)
   sys.exit(1)
 
+refresh_sudo()
+
 # Create base directory
 
 if not os.path.exists(BASE_DIR):
@@ -68,6 +74,8 @@ if "depot_tools" not in rc_file_contents:
     print("\t" + new_path + "\n")
   else:
     print("\texport " + new_path + "\n")
+
+refresh_sudo()
 
 # Fetch the source code
 
@@ -94,6 +102,8 @@ if not os.path.exists("src"):
     print(TRY_VERBOSE_MESSAGE)
   sys.exit(1)
 
+refresh_sudo()
+
 # Now for a (hopefully) temporary fix.
 os.chdir(BASE_DIR)
 os.system("echo 'target_os=[\"chromeos\"]' >> .gclient")
@@ -101,9 +111,11 @@ os.chdir("src")
 os.system("gclient sync")
 
 util.ensure_goma_installed()
+refresh_sudo()
 
 # Run the hooks
 
+refresh_sudo()
 os.chdir(BASE_DIR)
 os.chdir("src")
 cmd = "build/install-build-deps.sh --no-prompt"

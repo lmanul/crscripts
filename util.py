@@ -291,3 +291,18 @@ def get_issue_number():
   else:
     print("This branch isn't associated with any CL. " + \
         "Please run 'crupload' to create a CL.")
+
+def find_all_test_targets(options):
+  sys.stdout.write("Looking for test targets... ")
+  sys.stdout.flush()
+  os.chdir(get_chromium_src_dir())
+  all_targets = subprocess.check_output(shlex.split(
+      "gn ls  " + get_out_dir())).decode("utf-8").split("\n")
+  # Remove the leading "//"
+  all_test_targets = sorted([t[2:] for t in all_targets if t.endswith("tests")])
+  sys.stdout.write("" + str(len(all_test_targets)) + " targets.")
+  print("")
+  if options.verbose:
+    for t in all_test_targets:
+      print("\t" + t)
+  return all_test_targets

@@ -24,6 +24,9 @@ parser.add_option("-d", "--dryrun", dest="dryrun",
 parser.add_option("-t", "--tests_only", dest="testsonly",
                   action="store_true",
                   help="Only build unit tests")
+parser.add_option("-f", "--full", dest="full",
+                  action="store_true",
+                  help="Build all the targets that we know about")
 
 (options, args) = parser.parse_args()
 
@@ -31,7 +34,10 @@ os.chdir(os.path.join(HOME, "chromium", "src"))
 cmd = "gn gen " + util.get_out_dir() + " --args='" + " ".join(util.common_gn_args()) + "'"
 util.run(cmd, "Preparing for build...", options)
 
-test_targets = " ".join(util.find_all_test_targets(options))
+if not options.full and not options.testsonly:
+  test_targets = ""
+else:
+  test_targets = " ".join(util.find_all_test_targets(options))
 if options.testsonly:
   target = test_targets
 else:

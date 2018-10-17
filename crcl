@@ -1,10 +1,15 @@
 #!/usr/bin/python3
 
+import shlex
+import subprocess
 import util
 
 cl = util.get_issue_number()
-print("Current CL is " + str(cl))
+print("\n### CL " + str(cl))
 
 open_files = util.get_open_files_for_cl(cl)
+desc = subprocess.check_output(shlex.split("git cl description -d")).decode()
+
+print("\n" + desc)
 
 print("" + str(len(open_files)) + " open files:\n\t" + " \\\n\t".join(open_files))

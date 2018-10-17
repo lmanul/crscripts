@@ -1,0 +1,10 @@
+#!/usr/bin/python3
+
+import util
+
+cl = util.get_issue_number()
+print("Current CL is " + str(cl))
+
+open_files = util.get_open_files_for_cl(cl)
+
+print("" + str(len(open_files)) + " open files:\n\t" + " \\\n\t".join(open_files))

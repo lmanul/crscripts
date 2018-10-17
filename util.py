@@ -248,7 +248,6 @@ def get_last_revision_number_for_cl(cl):
 
 def get_open_files_for_cl(cl):
   revision = int(get_last_revision_number_for_cl(cl))
-  print("Last revision is " + str(revision))
   url = "https://chromium-review.googlesource.com/changes/chromium%2Fsrc~" + str(cl) + "/revisions/" + str(revision) + "/files"
   response = urllib.request.urlopen(url)
   data = response.read().decode("utf8")

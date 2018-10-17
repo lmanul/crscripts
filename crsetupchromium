@@ -108,6 +108,8 @@ refresh_sudo()
 os.chdir(BASE_DIR)
 os.system("echo 'target_os=[\"chromeos\"]' >> .gclient")
 os.chdir("src")
+# Opt into metrics to avoid seeing the annoying message
+os.system("gclient metrics --opt-in")
 os.system("gclient sync")
 
 util.ensure_goma_installed()

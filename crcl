@@ -2,9 +2,14 @@
 
 import shlex
 import subprocess
+import sys
 import util
 
 cl = util.get_issue_number()
+
+if not cl:
+  sys.exit(0)
+
 print("\n### CL " + str(cl))
 
 open_files = util.get_open_files_for_cl(cl)

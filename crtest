@@ -135,7 +135,9 @@ if status_code != 0:
   print("Compilation failed, aborting. Re-run with --verbose to see failures.")
   sys.exit(status_code)
 
-# TODO: Also use --gtest_filter="*pattern*"
+# Useful flags:
+# --enable-pixel-output-in-tests
+# --ui-test-action-timeout=1000000
 for t in test_targets:
   test_filter = ""
   if camel_case:

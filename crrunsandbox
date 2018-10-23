@@ -70,6 +70,7 @@ message = ("Running chrome, a new window will open. "
 # --force-device-scale-factor=0.75
 # --ui-slow-animations
 # --animation-duration-scale
+# --secondary-display-layout="r,0" --ash-host-window-bounds="800,0+800-800x800"
 if not options.verbose:
   message += "Re-run with '--verbose' to show debug output."
 util.run(cmd, message, options)

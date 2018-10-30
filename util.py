@@ -320,6 +320,7 @@ def ensure_depot_tools(options):
                   options)
 
   if not os.path.exists(DEPOT_TOOLS):
-    print("I wasn't able to fetch the depot tools. Aborting. Potential fix: delete your ~/.gitcookies")
+    print("I wasn't able to fetch the depot tools. Aborting. "
+          "Potential fix: delete your ~/.gitcookies")
     return False
   return True

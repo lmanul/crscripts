@@ -20,8 +20,6 @@ os.chdir(HOME)
 
 fetched = util.ensure_depot_tools(options)
 if not fetched:
-  print("I wasn't able to fetch the depot tools. Aborting. Potential fix: delete 
-your ~/.gitcookies")
   if not options.verbose:
     print(TRY_VERBOSE_MESSAGE)
   sys.exit(1)

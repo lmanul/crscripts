@@ -8,7 +8,6 @@ import util
 
 from optparse import OptionParser
 
-DEPOT_TOOLS = "depot_tools"
 TRY_VERBOSE_MESSAGE = ("Please try calling me again with the verbose (-v) "
                        "option to see what's going on.")
 
@@ -38,18 +37,8 @@ os.chdir(HOME)
 
 # Fetch depot_tools
 
-if os.path.exists(DEPOT_TOOLS):
-  print(DEPOT_TOOLS + " is already checked out, updating it...")
-  os.chdir(DEPOT_TOOLS)
-  os.system("git pull")
-  os.chdir("..")
-else:
-  print("Fetching " + DEPOT_TOOLS + "...")
-  util.system_silent("git clone "
-                     "https://chromium.googlesource.com/chromium/tools/depot_tools.git",
-                     options)
-
-if not os.path.exists(DEPOT_TOOLS):
+fetched = util.ensure_depot_tools(options)
+if not fetched:
   print("I wasn't able to fetch the depot tools. Aborting. Potential fix: delete your ~/.gitcookies")
   if not options.verbose:
     print(TRY_VERBOSE_MESSAGE)

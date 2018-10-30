@@ -14,6 +14,7 @@ import urllib.request
 from optparse import OptionParser
 
 SILENT = " > /dev/null 2>&1"
+DEPOT_TOOLS = "depot_tools"
 
 COLOR_FORMAT_PREF = '\033['
 COLOR_FORMAT_SUFF_PERCENT = 'm{0:.2f}%\033[0m'
@@ -305,3 +306,20 @@ def find_all_test_targets(options):
     for t in all_test_targets:
       print("\t" + t)
   return all_test_targets
+
+def ensure_depot_tools(options):
+  if os.path.exists(DEPOT_TOOLS):
+    print(DEPOT_TOOLS + " is already checked out, updating it...")
+    os.chdir(DEPOT_TOOLS)
+    os.system("git pull")
+    os.chdir("..")
+  else:
+    print("Fetching " + DEPOT_TOOLS + "...")
+    system_silent("git clone "
+                  "https://chromium.googlesource.com/chromium/tools/depot_tools.git",
+                  options)
+
+  if not os.path.exists(DEPOT_TOOLS):
+    print("I wasn't able to fetch the depot tools. Aborting. Potential fix: delete your ~/.gitcookies")
+    return False
+  return True

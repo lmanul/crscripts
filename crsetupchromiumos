@@ -1,0 +1,42 @@
+#!/usr/bin/python3
+
+import util
+
+from optparse import OptionParser
+
+parser = OptionParser()
+(options, args) = util.get_options_and_args(parser)
+
+# Base variables
+
+HOME = os.path.expanduser("~")
+BASE_DIR = os.path.join(HOME, "chromiumos")
+
+if not util.is_online():
+  print("You seem to be offline. I won't be able to do much. Aborting.")
+  sys.exit(1)
+
+os.chdir(HOME)
+
+fetched = util.ensure_depot_tools(options)
+if not fetched:
+  print("I wasn't able to fetch the depot tools. Aborting. Potential fix: delete 
+your ~/.gitcookies")
+  if not options.verbose:
+    print(TRY_VERBOSE_MESSAGE)
+  sys.exit(1)
+
+# Create base directory
+
+if not os.path.exists(BASE_DIR):
+  os.mkdir(BASE_DIR)
+
+# Fetch the source code
+
+os.chdir(BASE_DIR)
+
+# TODO: Skip this if the code is already checked out
+os.system("~/depot_tools/repo init -u "
+          "https://chromium.googlesource.com/chromiumos/manifest.git --repo-url "
+          "https://chromium.googlesource.com/external/repo.git")
+os.system("repo sync -j4")

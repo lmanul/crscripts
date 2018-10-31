@@ -17,6 +17,9 @@ if not util.is_online():
   print("You seem to be offline. I won't be able to do much. Aborting.")
   sys.exit(1)
 
+print("Installing some dependencies...")
+os.system("sudo apt -y install lvm2 thin-provisioning-tools")
+
 os.chdir(HOME)
 
 fetched = util.ensure_depot_tools(options)
@@ -34,8 +37,13 @@ if not os.path.exists(BASE_DIR):
 
 os.chdir(BASE_DIR)
 
-# TODO: Skip this if the code is already checked out
-os.system("~/depot_tools/repo init -u "
-          "https://chromium.googlesource.com/chromiumos/manifest.git --repo-url "
-          "https://chromium.googlesource.com/external/repo.git")
-os.system("repo sync -j4")
+if os.path.exists("AUTHORS"):
+  print("Source code seems to already be there, skipping.")
+else:
+  os.system("~/depot_tools/repo init -u "
+            "https://chromium.googlesource.com/chromiumos/manifest.git --repo-url "
+            "https://chromium.googlesource.com/external/repo.git")
+  os.system("repo sync -j4")
+
+print("Done. Now please run these commands:\n\t" + \
+    " \\\n\t".join(["cd ~/chromiumos", "cros_sdk"]))

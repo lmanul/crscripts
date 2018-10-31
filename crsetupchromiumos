@@ -58,5 +58,7 @@ os.system("cros_sdk -- ./setup_board --board=" + board)
 
 os.system("cros_sdk -- ./build_packages --board=" + board + " --accept_licenses='*'")
 
-#print("Done. Now please run these commands:\n\t" + \
-#    " \\\n\t".join(["cd ~/chromiumos", "cros_sdk"]))
+os.system("cros_sdk -- ./build_image --board=" + board + " --noenable_rootfs_verification test")
+
+print("If you'd like to create a USD stick, "
+      "run 'cd ~/chromiumos && cros_sdk' and follow the instructions above.")

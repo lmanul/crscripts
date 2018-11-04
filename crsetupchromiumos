@@ -10,7 +10,8 @@ parser = OptionParser()
 (options, args) = util.get_options_and_args(parser)
 
 if len(args) == 0:
-  print("Please pass in the name of a board. Some examples: " + ", ".join(["gru"]))
+  print("Please pass in the name of a board. Some examples: " + \
+      ", ".join(["gru", "nocturne"]))
   sys.exit(1)
 
 board = args[0]
@@ -60,5 +61,5 @@ os.system("cros_sdk -- ./build_packages --board=" + board + " --accept_licenses=
 
 os.system("cros_sdk -- ./build_image --board=" + board + " --noenable_rootfs_verification test")
 
-print("If you'd like to create a USD stick, "
+print("If you'd like to create a USB stick, "
       "run 'cd ~/chromiumos && cros_sdk' and follow the instructions above.")

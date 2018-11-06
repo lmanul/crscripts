@@ -44,12 +44,17 @@ gn_args = util.common_gn_args() + [
 if options.dryrun:
   print("Dry run, not actually running any tests.\n")
 
+os.chdir(util.get_chromium_src_dir())
+
+if not os.path.exists(util.get_out_dir()) or len(os.listdir(util.get_out_dir())) == 0:
+  print("Please do a build first so that I can figure out the list of "
+        "available tests:\n\n\tcrbuild --tests_only")
+  sys.exit(0)
+
 all_test_targets = util.find_all_test_targets(options)
 if list_only:
   print("This is what I know about:\n\t" + "\n\t".join(all_test_targets))
   sys.exit(0)
-
-os.chdir(os.path.join(HOME, "chromium", "src"))
 
 test_method = ""
 if "." in target:

@@ -80,7 +80,7 @@ else:
   flags = ["--nohooks"]
   if not options.history:
     flags.append("--no-history")
-  fetch_command = "" + os.path.join(HOME, DEPOT_TOOLS, "fetch") + " " + \
+  fetch_command = "" + os.path.join(HOME, "depot_tools", "fetch") + " " + \
       " ".join(flags) + " " + "chromium"
   util.run(fetch_command, "Fetching the source code...", options)
 

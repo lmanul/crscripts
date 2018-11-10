@@ -11,6 +11,7 @@ if util.is_google_machine():
 
 os.chdir(util.get_chromium_src_dir())
 
+# TODO: Check that there are no unstaged changes. If there are any, warn and abort.
 if util.get_current_branch() != "master":
   print("Switching to 'master' before updating...")
   os.system("git checkout master")

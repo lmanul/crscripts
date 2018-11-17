@@ -19,6 +19,11 @@ url = "https://chromium-review.googlesource.com/changes/" + \
 current_branch = util.get_current_branch()
 if util.get_current_branch() == "master":
   new_branch = "patch_" + str(cl)
+  existing_branches = util.get_branches()
+  if new_branch in existing_branches:
+    print("It seems like branch '" + new_branch + "' already exists.")
+    print("You might have patched this CL before?")
+    sys.exit(0)
   print("The current branch is master, creating branch '" + new_branch + "'...")
   # TODO: Stop if branching out fails.
   os.system("git checkout -b " + new_branch)

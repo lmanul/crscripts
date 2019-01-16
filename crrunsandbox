@@ -65,7 +65,8 @@ cmd = util.get_out_dir() + "/chrome --user-data-dir=" + test_user_profile_path +
     (" --enable-features=" + ",".join(config["enabled_features"].split(",")) if "enabled_features" in config else "")
 message = ("Running chrome, a new window will open. Shortcuts:\n"
            "\tCtrl-Alt-Shift-T  toggle tablet mode\n"
-           "\tCtrl-Alt-Z        toggle chromevox\n")
+           "\tCtrl-Alt-Z        toggle chromevox\n"
+           "\tAlt-Shift-S       open status tray\n")
 # Some other options to consider:
 # --touch-devices=[get ID from 'xinput list']
 # --force-device-scale-factor=0.75

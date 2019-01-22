@@ -1,6 +1,12 @@
 #!/usr/bin/python3
 
+import os
+
 print("Work in progress!")
 
-print("https://chromium-review.googlesource.com/changes/?O=81&S=0&n=25&q=status:merged+owner:manucornet@chromium.org+branch:master")
+
+os.system("wget -O stats.html "
+          "\"https://chromium-review.googlesource.com/changes/"
+          "?O=81&S=0&n=100&q=status:merged+owner:manucornet@chromium.org"
+          "+branch:master\"")
 

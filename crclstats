@@ -1,12 +1,33 @@
 #!/usr/bin/python3
 
+import json
 import os
+import sys
+
+if len(sys.argv) < 2:
+  print("Please give me a username/email as an argument")
+  sys.exit(1)
+
+email = sys.argv[1]
+if "@" not in email:
+  email = email + "@chromium.org"
+
+file_name = "stats.html"
 
 print("Work in progress!")
 
-
-os.system("wget -O stats.html "
+os.system("wget -O " + file_name + " "
           "\"https://chromium-review.googlesource.com/changes/"
-          "?O=81&S=0&n=100&q=status:merged+owner:manucornet@chromium.org"
+          "?O=81&S=0&n=100&q=status:merged+owner:" + email + ""
           "+branch:master\"")
 
+raw_content = open(file_name).readlines()
+# For some reason the first line doesn't make any sense.
+raw_content = "\n".join(raw_content[1:])
+
+data = json.loads(raw_content)
+
+for cl in data:
+  print("Found CL " + cl["change_id"])
+
+os.system("rm " + file_name)

@@ -1,9 +1,17 @@
 #!/usr/bin/python3
 
+import datetime
 import json
 import os
 import sys
 import util
+
+def date_to_key(d):
+  return ".".join([str(d.year), str(d.month).zfill(2), str(d.day).zfill(2)])
+
+def date_from_key(k):
+  parts = k.split(".")
+  return datetime.datetime(int(parts[0]), int(parts[1]), int(parts[2]))
 
 if len(sys.argv) < 2:
   print("Please give me a username/email as an argument")
@@ -33,10 +41,52 @@ relevant_cls = [c for c in data if \
     c["status"] == "MERGED"]
 
 items = []
+days = {}
 for cl in relevant_cls:
-  date = cl["submitted"].split(" ")[0]
-  items.append(":".join([date, str(cl["insertions"]), str(cl["deletions"])]))
-data_out = "|".join(items)
+  (y, m, d) = cl["submitted"].split(" ")[0].split("-")
+  d = datetime.datetime(int(y), int(m), int(d))
+  key = date_to_key(d)
+  if key not in days:
+    days[key] = [0, 0, 0]
+  days[key][0] += 1
+  days[key][1] += cl["insertions"]
+  days[key][2] += cl["deletions"]
+
+weeks = {}
+
+day_keys = sorted(list(days.keys()))
+
+# Get the first Monday before the first recoded CL.
+first_monday = date_from_key(day_keys[0])
+while first_monday.isoweekday() != 1:
+  first_monday = first_monday - datetime.timedelta(days=1)
+
+last_monday = date_from_key(day_keys[len(day_keys) - 1])
+while last_monday.isoweekday() != 1:
+  last_monday = last_monday - datetime.timedelta(days=1)
+
+current_monday = first_monday
+while current_monday <= last_monday:
+  cl_count = 0
+  ins_count = 0
+  del_count = 0
+  for i in range(0, 7):
+    d = current_monday + datetime.timedelta(days=i)
+    k = date_to_key(d)
+    if k in days:
+      cl_count +=  days[k][0]
+      ins_count += days[k][1]
+      del_count += days[k][2]
+  weeks[date_to_key(current_monday)] = [cl_count, ins_count, del_count]
+  current_monday = current_monday + datetime.timedelta(days = 7)
+
+days_out = []
+for d in days:
+  days_out.append(d + ":" + ":".join([str(a) for a in days[d]]))
+
+weeks_out = []
+for w in weeks:
+  weeks_out.append(w + ":" + ":".join([str(a) for a in weeks[w]]))
 
 charts_js = open(os.path.join(
     util.get_crscripts_dir(),"data/Chart.bundle.min.js")).read()
@@ -47,7 +97,8 @@ out = ""
 
 out += "<html><head><meta charset=\"utf-8\"/>"
 out += "<script>" + charts_js + "</script>"
-out += "<script>const data = '" + data_out + "';</script>"
+out += "<script>const days = '" + "|".join(days_out) + "';</script>"
+out += "<script>const weeks = '" + "|".join(weeks_out) + "';</script>"
 out += "</head><body>"
 out += "<div id=\"chart\"></div>"
 out += "</body></html>"

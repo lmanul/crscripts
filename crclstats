@@ -99,8 +99,48 @@ out += "<html><head><meta charset=\"utf-8\"/>"
 out += "<script>" + charts_js + "</script>"
 out += "<script>const days = '" + "|".join(days_out) + "';</script>"
 out += "<script>const weeks = '" + "|".join(weeks_out) + "';</script>"
+out += "<style>.chart { width: 75%; height: 45%; }</style>"
 out += "</head><body>"
-out += "<div id=\"chart\"></div>"
+out += "<div class=\"chart\"><canvas id=\"weeks\"></canvas></div>"
+out += "<div class=\"chart\"><canvas id=\"days\"></canvas></div>"
+
+out += """<script>
+
+var config = {
+  type: 'line'
+}
+
+let ctx_weeks = document.getElementById('weeks').getContext('2d');
+let cfg_weeks = JSON.parse(JSON.stringify(config))
+let week_labels = [];
+let cls = [];
+let ins = [];
+let dels = [];
+let data_points = weeks.split('|');
+for (let i = 0, data_point; data_point = data_points[i]; i++) {
+  const parts = data_point.split(':');
+  week_labels.push(parts[0]);
+  cls.push(parts[1]);
+  ins.push(parts[2]);
+  dels.push(parts[3]);
+}
+cfg_weeks.data = {
+  labels: week_labels,
+  datasets: [
+    {label: 'CLs', borderColor: '#00f', data: cls},
+    {label: '+',   borderColor: '#0f0', data: ins},
+    {label: '-',   borderColor: '#f00', data: dels}]};
+new Chart(ctx_weeks, cfg_weeks)
+
+let ctx_days = document.getElementById('days').getContext('2d');
+let cfg_days = JSON.parse(JSON.stringify(config))
+
+new Chart(ctx_days, cfg_days)
+
+
+</script>
+"""
+
 out += "</body></html>"
 
 f = open(out_file, "w")

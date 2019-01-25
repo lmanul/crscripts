@@ -3,6 +3,7 @@
 import json
 import os
 import sys
+import util
 
 if len(sys.argv) < 2:
   print("Please give me a username/email as an argument")
@@ -13,14 +14,14 @@ email = sys.argv[1]
 if "@" not in email:
   email = email + "@chromium.org"
 
-file_name = "stats.html"
+downloaded_file_name = "stats.html"
 
-os.system("wget -q -O " + file_name + " "
+os.system("wget -q -O " + downloaded_file_name + " "
           "\"https://chromium-review.googlesource.com/changes/"
           "?O=81&S=0&n=500&q=status:merged+owner:" + email + ""
           "+branch:master\"")
 
-raw_content = open(file_name).readlines()
+raw_content = open(downloaded_file_name).readlines()
 # For some reason the first line doesn't make any sense.
 raw_content = "\n".join(raw_content[1:])
 
@@ -35,4 +36,18 @@ for cl in relevant_cls:
   date = cl["submitted"].split(" ")[0]
   print(":".join([date, str(cl["insertions"]), str(cl["deletions"])]))
 
-os.system("rm " + file_name)
+charts_js = open(os.path.join(
+    util.get_crscripts_dir(),"data/Chart.bundle.min.js")).read()
+username = email[0:email.find("@")]
+out_file = username + ".html"
+
+out = ""
+
+out += "<html><head><script>" + charts_js + "</script></head><body>"
+out += "</body></html>"
+
+f = open(out_file, "w")
+f.write(out)
+f.close()
+
+os.system("rm " + downloaded_file_name)

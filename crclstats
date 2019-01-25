@@ -107,7 +107,24 @@ out += "<div class=\"chart\"><canvas id=\"days\"></canvas></div>"
 out += """<script>
 
 var config = {
-  type: 'line'
+  type: 'line',
+  options: {
+    responsive: true,
+    tooltips: {
+      mode: 'index',
+      intersect: false,
+    },
+    hover: {
+      mode: 'nearest',
+      intersect: true
+    },
+    scales: {
+      yAxes: [
+        {position: 'left',  id: 'y1'},
+        {position: 'right', id: 'y2'},
+      ]
+    }
+  }
 }
 
 let ctx_weeks = document.getElementById('weeks').getContext('2d');
@@ -127,9 +144,9 @@ for (let i = 0, data_point; data_point = data_points[i]; i++) {
 cfg_weeks.data = {
   labels: week_labels,
   datasets: [
-    {label: 'CLs', borderColor: '#00f', data: cls},
-    {label: '+',   borderColor: '#0f0', data: ins},
-    {label: '-',   borderColor: '#f00', data: dels}]};
+    {label: 'CLs', borderColor: '#00f', data: cls,  yAxisID: 'y2'},
+    {label: '+',   borderColor: '#0f0', data: ins,  yAxisID: 'y1'},
+    {label: '-',   borderColor: '#f00', data: dels, yAxisID: 'y1'}]};
 new Chart(ctx_weeks, cfg_weeks)
 
 let ctx_days = document.getElementById('days').getContext('2d');

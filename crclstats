@@ -32,9 +32,11 @@ relevant_cls = [c for c in data if \
     c["project"] == "chromium/src" and \
     c["status"] == "MERGED"]
 
+items = []
 for cl in relevant_cls:
   date = cl["submitted"].split(" ")[0]
-  print(":".join([date, str(cl["insertions"]), str(cl["deletions"])]))
+  items.append(":".join([date, str(cl["insertions"]), str(cl["deletions"])]))
+data_out = "|".join(items)
 
 charts_js = open(os.path.join(
     util.get_crscripts_dir(),"data/Chart.bundle.min.js")).read()
@@ -43,7 +45,11 @@ out_file = username + ".html"
 
 out = ""
 
-out += "<html><head><script>" + charts_js + "</script></head><body>"
+out += "<html><head><meta charset=\"utf-8\"/>"
+out += "<script>" + charts_js + "</script>"
+out += "<script>const data = '" + data_out + "';</script>"
+out += "</head><body>"
+out += "<div id=\"chart\"></div>"
 out += "</body></html>"
 
 f = open(out_file, "w")

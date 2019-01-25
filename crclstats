@@ -99,7 +99,6 @@ out += "<html><head><meta charset=\"utf-8\"/>"
 out += "<script>" + charts_js + "</script>"
 out += "<script>const days = '" + "|".join(days_out) + "';</script>"
 out += "<script>const weeks = '" + "|".join(weeks_out) + "';</script>"
-out += "<style>.chart { width: 75%; height: 45%; }</style>"
 out += "</head><body>"
 out += "<div class=\"chart\"><canvas id=\"weeks\"></canvas></div>"
 out += "<div class=\"chart\"><canvas id=\"days\"></canvas></div>"
@@ -115,8 +114,8 @@ var config = {
       intersect: false,
     },
     hover: {
-      mode: 'nearest',
-      intersect: true
+      mode: 'index',
+      intersect: false
     },
     scales: {
       yAxes: [
@@ -133,6 +132,7 @@ let week_labels = [];
 let cls = [];
 let ins = [];
 let dels = [];
+let lines = [];
 let data_points = weeks.split('|');
 for (let i = 0, data_point; data_point = data_points[i]; i++) {
   const parts = data_point.split(':');
@@ -140,19 +140,20 @@ for (let i = 0, data_point; data_point = data_points[i]; i++) {
   cls.push(parts[1]);
   ins.push(parts[2]);
   dels.push(parts[3]);
+  lines.push('' + (parseInt(parts[2]) + parseInt(parts[3])))
 }
 cfg_weeks.data = {
   labels: week_labels,
   datasets: [
-    {label: 'CLs', borderColor: '#00f', data: cls,  yAxisID: 'y2'},
-    {label: '+',   borderColor: '#0f0', data: ins,  yAxisID: 'y1'},
-    {label: '-',   borderColor: '#f00', data: dels, yAxisID: 'y1'}]};
+    {label: 'CLs',   borderColor: '#ffd300', backgroundColor: '#fff0', data: cls,   yAxisID: 'y2'},
+    {label: '+ & -', borderColor: '#0074dc', backgroundColor: '#fff0', data: lines,   yAxisID: 'y1'},
+    {label: '+',     borderColor: '#26e400', backgroundColor: '#fff0', data: ins,   yAxisID: 'y1'},
+    {label: '-',     borderColor: '#d80000', backgroundColor: '#fff0', data: dels, yAxisID: 'y1'}]};
 new Chart(ctx_weeks, cfg_weeks)
 
-let ctx_days = document.getElementById('days').getContext('2d');
-let cfg_days = JSON.parse(JSON.stringify(config))
-
-new Chart(ctx_days, cfg_days)
+// let ctx_days = document.getElementById('days').getContext('2d');
+// let cfg_days = JSON.parse(JSON.stringify(config))
+// new Chart(ctx_days, cfg_days)
 
 
 </script>

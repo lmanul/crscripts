@@ -138,7 +138,8 @@ def process_one_target_arg(target_arg):
         " ".join(gn_args) + "'"
   util.run(cmd, "Preparing to build...", options)
 
-  cmd = ("autoninja -C  " + util.get_out_dir() + "  " + " ".join(test_targets))
+  cmd = ("autoninja -j " + str(util.get_job_count()) + " -C  " + \
+      util.get_out_dir() + "  " + " ".join(test_targets))
   status_code = util.run(cmd, "Compiling, this may take a while...", options)
   if status_code != 0:
     print("Compilation failed, aborting. Re-run with --verbose "

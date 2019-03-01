@@ -1,4 +1,5 @@
 import json
+import multiprocessing
 import ntpath
 import os
 import platform
@@ -11,6 +12,7 @@ import sys
 import time
 import urllib.request
 
+from multiprocessing.dummy import Pool as ThreadPool
 from optparse import OptionParser
 
 SILENT = " > /dev/null 2>&1"
@@ -26,6 +28,9 @@ COLOR_FORMAT_RED_STRING    = COLOR_FORMAT_PREF + str(91) + COLOR_FORMAT_SUFF_STR
 COLOR_FORMAT_YELLOW_STRING = COLOR_FORMAT_PREF + str(33) + COLOR_FORMAT_SUFF_STRING
 COLOR_FORMAT_GREEN_STRING  = COLOR_FORMAT_PREF + str(92) + COLOR_FORMAT_SUFF_STRING
 
+CPU_TO_JOB_MULTIPLIER = 5
+CPU_TO_JOB_MULTIPLIER_GOMA = 10
+
 def get_chromium_src_dir():
   return os.path.join(os.path.expanduser("~"), "chromium", "src")
 
@@ -37,6 +42,11 @@ def get_goma_dir():
 
 def get_out_dir():
   return "out/Default"
+
+def get_job_count():
+  n_cpus = multiprocessing.cpu_count()
+  multi = CPU_TO_JOB_MULTIPLIER_GOMA if is_goma_running() else CPU_TO_JOB_MULTIPLIER
+  return n_cpus * multi
 
 def get_options_and_args(parser=None):
   if not parser:

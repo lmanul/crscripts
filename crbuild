@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-import multiprocessing
 import os
 import re
 import subprocess
@@ -9,10 +8,7 @@ import util
 
 HOME = os.path.expanduser("~")
 TEST_USER_PROFILE_PATH = os.path.join(HOME, "tmp", "test-chromium")
-CPU_TO_JOB_MULTIPLIER = 5
-CPU_TO_JOB_MULTIPLIER_GOMA = 10
 
-from multiprocessing.dummy import Pool as ThreadPool
 from optparse import OptionParser
 
 # Options
@@ -37,10 +33,6 @@ os.chdir(os.path.join(HOME, "chromium", "src"))
 cmd = "gn gen " + util.get_out_dir() + " --args='" + " ".join(util.common_gn_args()) + "'"
 util.run(cmd, "Preparing for build...", options)
 
-n_cpus = multiprocessing.cpu_count()
-multi = CPU_TO_JOB_MULTIPLIER_GOMA if util.is_goma_running() else CPU_TO_JOB_MULTIPLIER
-jobs = n_cpus * multi
-
 if not options.full and not options.testsonly:
   test_targets = ""
 else:
@@ -49,7 +41,8 @@ if options.testsonly:
   target = test_targets
 else:
   target = "chrome chrome_sandbox " + test_targets
-cmd = ("ninja -j " + str(jobs) + " -C " + util.get_out_dir() + " " + target)
+cmd = ("ninja -j " + str(util.get_job_count()) + " -C " + \
+    util.get_out_dir() + " " + target)
 status_code = util.run(cmd, "Compiling, this may take a while...\n", options)
 if status_code == 0:
   print("All done.")

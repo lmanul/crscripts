@@ -18,7 +18,7 @@ parser.add_option("-l", "--login-manager", dest="loginmanager",
 
 config = util.read_config_from_file()
 f = open("/sys/class/dmi/id/product_family")
-product = f.read()
+product = f.read().strip()
 f.close()
 should_use_swift_shader = "carbon" in product.lower()
 if should_use_swift_shader:

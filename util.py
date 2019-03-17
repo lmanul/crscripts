@@ -140,7 +140,7 @@ def common_gn_args():
     "enable_nacl = false",
     # Not strictly true, but this unlocks more targets
     'target_os = "chromeos"',
-    "remove_webcore_debug_symbols = true",
+    "blink_symbol_level = 0",
   ]
   if is_goma_running():
     print(COLOR_FORMAT_GREEN_STRING.format("Goma is running."))

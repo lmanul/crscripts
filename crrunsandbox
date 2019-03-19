@@ -32,9 +32,6 @@ TEST_PATH_KEY = "test_user_profile_path"
 test_user_profile_path = config[TEST_PATH_KEY] if TEST_PATH_KEY in config else None
 if not test_user_profile_path:
   test_user_profile_path = os.path.join(HOME, "tmp", "test-sandbox")
-gn_args = util.common_gn_args() + [
-  'is_component_build = true',
-]
 
 util.ensure_goma_installed()
 

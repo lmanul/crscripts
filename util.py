@@ -142,6 +142,7 @@ def common_gn_args():
     'target_os = "chromeos"',
     "blink_symbol_level = 0",
     "is_debug = false",
+    "is_component_build = true",
   ]
   if is_goma_running():
     print(COLOR_FORMAT_GREEN_STRING.format("Goma is running."))

@@ -46,7 +46,8 @@ if status_code != 0:
   print("gn step failed, aborting.")
   sys.exit(status_code)
 
-cmd = ("autoninja -C " + util.get_out_dir() + " chrome chrome_sandbox")
+cmd = ("ninja -j " + str(util.get_job_count()) + " -C " + \
+    util.get_out_dir() + " chrome chrome_sandbox")
 status_code = util.run(cmd, "Compiling, this may take a while", options)
 if status_code != 0:
   print("Compilation failed, aborting.")

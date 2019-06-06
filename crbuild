@@ -33,7 +33,7 @@ os.chdir(os.path.join(HOME, "chromium", "src"))
 cmd = "gn gen " + util.get_out_dir() + " --args='" + " ".join(util.common_gn_args()) + "'"
 status_code = util.run(cmd, "Preparing to build...", options)
 if status_code != 0:
-  print("gn step failed, aborting.")
+  util.print_failure("gn step failed, aborting.")
   sys.exit(status_code)
 
 if not options.full and not options.testsonly:
@@ -50,7 +50,7 @@ status_code = util.run(cmd, "Compiling, this may take a while...\n", options)
 if status_code == 0:
   print("All done.")
 else:
-  print("Compilation failed, aborting.")
+  util.print_failure("Compilation failed, aborting.")
   if not options.verbose:
     print("Please use '-v' to see actual failures.")
 sys.exit(status_code)

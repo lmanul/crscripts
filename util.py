@@ -246,6 +246,9 @@ def monitor_compile_progress(child_process):
         if rounded_seconds > 0:
           print(str(rounded_seconds) + "s spent on " + flattened[i][0])
 
+def print_failure(message):
+  print(COLOR_FORMAT_RED_STRING.format(message))
+
 def get_last_revision_number_for_cl(cl):
   url = "https://chromium-review.googlesource.com/changes/chromium%2Fsrc~" + str(cl) + "/detail"
   response = urllib.request.urlopen(url)

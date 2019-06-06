@@ -142,7 +142,7 @@ def process_one_target_arg(target_arg):
       util.get_out_dir() + "  " + " ".join(test_targets))
   status_code = util.run(cmd, "Compiling, this may take a while...", options)
   if status_code != 0:
-    print("Compilation failed, aborting. Re-run with --verbose "
+    util.print_failure("Compilation failed, aborting. Re-run with --verbose "
           "to see failures.")
     sys.exit(status_code)
 

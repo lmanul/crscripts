@@ -85,7 +85,7 @@ else:
   util.run(fetch_command, "Fetching the source code...", options)
 
 if not os.path.exists("src"):
-  print("Fetching the code has failed, aborting. Sorry about that. ")
+  util.print_failure("Fetching the code has failed, aborting. Sorry about that.")
   if not options.verbose:
     print(TRY_VERBOSE_MESSAGE)
   sys.exit(1)
@@ -121,13 +121,13 @@ os.system("git config user.email " + getpass.getuser() + "@chromium.org")
 sc = util.run("gn gen " + util.get_out_dir() + " --args='" + " ".join(util.common_gn_args()) + "'",
     "Preparing for the first build...", options)
 if sc != 0:
-  print("gn step failed, aborting.")
+  util.print_failure("gn step failed, aborting.")
   sys.exit(sc)
 
 sc = util.run("autoninja -C " + util.get_out_dir() + " chrome", "Doing the first build...", options)
 # TODO: Catch Ctrl-C, abort cleanly.
 if sc != 0:
-  print("Compilation failed, aborting.")
+  util.print_failure("Compilation failed, aborting.")
   sys.exit(sc)
 
 # The end

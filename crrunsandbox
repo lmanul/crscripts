@@ -39,14 +39,14 @@ os.chdir(os.path.join(HOME, "chromium", "src"))
 cmd = "gn gen " + util.get_out_dir() + " --args='" + " ".join(util.common_gn_args()) + "'"
 status_code = util.run(cmd, "Preparing to build...", options)
 if status_code != 0:
-  print("gn step failed, aborting.")
+  util.print_failure("gn step failed, aborting.")
   sys.exit(status_code)
 
 cmd = ("ninja -j " + str(util.get_job_count()) + " -C " + \
     util.get_out_dir() + " chrome chrome_sandbox")
 status_code = util.run(cmd, "Compiling, this may take a while", options)
 if status_code != 0:
-  print("Compilation failed, aborting.")
+  util.print_failure("Compilation failed, aborting.")
   if not options.verbose:
     print("Please use -v to see failures.")
   sys.exit(status_code)

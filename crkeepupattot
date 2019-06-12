@@ -31,7 +31,7 @@ while True:
       print("We should be on master at this point,"
             " you probably need to resolve conflicts first.")
       sys.exit(1)
-    os.system(os.path.join(util.get_crscripts_dir(), "crbuild"))
+    os.system(os.path.join(util.get_crscripts_dir(), "crbuild -f"))
     sys.stdout.write("\nSleeping until next compilation (Ctrl-C to stop now).")
     sys.stdout.flush()
   else:

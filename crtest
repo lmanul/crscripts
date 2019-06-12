@@ -16,6 +16,7 @@ from optparse import OptionParser
 KNOWN_MAPPINGS = {
   "ash/content": "ash:ash_content_unittests",
   "chrome/browser": "chrome/test:browser_tests",
+  "chrome/browser/ui/ash": "chrome/test:unit_tests",
   #"chrome/browser/ui": "chrome/test:interactive_ui_tests",
   "chrome/common/extensions": "chrome/test:unit_tests",
   "ui/views": "ui/views:views_unittests",

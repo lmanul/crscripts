@@ -63,6 +63,7 @@ if not os.path.exists(sbin_target):
 cmd = util.get_out_dir() + "/chrome --user-data-dir=" + test_user_profile_path + \
     (" --login-manager" if options.loginmanager else "") + \
     (" --ash-debug-shortcuts") + \
+    (" --enable-ui-devtools") + \
     (" --use-gl=swiftshader" if should_use_swift_shader else "") + \
     (" --use-first-display-as-internal") + \
     (" " + config["extra_flags"] if "extra_flags" in config else "") + \
@@ -73,7 +74,9 @@ message = ("Running chrome, a new window will open. Shortcuts:\n"
            "\tCtrl-Alt-Shift-L  print layer hierarchy\n"
            "\tCtrl-Alt-Shift-V  print view hierarchy\n"
            "\tCtrl-Alt-Z        toggle chromevox\n"
-           "\tAlt-Shift-S       open status tray\n")
+           "\tAlt-Shift-S       open status tray\n"
+           "\n"
+           "Inspector URL: chrome-devtools://devtools/bundled/inspector.html?ws=localhost:9223/0\n")
 # Some other options to consider:
 # --touch-devices=[get ID from 'xinput list']
 # --force-device-scale-factor=0.75

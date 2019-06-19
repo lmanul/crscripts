@@ -97,7 +97,7 @@ def process_one_target_arg(target_arg):
   test_targets = set()
   if camel_case and len(matching_test_files) != 0:
     # If the user gave us a camel-cased test name, we just want to find the one
-    # target that best matches that. Looking for decreasing sub-paths of the test 
+    # target that best matches that. Looking for decreasing sub-paths of the test
     # file path.
     for matching_test_file in matching_test_files:
       els = matching_test_file.split("/")
@@ -114,6 +114,9 @@ def process_one_target_arg(target_arg):
             test_targets.add(t)
             break
         path_length -= 1
+      # Special-case browser tests
+      if "browsertest" in matching_test_file:
+        test_targets.add("chrome/test:browser_tests")
   else:
     for t in all_test_targets:
       # Targets are something like path/to/directory:actual_target_unittests

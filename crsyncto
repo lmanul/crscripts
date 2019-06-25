@@ -1,0 +1,13 @@
+#!/usr/bin/python3
+
+import os
+import sys
+
+commit = sys.argv[1]
+# TODO: Sanity-check the input
+
+print("Resetting git workspace to commit " + commit + "...")
+os.system("git reset --hard " + commit)
+print("Running gclient to sync all the right things...")
+os.system("gclient sync -r src@HEAD")
+print("All done.")

@@ -3,7 +3,7 @@
 import os
 import sys
 
-if len(sys.argv < 2):
+if len(sys.argv) < 2:
   print("I need a full commit hash as an argument")
   sys.exit(1)
 commit = sys.argv[1]

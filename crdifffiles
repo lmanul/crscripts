@@ -5,4 +5,4 @@ import util
 
 branch = util.get_current_branch()
 
-os.system("git diff origin " + branch)
+os.system("git diff --name-only " + branch + " origin")

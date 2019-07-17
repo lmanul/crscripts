@@ -42,6 +42,9 @@ else:
   test_targets = " ".join(util.find_all_test_targets(options))
 if options.testsonly:
   target = test_targets
+elif len(args) > 0:
+  # Explicit target passed as argument
+  target = args[0]
 else:
   target = "chrome chrome_sandbox " + test_targets
 cmd = ("ninja -j " + str(util.get_job_count()) + " -C " + \

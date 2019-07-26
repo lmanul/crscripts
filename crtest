@@ -19,6 +19,7 @@ KNOWN_MAPPINGS = {
   "chrome/browser/ui/ash": "chrome/test:unit_tests",
   #"chrome/browser/ui": "chrome/test:interactive_ui_tests",
   "chrome/common/extensions": "chrome/test:unit_tests",
+  "components/exo": "components/exo:exo_unittests",
   "ui/views": "ui/views:views_unittests",
 }
 

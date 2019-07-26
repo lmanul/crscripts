@@ -1,0 +1,32 @@
+#!/usr/bin/python3
+
+import getpass
+import os
+import re
+import shlex
+import subprocess
+import util
+
+running = subprocess.check_output(shlex.split("ps aux")).decode()
+username = getpass.getuser()
+pattern = "compiler_proxy"
+
+proc_to_kill = []
+proc_cant_kill = []
+for l in running.split("\n"):
+  if pattern in l:
+    # The username is sometimes truncated in the ps output.
+    if l.startswith(username[:5]):
+      proc_to_kill.append(l)
+    else:
+      proc_cant_kill.append(l)
+
+for l in proc_to_kill:
+  parsed = re.match(r"[a-z+]+\s+(\d+)\s+", l)
+  proc_number = int(parsed.group(1))
+  print("Killing process " + str(proc_number) + "...")
+  os.system("kill " + str(proc_number))
+
+if len(proc_cant_kill) > 0:
+  print("Some processes matched but aren't owned by you: " + \
+      "\n".join(proc_cant_kill))

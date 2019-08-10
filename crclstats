@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import datetime
+import getpass
 import json
 import os
 import sys
@@ -13,12 +14,13 @@ def date_from_key(k):
   parts = k.split(".")
   return datetime.datetime(int(parts[0]), int(parts[1]), int(parts[2]))
 
-if len(sys.argv) < 2:
-  print("Please give me a username/email as an argument")
-  sys.exit(1)
-
 # TODO: Several users at once
-email = sys.argv[1]
+if len(sys.argv) < 2:
+  email = getpass.getuser()
+  print("No argument given, using '" + email + "'.")
+else:
+  email = sys.argv[1]
+
 if "@" not in email:
   email = email + "@chromium.org"
 

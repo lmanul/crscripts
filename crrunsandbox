@@ -80,6 +80,7 @@ message = ("Running chrome, a new window will open. Shortcuts:\n"
 # Some other options to consider:
 # --touch-devices=[get ID from 'xinput list']
 # --force-device-scale-factor=0.75
+# --force-ui-direction=rtl
 # --ui-slow-animations
 # --animation-duration-scale
 # --secondary-display-layout="r,0" --ash-host-window-bounds="800,0+800-800x800"

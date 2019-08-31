@@ -24,8 +24,6 @@ should_use_swift_shader = "carbon" in product.lower()
 if should_use_swift_shader:
   print("Computer model is '" + product + "', using swift shaders")
 
-# TODO: hide compilation output.
-
 HOME = os.path.expanduser("~")
 TEST_PATH_KEY = "test_user_profile_path"
 

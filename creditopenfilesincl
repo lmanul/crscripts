@@ -41,4 +41,6 @@ if editor in ['gedit', 'qtcreator']:
 print(command)
 os.system(command)
 
-util.save_config(config)
+# Don't overwrite the config file for now. Let users change things by hand if 
+# they need.
+# util.save_config(config)

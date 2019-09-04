@@ -2,17 +2,22 @@
 
 Scripts for making work on Chromium and Chromium OS easier.
 
-Typical workflow:
+Start by cloning this directory:
+
+`git clone https://github.com/lmanul/crscripts.git`
+
+Then, it's probably best to add the new cloned directory to your $PATH. After 
+that, typical workflow:
 
 `crsetupchromium # setup a Chromium repository and build it once`
 
-`crrun # run a locally built version of Chromium`
-
 `crrunsandbox # run the Chromium OS version of Chromium (including window manager, etc.) in a sandbox`
+
+`crrun # run a locally built version of Chromium`
 
 (Make some changes to the code.)
 
-`crtest # run the set of tests given as argument, for instance base_unittests`
+`crtest ash_unittests # run the set of tests given as argument`
 
 `crupload # Upload your changes to the server`
 

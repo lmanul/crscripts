@@ -4,4 +4,4 @@ import os
 import util
 
 os.chdir(util.get_chromium_src_dir())
-os.system("qtcreator " + util.get_out_dir() + "/qtcreator_project/all.creator")
+os.system("qtcreator " + util.get_out_dir() + "/qtcreator_project/all.creator &")

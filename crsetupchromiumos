@@ -11,7 +11,7 @@ parser = OptionParser()
 
 if len(args) == 0:
   print("Please pass in the name of a board. Some examples: " + \
-      ", ".join(["gru", "nocturne"]))
+      ", ".join(["gru", "kukui", "nocturne"]))
   sys.exit(1)
 
 board = args[0]

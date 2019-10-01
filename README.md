@@ -11,6 +11,10 @@ that, typical workflow:
 
 `crsetupchromium # setup a Chromium repository and build it once`
 
+`crbuild # build Chromium`
+
+![crbuild Screenshot](https://github.com/lmanul/crscripts/blob/master/screenshots/crbuild.gif)
+
 `crrunsandbox # run the Chromium OS version of Chromium (including window manager, etc.) in a sandbox`
 
 `crrun # run a locally built version of Chromium`

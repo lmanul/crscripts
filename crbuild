@@ -37,7 +37,7 @@ if status_code != 0:
   sys.exit(status_code)
 
 targets = "chrome chrome_sandbox"
-if not options.full and options.testonly:
+if not options.full and options.testsonly:
   targets = " ".join(util.find_all_test_targets(options))
 elif len(args) > 0:
   # Explicit target passed as argument

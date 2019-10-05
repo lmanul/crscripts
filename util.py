@@ -333,7 +333,8 @@ def find_all_test_targets(options):
   all_targets = subprocess.check_output(shlex.split(
       "gn ls  " + get_out_dir())).decode("utf-8").split("\n")
   # Remove the leading "//"
-  all_test_targets = sorted([t[2:] for t in all_targets if t.endswith("tests")])
+  all_test_targets = sorted([t[2:] for t in all_targets if \
+      (t.endswith("tests") or t.endswith("unittest"))])
   sys.stdout.write("" + str(len(all_test_targets)) + " targets.")
   print("")
   if options.verbose:

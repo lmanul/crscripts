@@ -36,19 +36,17 @@ if status_code != 0:
   util.print_failure("gn step failed, aborting.")
   sys.exit(status_code)
 
-if not options.full and not options.testsonly:
-  test_targets = ""
-else:
-  test_targets = " ".join(util.find_all_test_targets(options))
-if options.testsonly:
-  target = test_targets
+targets = "chrome chrome_sandbox"
+if not options.full and options.testonly:
+  targets = " ".join(util.find_all_test_targets(options))
 elif len(args) > 0:
   # Explicit target passed as argument
-  target = args[0]
-else:
-  target = "chrome chrome_sandbox " + test_targets
+  targets = " ".join(args)
+elif options.full:
+  targets = "all"
+
 cmd = ("ninja -j " + str(util.get_job_count()) + " -C " + \
-    util.get_out_dir() + " " + target)
+    util.get_out_dir() + " " + targets)
 status_code = util.run(cmd, "Compiling, this may take a while...\n", options)
 if status_code == 0:
   print("All done.")

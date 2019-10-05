@@ -137,21 +137,21 @@ def get_goma_dir():
 
 def common_gn_args():
   args = [
-    "enable_nacl = false",
+    "enable_nacl=false",
     # Not strictly true, but this unlocks more targets
-    'target_os = "chromeos"',
-    "blink_symbol_level = 0",
-    "is_debug = false",
-    "is_component_build = true",
+    'target_os="chromeos"',
+    "blink_symbol_level=0",
+    "is_debug=false",
+    "is_component_build=true",
   ]
   if is_goma_running():
     print(COLOR_FORMAT_GREEN_STRING.format("Goma is running."))
-    args.append("use_goma = true")
-    args.append('goma_dir = "' + get_goma_dir() + '"')
+    args.append("use_goma=true")
+    args.append('goma_dir="' + get_goma_dir() + '"')
   else:
     print(COLOR_FORMAT_YELLOW_STRING.format(
         "Goma is not running, the build may be slower."))
-    args.append("use_goma = false")
+    args.append("use_goma=false")
   return args
 
 def format_remaining_time(seconds):
@@ -306,6 +306,25 @@ def get_issue_number():
   else:
     print("This branch isn't associated with any CL. " + \
         "Please run 'crupload' to create a CL.")
+
+def find_all_non_third_party_targets(options):
+  sys.stdout.write("Looking for build targets... ")
+  sys.stdout.flush()
+  os.chdir(get_chromium_src_dir())
+  all_targets = subprocess.check_output(shlex.split(
+      "gn ls  " + get_out_dir())).decode("utf-8").split("\n")
+  # Remove the leading "//"
+  all_targets = sorted([t[2:] for t in all_targets])
+  # Building all top-level targets should be sufficient, since all other targets 
+  # should depend on those.
+  all_build_targets = [t for t in all_targets if \
+      (t.count("/") == 0 and not t.startswith("third_party"))]
+  sys.stdout.write("" + str(len(all_build_targets)) + " targets.")
+  print("")
+  if options.verbose:
+    for t in all_build_targets:
+      print("\t" + t)
+  return all_build_targets
 
 def find_all_test_targets(options):
   sys.stdout.write("Looking for test targets... ")

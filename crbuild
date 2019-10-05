@@ -43,7 +43,7 @@ elif len(args) > 0:
   # Explicit target passed as argument
   targets = " ".join(args)
 elif options.full:
-  targets = "all"
+  targets = " ".join(util.find_all_non_third_party_targets(options))
 
 cmd = ("ninja -j " + str(util.get_job_count()) + " -C " + \
     util.get_out_dir() + " " + targets)

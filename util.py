@@ -143,6 +143,14 @@ def common_gn_args():
     "blink_symbol_level=0",
     "is_debug=false",
     "is_component_build=true",
+    # TODO: Other/different flags to consider:
+    #"dcheck_always_on=true",
+    #"ffmpeg_branding=\"ChromeOS\"",
+    #"is_component_build=false",
+    #"proprietary_codecs=true",
+    #"strip_absolute_paths_from_debug_symbols=true",
+    #"symbol_level=0",
+    #"use_clang_coverage=true",
   ]
   if is_goma_running():
     print(COLOR_FORMAT_GREEN_STRING.format("Goma is running."))

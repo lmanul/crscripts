@@ -51,8 +51,10 @@ for cl in relevant_cls:
   if key not in days:
     days[key] = [0, 0, 0]
   days[key][0] += 1
-  days[key][1] += cl["insertions"]
-  days[key][2] += cl["deletions"]
+  if "insertions" in cl:
+    days[key][1] += cl["insertions"]
+  if "deletions" in cl:
+    days[key][2] += cl["deletions"]
 
 weeks = {}
 

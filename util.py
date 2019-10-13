@@ -110,9 +110,15 @@ def get_current_branch():
     "git rev-parse --abbrev-ref HEAD")).decode().strip()
 
 def get_branches():
+  BRANCH_LINE_PATTERN = re.compile("\**\s*([a-zA-z0-9\_-]+)")
   raw = subprocess.check_output(shlex.split("git branch")).decode().strip()
-  chars_to_ignore = "* "
-  return [b[len(chars_to_ignore):] for b in raw.split("\n")]
+  branches = []
+  for l in raw.split("\n"):
+    matches = BRANCH_LINE_PATTERN.match(l)
+    if not matches:
+      continue
+    branches.append(matches.group(1))
+  return branches
 
 def ensure_goma_installed():
   if not is_google_machine():

@@ -11,6 +11,9 @@ print("Now merging the updated code with all branches...")
 try:
   os.chdir(util.get_chromium_src_dir())
   for b in util.get_branches():
+    if "(" in b and ")" in b:
+      # This is most likely a branch detached from master. Skip.
+      continue
     print(b + "...")
     os.system("git checkout " + b)
     os.system("git merge origin/master --no-edit")

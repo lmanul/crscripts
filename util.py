@@ -149,8 +149,8 @@ def common_gn_args():
     "blink_symbol_level=0",
     "is_debug=false",
     "is_component_build=true",
+    "dcheck_always_on=true",
     # TODO: Other/different flags to consider:
-    #"dcheck_always_on=true",
     #"ffmpeg_branding=\"ChromeOS\"",
     #"is_component_build=false",
     #"proprietary_codecs=true",

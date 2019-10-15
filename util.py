@@ -360,7 +360,7 @@ def ensure_depot_tools(options):
   if os.path.exists(DEPOT_TOOLS):
     print(DEPOT_TOOLS + " is already checked out, updating it...")
     os.chdir(DEPOT_TOOLS)
-    os.system("git pull")
+    os.system("git checkout master ; git pull origin master")
     os.chdir("..")
   else:
     print("Fetching " + DEPOT_TOOLS + "...")

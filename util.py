@@ -373,3 +373,24 @@ def ensure_depot_tools(options):
           "Potential fix: delete your ~/.gitcookies")
     return False
   return True
+
+def check_for_local_changes_in_all_repos():
+  os.chdir(get_chromium_src_dir())
+  repos = []
+  for path, _, _ in os.walk(os.getcwd()):
+    if os.path.exists(os.path.join(path, ".git")):
+      repos.append(path)
+  repos_with_local_changes = []
+  for repo in repos:
+    # TODO: multithread
+    child = subprocess.Popen(
+        ["git", "diff", "--exit-code", "--quiet"], cwd=repo)
+    streamdata = child.communicate()[0]
+    rc = child.returncode
+    if rc != 0:
+      repos_with_local_changes.append(repo)
+  if len(repos_with_local_changes) != 0:
+    print("These repositories have local changes, please commit or "
+          "stash them before continuing:\n")
+    print("\t" + "\n\t".join(repos_with_local_changes))
+  return len(repos_with_local_changes) == 0

@@ -1,2 +1,14 @@
 * Use some of Python's magic __name__ and __main__ stuff to distinguish between 
   "crupdate" and "crupdateallbranches".
+
+* Add some ASAN functionality:
+
+gn gen out_cros/asan --args="target_os = \"chromeos\" is_component_build = true enable_nacl = false use_goma = true goma_dir=\"$GOMA_DIR\" is_debug = false dcheck_always_on = true is_asan = true is_lsan = true"
+
+autoninja -C out_cros/asan chrome 
+
+out_cros/asan/chrome --user-data-dir=...  2>&1 | tools/valgrind/asan/asan_symbolize.py
+
+You will want to modify the last one to work around a known false positive:
+
+ASAN_OPTIONS=detect_odr_violation=0 out_cros/asan/chrome --user-data-dir=...  2>&1 | tools/valgrind/asan/asan_symbolize.py

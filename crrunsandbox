@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import shlex
 import os
 import re
 import subprocess
@@ -26,6 +27,16 @@ if should_use_swift_shader:
 
 HOME = os.path.expanduser("~")
 TEST_PATH_KEY = "test_user_profile_path"
+
+def get_id_of_touch_device():
+  xinput = subprocess.check_output(shlex.split("xinput list")).decode()
+  touch_device_pattern = re.compile('.*\s+id=(\d+)\s+.*')
+  for l in xinput.split("\n"):
+    if "finger touch" in l.lower():
+      matches = touch_device_pattern.match(l)
+      if matches:
+        return int(matches.group(1))
+  return -1
 
 test_user_profile_path = config[TEST_PATH_KEY] if TEST_PATH_KEY in config else None
 if not test_user_profile_path:
@@ -55,6 +66,16 @@ if not os.path.exists(sbin_target):
   os.system("sudo chown root:root /usr/local/sbin/chrome-devel-sandbox")
   os.system("sudo chmod 4755 /usr/local/sbin/chrome-devel-sandbox")
 
+touch_device_id = get_id_of_touch_device()
+
+extra_flags = []
+if touch_device_id != -1:
+  extra_flags.append("--touch_devices=" + str(touch_device_id))
+if "extra_flags" in config:
+  extra_flags += config["extra_flags"].split(" ")
+
+print(extra_flags)
+
 #TODO: Make the data dir configurable
 # --ash-debug-shortcuts allows Ctrl-Alt_Shift-T for switching to tablet
 # mode.
@@ -64,7 +85,7 @@ cmd = util.get_out_dir() + "/chrome --user-data-dir=" + test_user_profile_path +
     (" --enable-ui-devtools") + \
     (" --use-gl=swiftshader" if should_use_swift_shader else "") + \
     (" --use-first-display-as-internal") + \
-    (" " + config["extra_flags"] if "extra_flags" in config else "") + \
+    (" " + " ".join(extra_flags)) + \
     (" --enable-features=" + ",".join(config["enabled_features"].split(",")) if "enabled_features" in config else "")
 message = ("Running chrome, a new window will open. Shortcuts:\n"
            "\tCtrl-Alt-Shift-T  toggle tablet mode\n"

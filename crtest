@@ -76,7 +76,7 @@ def process_one_target_arg(target_arg):
     sys.stdout.write("Looking for test files... ")
     sys.stdout.flush()
     all_test_files = sorted(subprocess.check_output(shlex.split(
-        'find . -name "*test.cc" -not -path "./third_party/*" -not -path "./out/*" -print'))\
+        'find . -name "*test*.cc" -not -path "./third_party/*" -not -path "./out/*" -print'))\
         .decode("utf-8").split("\n"))
     sys.stdout.write("" + str(len(all_test_files)) + " files.\n")
     print("")

@@ -82,6 +82,7 @@ print(extra_flags)
 cmd = util.get_out_dir() + "/chrome --user-data-dir=" + test_user_profile_path + \
     (" --login-manager" if options.loginmanager else "") + \
     (" --ash-debug-shortcuts") + \
+    (" --ash-dev-shortcuts") + \
     (" --enable-ui-devtools") + \
     (" --use-gl=swiftshader" if should_use_swift_shader else "") + \
     (" --use-first-display-as-internal") + \
@@ -94,6 +95,7 @@ message = ("Running chrome, a new window will open. Shortcuts:\n"
            "\tCtrl-Alt-Shift-V  print view hierarchy\n"
            "\tCtrl-Alt-Z        toggle chromevox\n"
            "\tAlt-Shift-S       open status tray\n"
+           "\tCtrl-Shift-D      toggle a second display\n"
            "\n"
            "Inspector URL: chrome-devtools://devtools/bundled/inspector.html?ws=localhost:9223/0\n")
 # Some other options to consider:

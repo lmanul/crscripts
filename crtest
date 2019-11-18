@@ -35,6 +35,12 @@ if len(args) < 1:
 # TODO: Support several test targets at once
 target_arg = args[0]
 
+# Make it easy for someone to just copy paste part of the
+# TEST_F(TestClassName, TestName) string as an argument and treat that the 
+# appropriate way.
+if args[0].endswith(",") and len(args) > 1:
+  target_arg = args[0][:-1] + "." + args[1]
+
 def process_one_target_arg(target_arg):
   global options
   list_only = (target_arg == "list")

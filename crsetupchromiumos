@@ -56,8 +56,8 @@ else:
 print("Syncing source code...")
 os.system("repo sync -j" + str(util.get_job_count()))
 
-# setup_board doesn't seem to exist any longer.
-#os.system("cros_sdk -- ./setup_board --board=" + board)
+print("Setting up the '" + board + "'board...")
+os.system("cros_sdk -- ../../chromite/bin/setup_board --board=" + board)
 
 #os.system("cros_sdk -- ./set_shared_user_password.sh")
 

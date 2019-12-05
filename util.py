@@ -31,8 +31,11 @@ COLOR_FORMAT_GREEN_STRING  = COLOR_FORMAT_PREF + str(92) + COLOR_FORMAT_SUFF_STR
 CPU_TO_JOB_MULTIPLIER = 2
 CPU_TO_JOB_MULTIPLIER_GOMA = 10
 
+def get_chromium_dir():
+  return os.path.join(os.path.expanduser("~"), "chromium")
+
 def get_chromium_src_dir():
-  return os.path.join(os.path.expanduser("~"), "chromium", "src")
+  return os.path.join(get_chromium_dir(), "src")
 
 def get_crscripts_dir():
   return os.path.dirname(os.path.realpath(__file__))

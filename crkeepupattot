@@ -2,6 +2,7 @@
 
 import datetime
 import os
+import socket
 import sys
 import time
 import util
@@ -9,6 +10,7 @@ import util
 MIN_INTERVAL_S = 30 * 60
 SLEEP_INTERVAL_S = 20
 
+hostname = socket.gethostname()
 os.chdir(util.get_chromium_src_dir())
 
 last_compile_time = None
@@ -21,6 +23,16 @@ while True:
   elif (datetime.datetime.now() - last_compile_time).seconds > MIN_INTERVAL_S:
     print("It's time to sync & compile!")
     should_compile = True
+
+  if os.path.exists(os.path.join(util.get_chromium_dir(), "stop")):
+    print("I found a 'stop' file in " + util.get_chromium_dir() + ", aborting.")
+    should_compile = False
+
+  if os.path.exists(os.path.join(util.get_chromium_dir(), "stop_" + hostname)):
+    print("I found a 'stop' file suffixed with my host name '" + \
+        hostname + "' in " + util.get_chromium_dir() + ", aborting.")
+    should_compile = False
+  
 
   if should_compile:
     # Set the new timestamp first, so that if the compilation takes more than

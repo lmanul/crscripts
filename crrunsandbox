@@ -70,6 +70,8 @@ touch_device_id = get_id_of_touch_device()
 
 extra_flags = []
 if touch_device_id != -1:
+  print("Touch device detected with id '" + str(touch_device_id) + "', "
+        "using it in the sandbox")
   extra_flags.append("--touch_devices=" + str(touch_device_id))
 if "extra_flags" in config:
   extra_flags += config["extra_flags"].split(" ")
@@ -84,6 +86,7 @@ cmd = util.get_out_dir() + "/chrome --user-data-dir=" + test_user_profile_path +
     (" --ash-debug-shortcuts") + \
     (" --ash-dev-shortcuts") + \
     (" --enable-ui-devtools") + \
+    (" --show-taps") + \
     (" --use-gl=swiftshader" if should_use_swift_shader else "") + \
     (" --use-first-display-as-internal") + \
     (" " + " ".join(extra_flags)) + \

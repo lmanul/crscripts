@@ -30,6 +30,8 @@ parser.add_option("-f", "--full", dest="full",
 (options, args) = parser.parse_args()
 
 os.chdir(os.path.join(HOME, "chromium", "src"))
+# TODO: Check the exec bit is set instead of just setting it each time
+os.system("chmod +x buildtools/linux64/gn")
 cmd = "gn gen " + util.get_out_dir() + " --args='" + " ".join(util.common_gn_args()) + "'"
 status_code = util.run(cmd, "Preparing to build...", options)
 if status_code != 0:

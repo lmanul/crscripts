@@ -21,7 +21,8 @@ try:
 
   # This will try to update all branches and print some benign error messages
   # that we can safely ignore and hide from the user.
-  util.run("git rebase-update | grep -v 'No upstream specified' && gclient sync",
+  # -D is for deleting stuff that's no longer part of the repos.
+  util.run("git rebase-update | grep -v 'No upstream specified' && gclient sync -D",
            "Updating...", options)
 except Exception as e:
   print("Encountered an error while trying to update, bailing out.")

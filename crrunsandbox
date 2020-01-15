@@ -51,9 +51,10 @@ if status_code != 0:
   util.print_failure("gn step failed, aborting.")
   sys.exit(status_code)
 
-cmd = ("ninja -j " + str(util.get_job_count()) + " -C " + \
+jobs = util.get_job_count()
+cmd = ("ninja -j " + str(jobs) + " -C " + \
     util.get_out_dir() + " chrome chrome_sandbox")
-status_code = util.run(cmd, "Compiling, this may take a while", options)
+status_code = util.run(cmd, "Compiling with " + str(jobs) + " jobs, this may take a while", options)
 if status_code != 0:
   util.print_failure("Compilation failed, aborting.")
   if not options.verbose:

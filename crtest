@@ -41,6 +41,11 @@ target_arg = args[0]
 if args[0].endswith(",") and len(args) > 1:
   target_arg = args[0][:-1] + "." + args[1]
 
+# Also, sometimes test class names are prepended with "All/"
+if args[0].startswith("All/") and len(args) == 1:
+  target_arg = args[0][4:]
+  print("Note: ignoring 'All/' prefix. You're welcome.")
+
 def process_one_target_arg(target_arg):
   global options
   list_only = (target_arg == "list")

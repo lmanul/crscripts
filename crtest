@@ -20,6 +20,7 @@ KNOWN_MAPPINGS = {
   #"chrome/browser/ui": "chrome/test:interactive_ui_tests",
   "chrome/common/extensions": "chrome/test:unit_tests",
   "components/exo": "components/exo:exo_unittests",
+  "ui/compositor": "ui/compositor:compositor_unittests",
   "ui/views": "ui/views:views_unittests",
 }
 
@@ -90,14 +91,22 @@ def process_one_target_arg(target_arg):
         'find . -name "*test*.cc" -not -path "./third_party/*" -not -path "./out/*" -print'))\
         .decode("utf-8").split("\n"))
     sys.stdout.write("" + str(len(all_test_files)) + " files.\n")
+    if options.verbose:
+      for f in all_test_files:
+        if "layer" in f:
+          print(f)
     print("")
 
     matching_test_files = []
+    if options.verbose:
+      print("Looking for " + target_arg + "...")
     for f in all_test_files:
       if not os.path.exists(f):
         continue
       data = open(f, "r").read()
-      if "class " + target_arg in data or "TEST_F(" + target_arg in data:
+      if "class " + target_arg in data \
+          or "TEST_F(" + target_arg in data \
+          or "TEST("   + target_arg in data:
         matching_test_files.append(f)
 
     if len(matching_test_files) == 0:

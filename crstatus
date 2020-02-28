@@ -1,0 +1,12 @@
+#!/usr/bin/python3
+
+import os
+import sys
+import util
+
+(options, args) = util.get_options_and_args()
+
+os.chdir(util.get_chromium_src_dir())
+
+print("Looking for local changes in all git repositories...")
+util.check_for_local_changes_in_all_repos()

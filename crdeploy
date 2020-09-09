@@ -7,11 +7,13 @@ import sys
 me = os.path.basename(__file__)
 
 if len(sys.argv) < 3:
-  print("Usage: " + me + " board_name target_ip_address")
-  sys.exit(1)
+    print("Usage: " + me + " board_name target_ip_address")
+    sys.exit(1)
 
 os.chdir(util.get_chromium_src_dir())
-os.system("./third_party/chromite/bin/deploy_chrome "
-          "--build-dir out/Default/ "
-          "--board " + sys.argv[1] + " "
-          "--to " + sys.argv[2] + " ")
+os.system(
+    "./third_party/chromite/bin/deploy_chrome "
+    "--build-dir out/Default/ "
+    "--board " + sys.argv[1] + " "
+    "--to " + sys.argv[2] + " "
+)

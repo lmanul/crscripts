@@ -5,26 +5,29 @@ import sys
 import util
 
 if util.is_google_machine():
-  os.system("glogin")
+    os.system("glogin")
 
 (options, args) = util.get_options_and_args()
 
 os.chdir(util.get_chromium_src_dir())
 
 try:
-  if util.get_current_branch() != "master":
-    print("Switching to 'master' before updating...")
-    os.system("git checkout master")
+    if util.get_current_branch() != "master":
+        print("Switching to 'master' before updating...")
+        os.system("git checkout master")
 
-  if not util.check_for_local_changes_in_all_repos():
-    sys.exit(1)
+    if not util.check_for_local_changes_in_all_repos():
+        sys.exit(1)
 
-  # This will try to update all branches and print some benign error messages
-  # that we can safely ignore and hide from the user.
-  # -D is for deleting stuff that's no longer part of the repos.
-  util.run("git rebase-update | grep -v 'No upstream specified' && gclient sync -D",
-           "Updating...", options)
+    # This will try to update all branches and print some benign error messages
+    # that we can safely ignore and hide from the user.
+    # -D is for deleting stuff that's no longer part of the repos.
+    util.run(
+        "git rebase-update | grep -v 'No upstream specified' && gclient sync -D",
+        "Updating...",
+        options,
+    )
 except Exception as e:
-  print("Encountered an error while trying to update, bailing out.")
-  print(e)
-  sys.exit(1)
+    print("Encountered an error while trying to update, bailing out.")
+    print(e)
+    sys.exit(1)

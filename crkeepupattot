@@ -16,37 +16,44 @@ os.chdir(util.get_chromium_src_dir())
 last_compile_time = None
 
 while True:
-  should_compile = False
-  if not last_compile_time:
-    print("First sync & compilation...")
-    should_compile = True
-  elif (datetime.datetime.now() - last_compile_time).seconds > MIN_INTERVAL_S:
-    print("It's time to sync & compile!")
-    should_compile = True
-
-  if os.path.exists(os.path.join(util.get_chromium_dir(), "stop")):
-    print("I found a 'stop' file in " + util.get_chromium_dir() + ", aborting.")
     should_compile = False
+    if not last_compile_time:
+        print("First sync & compilation...")
+        should_compile = True
+    elif (datetime.datetime.now() - last_compile_time).seconds > MIN_INTERVAL_S:
+        print("It's time to sync & compile!")
+        should_compile = True
 
-  if os.path.exists(os.path.join(util.get_chromium_dir(), "stop_" + hostname)):
-    print("I found a 'stop' file suffixed with my host name '" + \
-        hostname + "' in " + util.get_chromium_dir() + ", aborting.")
-    should_compile = False
+    if os.path.exists(os.path.join(util.get_chromium_dir(), "stop")):
+        print("I found a 'stop' file in " + util.get_chromium_dir() + ", aborting.")
+        should_compile = False
 
-  if should_compile:
-    # Set the new timestamp first, so that if the compilation takes more than
-    # the min interval, we will start again immediately after finishing.
-    last_compile_time = datetime.datetime.now()
-    os.system(os.path.join(util.get_crscripts_dir(), "crupdateallbranches"))
-    if util.get_current_branch() != "master":
-      print("We should be on master at this point,"
-            " you probably need to resolve conflicts first.")
-      sys.exit(1)
-    os.system(os.path.join(util.get_crscripts_dir(), "crgomarun"))
-    os.system(os.path.join(util.get_crscripts_dir(), "crbuild -f"))
-    sys.stdout.write("\nSleeping until next compilation (Ctrl-C to stop now).")
-    sys.stdout.flush()
-  else:
-    sys.stdout.write(".")
-    sys.stdout.flush()
-    time.sleep(SLEEP_INTERVAL_S)
+    if os.path.exists(os.path.join(util.get_chromium_dir(), "stop_" + hostname)):
+        print(
+            "I found a 'stop' file suffixed with my host name '"
+            + hostname
+            + "' in "
+            + util.get_chromium_dir()
+            + ", aborting."
+        )
+        should_compile = False
+
+    if should_compile:
+        # Set the new timestamp first, so that if the compilation takes more than
+        # the min interval, we will start again immediately after finishing.
+        last_compile_time = datetime.datetime.now()
+        os.system(os.path.join(util.get_crscripts_dir(), "crupdateallbranches"))
+        if util.get_current_branch() != "master":
+            print(
+                "We should be on master at this point,"
+                " you probably need to resolve conflicts first."
+            )
+            sys.exit(1)
+        os.system(os.path.join(util.get_crscripts_dir(), "crgomarun"))
+        os.system(os.path.join(util.get_crscripts_dir(), "crbuild -f"))
+        sys.stdout.write("\nSleeping until next compilation (Ctrl-C to stop now).")
+        sys.stdout.flush()
+    else:
+        sys.stdout.write(".")
+        sys.stdout.flush()
+        time.sleep(SLEEP_INTERVAL_S)

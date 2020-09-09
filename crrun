@@ -10,10 +10,7 @@ import util
 HOME = os.path.expanduser("~")
 TEST_USER_PROFILE_PATH = os.path.join(HOME, "tmp", "test-chromium")
 # TODO: Use the common flags in util, including goma.
-GN_ARGS = [
-  "enable_nacl = false",
-  "remove_webcore_debug_symbols = true",
-]
+GN_ARGS = ["enable_nacl = false", "remove_webcore_debug_symbols = true"]
 
 (options, args) = util.get_options_and_args()
 
@@ -22,11 +19,13 @@ os.chdir(os.path.join(HOME, "chromium", "src"))
 cmd = "gn gen " + util.get_out_dir() + " --args='" + " ".join(GN_ARGS) + "'"
 util.run(cmd, "Preparing to build...", options)
 
-cmd = ("autoninja -C " + util.get_out_dir() + " chrome")
+cmd = "autoninja -C " + util.get_out_dir() + " chrome"
 status_code = util.run(cmd, "Compiling, this may take a while...", options)
 if status_code != 0:
-  print("Compilation failed, aborting.")
-  sys.exit(status_code)
+    print("Compilation failed, aborting.")
+    sys.exit(status_code)
 
-#TODO: Make those configurable
-os.system("./" + util.get_out_dir() + "/chrome --user-data-dir=" + TEST_USER_PROFILE_PATH)
+# TODO: Make those configurable
+os.system(
+    "./" + util.get_out_dir() + "/chrome --user-data-dir=" + TEST_USER_PROFILE_PATH
+)

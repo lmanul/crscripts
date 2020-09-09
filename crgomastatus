@@ -13,14 +13,14 @@ pattern = "compiler_proxy"
 proc_to_kill = []
 proc_cant_kill = []
 for l in running.split("\n"):
-  if pattern in l:
-    # The username is sometimes truncated in the ps output.
-    if l.startswith(username[:5]):
-      proc_to_kill.append(l)
-    else:
-      proc_cant_kill.append(l)
+    if pattern in l:
+        # The username is sometimes truncated in the ps output.
+        if l.startswith(username[:5]):
+            proc_to_kill.append(l)
+        else:
+            proc_cant_kill.append(l)
 
 if len(proc_to_kill):
-  print(util.COLOR_FORMAT_GREEN_STRING.format("Goma is running"))
+    print(util.COLOR_FORMAT_GREEN_STRING.format("Goma is running"))
 else:
-  print(util.COLOR_FORMAT_YELLOW_STRING.format("Goma is NOT running"))
+    print(util.COLOR_FORMAT_YELLOW_STRING.format("Goma is NOT running"))

@@ -14,47 +14,62 @@ from optparse import OptionParser
 # Options
 
 parser = OptionParser()
-parser.add_option("-v", "--verbose", dest="verbose",
-                  action="store_true",
-                  help="show verbose messages")
-parser.add_option("-d", "--dryrun", dest="dryrun",
-                  action="store_true",
-                  help="dry run, log what we plan to do but don't actually do anything")
-parser.add_option("-t", "--tests_only", dest="testsonly",
-                  action="store_true",
-                  help="Only build unit tests")
-parser.add_option("-f", "--full", dest="full",
-                  action="store_true",
-                  help="Build all the targets that we know about")
+parser.add_option(
+    "-v", "--verbose", dest="verbose", action="store_true", help="show verbose messages"
+)
+parser.add_option(
+    "-d",
+    "--dryrun",
+    dest="dryrun",
+    action="store_true",
+    help="dry run, log what we plan to do but don't actually do anything",
+)
+parser.add_option(
+    "-t",
+    "--tests_only",
+    dest="testsonly",
+    action="store_true",
+    help="Only build unit tests",
+)
+parser.add_option(
+    "-f",
+    "--full",
+    dest="full",
+    action="store_true",
+    help="Build all the targets that we know about",
+)
 
 (options, args) = parser.parse_args()
 
 os.chdir(os.path.join(HOME, "chromium", "src"))
 # TODO: Check the exec bit is set instead of just setting it each time
 os.system("chmod +x buildtools/linux64/gn")
-cmd = "gn gen " + util.get_out_dir() + " --args='" + " ".join(util.common_gn_args()) + "'"
+cmd = (
+    "gn gen " + util.get_out_dir() + " --args='" + " ".join(util.common_gn_args()) + "'"
+)
 status_code = util.run(cmd, "Preparing to build...", options)
 if status_code != 0:
-  util.print_failure("gn step failed, aborting.")
-  sys.exit(status_code)
+    util.print_failure("gn step failed, aborting.")
+    sys.exit(status_code)
 
 targets = "chrome chrome_sandbox"
 if not options.full and options.testsonly:
-  targets = " ".join(util.find_all_test_targets(options))
+    targets = " ".join(util.find_all_test_targets(options))
 elif len(args) > 0:
-  # Explicit target passed as argument
-  targets = " ".join(args)
+    # Explicit target passed as argument
+    targets = " ".join(args)
 elif options.full:
-  targets = " ".join(util.find_all_non_third_party_targets(options))
+    targets = " ".join(util.find_all_non_third_party_targets(options))
 
 jobs = util.get_job_count()
-cmd = ("ninja -j " + str(jobs) + " -C " + \
-    util.get_out_dir() + " " + targets)
-status_code = util.run(cmd, "Compiling with " + str(jobs) + " jobs, this may take a while...\n", options)
+cmd = "ninja -j " + str(jobs) + " -C " + util.get_out_dir() + " " + targets
+status_code = util.run(
+    cmd, "Compiling with " + str(jobs) + " jobs, this may take a while...\n", options
+)
 if status_code == 0:
-  print("All done.")
+    print("All done.")
 else:
-  util.print_failure("Compilation failed, aborting.")
-  if not options.verbose:
-    print("Please use '-v' to see actual failures.")
+    util.print_failure("Compilation failed, aborting.")
+    if not options.verbose:
+        print("Please use '-v' to see actual failures.")
 sys.exit(status_code)

@@ -8,7 +8,7 @@ import util
 cl = util.get_issue_number()
 
 if not cl:
-  sys.exit(0)
+    sys.exit(0)
 
 print("\n### CL " + str(cl))
 

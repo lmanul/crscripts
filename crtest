@@ -14,181 +14,210 @@ from optparse import OptionParser
 (options, args) = util.get_options_and_args()
 
 KNOWN_MAPPINGS = {
-  "ash/app_list": "ash/app_list:app_list_unittests",
-  "ash/content": "ash:ash_content_unittests",
-  "chrome/browser": "chrome/test:browser_tests",
-  #"chrome/browser/ui/ash": "chrome/test:unit_tests",
-  "chrome/browser/ui": "chrome/test:interactive_ui_tests",
-  "chrome/common/extensions": "chrome/test:unit_tests",
-  "components/exo": "components/exo:exo_unittests",
-  "ui/compositor": "ui/compositor:compositor_unittests",
-  "ui/views": "ui/views:views_unittests",
+    "ash/app_list": "ash/app_list:app_list_unittests",
+    "ash/content": "ash:ash_content_unittests",
+    "chrome/browser": "chrome/test:browser_tests",
+    # "chrome/browser/ui/ash": "chrome/test:unit_tests",
+    "chrome/browser/ui": "chrome/test:interactive_ui_tests",
+    "chrome/common/extensions": "chrome/test:unit_tests",
+    "components/exo": "components/exo:exo_unittests",
+    "ui/compositor": "ui/compositor:compositor_unittests",
+    "ui/views": "ui/views:views_unittests",
 }
 
+
 def print_rebuild_warning():
-  print("If this isn't what you expected, consider re-building unit tests: " + \
-      "'crbuild --tests_only'")
+    print(
+        "If this isn't what you expected, consider re-building unit tests: "
+        + "'crbuild --tests_only'"
+    )
+
 
 if len(args) < 1:
-  print("I need the name of a test as an argument, e.g. 'base_unittests'.")
-  print("For a list of all I know about, try 'crtest list'")
-  sys.exit(1)
+    print("I need the name of a test as an argument, e.g. 'base_unittests'.")
+    print("For a list of all I know about, try 'crtest list'")
+    sys.exit(1)
 
 # TODO: Support several test targets at once
 target_arg = args[0]
 
 # Make it easy for someone to just copy paste part of the
-# TEST_F(TestClassName, TestName) string as an argument and treat that the 
+# TEST_F(TestClassName, TestName) string as an argument and treat that the
 # appropriate way.
 if args[0].endswith(",") and len(args) > 1:
-  target_arg = args[0][:-1] + "." + args[1]
+    target_arg = args[0][:-1] + "." + args[1]
 
 # Also, sometimes test class names are prepended with "All/"
 if args[0].startswith("All/") and len(args) == 1:
-  target_arg = args[0][4:]
-  print("Note: ignoring 'All/' prefix. You're welcome.")
+    target_arg = args[0][4:]
+    print("Note: ignoring 'All/' prefix. You're welcome.")
+
 
 def process_one_target_arg(target_arg):
-  global options
-  list_only = (target_arg == "list")
-  HOME = os.path.expanduser("~")
-  TEST_USER_PROFILE_PATH = os.path.join(HOME, "tmp", "test-chromium")
-  # Even though our target OS isn't necessarily actually Chrome OS, adding this
-  # gives access to more build targets.
-  gn_args = util.common_gn_args() + [
-    'target_os = "chromeos"',
-  ]
+    global options
+    list_only = target_arg == "list"
+    HOME = os.path.expanduser("~")
+    TEST_USER_PROFILE_PATH = os.path.join(HOME, "tmp", "test-chromium")
+    # Even though our target OS isn't necessarily actually Chrome OS, adding this
+    # gives access to more build targets.
+    gn_args = util.common_gn_args() + ['target_os = "chromeos"']
 
-  if options.dryrun:
-    print("Dry run, not actually running any tests.\n")
+    if options.dryrun:
+        print("Dry run, not actually running any tests.\n")
 
-  os.chdir(util.get_chromium_src_dir())
+    os.chdir(util.get_chromium_src_dir())
 
-  if not os.path.exists(util.get_out_dir()) or len(os.listdir(util.get_out_dir())) == 0:
-    print("Please do a build first so that I can figure out the list of "
-          "available tests:\n\n\tcrbuild --tests_only")
-    sys.exit(0)
+    if (
+        not os.path.exists(util.get_out_dir())
+        or len(os.listdir(util.get_out_dir())) == 0
+    ):
+        print(
+            "Please do a build first so that I can figure out the list of "
+            "available tests:\n\n\tcrbuild --tests_only"
+        )
+        sys.exit(0)
 
-  all_test_targets = util.find_all_test_targets(options)
-  if list_only:
-    print("This is what I know about:\n\t" + "\n\t".join(all_test_targets))
-    sys.exit(0)
+    all_test_targets = util.find_all_test_targets(options)
+    if list_only:
+        print("This is what I know about:\n\t" + "\n\t".join(all_test_targets))
+        sys.exit(0)
 
-  test_method = ""
-  if "." in target_arg:
-    parts = target_arg.split(".", 1)
-    target_arg = parts[0]
-    test_method = parts[1]
-    if options.verbose:
-      print("Method name is " + test_method + ", class is " + target_arg)
-  camel_case = (target_arg != target_arg.lower())
-  if camel_case:
-    if not target_arg.endswith("Test"):
-      print("(Note: correcting '" + target_arg + "' into " + target_arg + "Test)")
-      target_arg = target_arg + "Test"
-    sys.stdout.write("Looking for test files... ")
-    sys.stdout.flush()
-    all_test_files = sorted(subprocess.check_output(shlex.split(
-        'find . -name "*test*.cc" -not -path "./third_party/*" -not -path "./out/*" -print'))\
-        .decode("utf-8").split("\n"))
-    sys.stdout.write("" + str(len(all_test_files)) + " files.\n")
-    if options.verbose:
-      for f in all_test_files:
-        if "layer" in f:
-          print(f)
-    print("")
-
-    matching_test_files = []
-    if options.verbose:
-      print("Looking for " + target_arg + "...")
-    for f in all_test_files:
-      if not os.path.exists(f):
-        continue
-      data = open(f, "r").read()
-      if "class " + target_arg in data \
-          or "TEST_F(" + target_arg in data \
-          or "TEST("   + target_arg in data:
-        matching_test_files.append(f)
-
-    if len(matching_test_files) == 0:
-        print("I didn't find any matching test files.")
-    else:
-      print("" + target_arg + " is defined in " + str(matching_test_files))
-
-  # Now let's try to infere the test target(s).
-  test_targets = set()
-  if camel_case and len(matching_test_files) != 0:
-    # If the user gave us a camel-cased test name, we just want to find the one
-    # target that best matches that. Looking for decreasing sub-paths of the test
-    # file path.
-    for matching_test_file in matching_test_files:
-      els = matching_test_file.split("/")
-      path_length = len(els) - 1
-      while (path_length > 1):
-        query = "/".join(els[1:path_length])
+    test_method = ""
+    if "." in target_arg:
+        parts = target_arg.split(".", 1)
+        target_arg = parts[0]
+        test_method = parts[1]
         if options.verbose:
-          print("Trying " + query)
-        if query in KNOWN_MAPPINGS:
-          test_targets.add(KNOWN_MAPPINGS[query])
-          break
-        for t in all_test_targets:
-          if query + "_unittests" in t or query + "_tests" in query:
-            test_targets.add(t)
-            break
-        path_length -= 1
-      # Special-case browser tests
-      if "browsertest" in matching_test_file:
-        test_targets.add("chrome/test:browser_tests")
-  else:
-    for t in all_test_targets:
-      # Targets are something like path/to/directory:actual_target_unittests
-      parts = t.split("/")
-      parts = parts[:-1] + parts[-1].split(":")
-      if (("_" in target_arg or "/" in target_arg) and target_arg in t) \
-          or target_arg in parts \
-          or target_arg + "_unittests" in parts:
-        test_targets.add(t)
-
-  if len(test_targets) == 0:
-    print("Sorry, I didn't find any matching targets. Aborting. ")
-    print_rebuild_warning()
-    sys.exit(0)
-
-  print("\nI'm going to run these test targets:")
-  for t in test_targets:
-    print("\t" + t)
-  print("")
-  print_rebuild_warning()
-
-  cmd = "gn gen  " + util.get_out_dir() + "  --args='" + \
-        " ".join(gn_args) + "'"
-  util.run(cmd, "Preparing to build...", options)
-
-  cmd = ("autoninja -j " + str(util.get_job_count()) + " -C  " + \
-      util.get_out_dir() + "  " + " ".join(test_targets))
-  status_code = util.run(cmd, "Compiling, this may take a while...", options)
-  if status_code != 0:
-    util.print_failure("Compilation failed, aborting. Re-run with --verbose "
-          "to see failures.")
-    sys.exit(status_code)
-
-  # Useful flags:
-  # --enable-pixel-output-in-tests
-  # --ui-test-action-timeout=1000000
-  for t in test_targets:
-    test_filter = ""
+            print("Method name is " + test_method + ", class is " + target_arg)
+    camel_case = target_arg != target_arg.lower()
     if camel_case:
-      test_filter = "*" + target_arg + "*"
-      if test_method:
-        test_filter = "*" + target_arg + "." + test_method + "*"
-    cmd = "./" + util.get_out_dir() + "/" + \
-        (t.split(":")[1] if ":" in t else t) + \
-        (' --gtest_filter="' + test_filter + '"' if test_filter else "")
-        # Don't use '--use-gpu-in-tests' -- it actually makes tests ~10 times 
+        if not target_arg.endswith("Test"):
+            print("(Note: correcting '" + target_arg + "' into " + target_arg + "Test)")
+            target_arg = target_arg + "Test"
+        sys.stdout.write("Looking for test files... ")
+        sys.stdout.flush()
+        all_test_files = sorted(
+            subprocess.check_output(
+                shlex.split(
+                    'find . -name "*test*.cc" -not -path "./third_party/*" -not -path "./out/*" -print'
+                )
+            )
+            .decode("utf-8")
+            .split("\n")
+        )
+        sys.stdout.write("" + str(len(all_test_files)) + " files.\n")
+        if options.verbose:
+            for f in all_test_files:
+                if "layer" in f:
+                    print(f)
+        print("")
+
+        matching_test_files = []
+        if options.verbose:
+            print("Looking for " + target_arg + "...")
+        for f in all_test_files:
+            if not os.path.exists(f):
+                continue
+            data = open(f, "r").read()
+            if (
+                "class " + target_arg in data
+                or "TEST_F(" + target_arg in data
+                or "TEST(" + target_arg in data
+            ):
+                matching_test_files.append(f)
+
+        if len(matching_test_files) == 0:
+            print("I didn't find any matching test files.")
+        else:
+            print("" + target_arg + " is defined in " + str(matching_test_files))
+
+    # Now let's try to infere the test target(s).
+    test_targets = set()
+    if camel_case and len(matching_test_files) != 0:
+        # If the user gave us a camel-cased test name, we just want to find the one
+        # target that best matches that. Looking for decreasing sub-paths of the test
+        # file path.
+        for matching_test_file in matching_test_files:
+            els = matching_test_file.split("/")
+            path_length = len(els) - 1
+            while path_length > 1:
+                query = "/".join(els[1:path_length])
+                if options.verbose:
+                    print("Trying " + query)
+                if query in KNOWN_MAPPINGS:
+                    test_targets.add(KNOWN_MAPPINGS[query])
+                    break
+                for t in all_test_targets:
+                    if query + "_unittests" in t or query + "_tests" in query:
+                        test_targets.add(t)
+                        break
+                path_length -= 1
+            # Special-case browser tests
+            if "browsertest" in matching_test_file:
+                test_targets.add("chrome/test:browser_tests")
+    else:
+        for t in all_test_targets:
+            # Targets are something like path/to/directory:actual_target_unittests
+            parts = t.split("/")
+            parts = parts[:-1] + parts[-1].split(":")
+            if (
+                (("_" in target_arg or "/" in target_arg) and target_arg in t)
+                or target_arg in parts
+                or target_arg + "_unittests" in parts
+            ):
+                test_targets.add(t)
+
+    if len(test_targets) == 0:
+        print("Sorry, I didn't find any matching targets. Aborting. ")
+        print_rebuild_warning()
+        sys.exit(0)
+
+    print("\nI'm going to run these test targets:")
+    for t in test_targets:
+        print("\t" + t)
+    print("")
+    print_rebuild_warning()
+
+    cmd = "gn gen  " + util.get_out_dir() + "  --args='" + " ".join(gn_args) + "'"
+    util.run(cmd, "Preparing to build...", options)
+
+    cmd = (
+        "autoninja -j "
+        + str(util.get_job_count())
+        + " -C  "
+        + util.get_out_dir()
+        + "  "
+        + " ".join(test_targets)
+    )
+    status_code = util.run(cmd, "Compiling, this may take a while...", options)
+    if status_code != 0:
+        util.print_failure(
+            "Compilation failed, aborting. Re-run with --verbose " "to see failures."
+        )
+        sys.exit(status_code)
+
+    # Useful flags:
+    # --enable-pixel-output-in-tests
+    # --ui-test-action-timeout=1000000
+    for t in test_targets:
+        test_filter = ""
+        if camel_case:
+            test_filter = "*" + target_arg + "*"
+            if test_method:
+                test_filter = "*" + target_arg + "." + test_method + "*"
+        cmd = (
+            "./"
+            + util.get_out_dir()
+            + "/"
+            + (t.split(":")[1] if ":" in t else t)
+            + (' --gtest_filter="' + test_filter + '"' if test_filter else "")
+        )
+        # Don't use '--use-gpu-in-tests' -- it actually makes tests ~10 times
         # slower
-    if options.verbose:
-      print(cmd)
-    if not options.dryrun:
-      os.system(cmd)
+        if options.verbose:
+            print(cmd)
+        if not options.dryrun:
+            os.system(cmd)
+
 
 process_one_target_arg(target_arg)

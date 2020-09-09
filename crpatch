@@ -7,26 +7,31 @@ import sys
 import util
 
 if len(sys.argv) < 2:
-  print("I need a CL number as an argument.")
-  sys.exit(1)
+    print("I need a CL number as an argument.")
+    sys.exit(1)
 
 cl = int(sys.argv[1])
 latest_revision = util.get_last_revision_number_for_cl(cl)
 
-url = "https://chromium-review.googlesource.com/changes/" + \
-    str(cl) + "/revisions/" + str(latest_revision) + "/patch?zip"
+url = (
+    "https://chromium-review.googlesource.com/changes/"
+    + str(cl)
+    + "/revisions/"
+    + str(latest_revision)
+    + "/patch?zip"
+)
 
 current_branch = util.get_current_branch()
 if util.get_current_branch() == "master":
-  new_branch = "patch_" + str(cl)
-  existing_branches = util.get_branches()
-  if new_branch in existing_branches:
-    print("It seems like branch '" + new_branch + "' already exists.")
-    print("You might have patched this CL before?")
-    sys.exit(0)
-  print("The current branch is master, creating branch '" + new_branch + "'...")
-  # TODO: Stop if branching out fails.
-  os.system("git checkout -b " + new_branch)
+    new_branch = "patch_" + str(cl)
+    existing_branches = util.get_branches()
+    if new_branch in existing_branches:
+        print("It seems like branch '" + new_branch + "' already exists.")
+        print("You might have patched this CL before?")
+        sys.exit(0)
+    print("The current branch is master, creating branch '" + new_branch + "'...")
+    # TODO: Stop if branching out fails.
+    os.system("git checkout -b " + new_branch)
 
 print("Downloading patch...")
 os.chdir(util.get_chromium_src_dir())
@@ -35,16 +40,16 @@ unzipped = "patch_" + str(cl) + ".diff"
 zip = "patch.zip"
 os.system("curl '" + url + "' > " + zip)
 
-# The URL doesn't let us know what the patch file will be called, so we'll just 
+# The URL doesn't let us know what the patch file will be called, so we'll just
 # diff the contents of the directory.
 files_before = os.listdir(".")
 os.system("unzip " + zip)
 files_after = os.listdir(".")
 for f in files_after:
-  if f not in files_before and f.endswith(".diff"):
-    unzipped = f
-    break
-print("Applying '" + unzipped  + "'...")
+    if f not in files_before and f.endswith(".diff"):
+        unzipped = f
+        break
+print("Applying '" + unzipped + "'...")
 os.system("patch -p1 < " + unzipped)
 print("Cleaning up...")
 os.system("rm " + zip + " " + unzipped)

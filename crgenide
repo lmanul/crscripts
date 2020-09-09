@@ -10,5 +10,13 @@ from optparse import OptionParser
 os.chdir(util.get_chromium_src_dir())
 
 print("Generating IDE project...")
-os.system("gn gen  " + util.get_out_dir() + "  --ide=qtcreator  --args='" + " \
-    ".join(util.common_gn_args()) + "'")
+os.system(
+    "gn gen  "
+    + util.get_out_dir()
+    + "  --ide=qtcreator  --args='"
+    + " \
+    ".join(
+        util.common_gn_args()
+    )
+    + "'"
+)

@@ -7,40 +7,42 @@ import util
 config = util.read_config_from_file()
 
 if len(sys.argv) > 1:
-  cl = int(sys.argv[1])
-  config["cl"] = cl
+    cl = int(sys.argv[1])
+    config["cl"] = cl
 else:
-  if "cl" in config:
-    cl = config["cl"]
-  else:
-    print("No CL specified in argument and no 'cl' value in ~/.crrc, bailing out.")
-    sys.exit(1)
+    if "cl" in config:
+        cl = config["cl"]
+    else:
+        print("No CL specified in argument and no 'cl' value in ~/.crrc, bailing out.")
+        sys.exit(1)
 
 if len(sys.argv) > 2:
-  editor = sys.argv[2]
-  config["editor"] = editor
+    editor = sys.argv[2]
+    config["editor"] = editor
 else:
-  if "editor" in config:
-    editor = config["editor"]
-  else:
-    editor = os.getenv("EDITOR").strip()
-  if editor == "":
-    print("No editor was specified as an argument or "
-          "in ~/.crrc and $EDITOR is empty, bailing out.")
-    sys.exit(1)
-  print("No editor specified, using '" + editor + "'")
+    if "editor" in config:
+        editor = config["editor"]
+    else:
+        editor = os.getenv("EDITOR").strip()
+    if editor == "":
+        print(
+            "No editor was specified as an argument or "
+            "in ~/.crrc and $EDITOR is empty, bailing out."
+        )
+        sys.exit(1)
+    print("No editor specified, using '" + editor + "'")
 
 home = os.path.expanduser("~")
 cr_dir = os.path.join(home, "chromium", "src")
 os.chdir(cr_dir)
 files_to_edit = " ".join(util.get_open_files_for_cl(cl))
 command = editor + " " + files_to_edit
-if editor in ['gedit', 'qtcreator']:
-  # gedit creates spurious stderr stuff
-  command += " 2> /dev/null &"
+if editor in ["gedit", "qtcreator"]:
+    # gedit creates spurious stderr stuff
+    command += " 2> /dev/null &"
 print(command)
 os.system(command)
 
-# Don't overwrite the config file for now. Let users change things by hand if 
+# Don't overwrite the config file for now. Let users change things by hand if
 # they need.
 # util.save_config(config)

@@ -9,20 +9,20 @@ os.system(os.path.join(util.get_crscripts_dir(), "crupdate"))
 print("Now merging the updated code with all branches...")
 
 try:
-  os.chdir(util.get_chromium_src_dir())
-  for b in util.get_branches():
-    if "(" in b and ")" in b:
-      # This is most likely a branch detached from master. Skip.
-      continue
-    print(b + "...")
-    os.system("git checkout " + b)
-    os.system("git merge origin/master --no-edit")
+    os.chdir(util.get_chromium_src_dir())
+    for b in util.get_branches():
+        if "(" in b and ")" in b:
+            # This is most likely a branch detached from master. Skip.
+            continue
+        print(b + "...")
+        os.system("git checkout " + b)
+        os.system("git merge origin/master --no-edit")
 except:
-  print("Encountered an error while trying to update. Bailing out.")
-  sys.exit(1)
+    print("Encountered an error while trying to update. Bailing out.")
+    sys.exit(1)
 
 os.system("git checkout master")
 
 if util.get_current_branch() != "master":
-  print("There were some merge issues, please resolve them and try again")
-  sys.exit(1)
+    print("There were some merge issues, please resolve them and try again")
+    sys.exit(1)

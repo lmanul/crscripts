@@ -8,18 +8,26 @@ import util
 
 from optparse import OptionParser
 
-TRY_VERBOSE_MESSAGE = ("Please try calling me again with the verbose (-v) "
-                       "option to see what's going on.")
+TRY_VERBOSE_MESSAGE = (
+    "Please try calling me again with the verbose (-v) "
+    "option to see what's going on."
+)
 
 parser = OptionParser()
-parser.add_option("-f", "--full-history", dest="history",
-                  action="store_true",
-                  help="Download the full repo history (longer fetch)")
+parser.add_option(
+    "-f",
+    "--full-history",
+    dest="history",
+    action="store_true",
+    help="Download the full repo history (longer fetch)",
+)
 
 (options, args) = util.get_options_and_args(parser)
 
+
 def refresh_sudo():
-  os.system("sudo ls > /dev/null")
+    os.system("sudo ls > /dev/null")
+
 
 # Base variables
 
@@ -28,8 +36,8 @@ BASE_DIR = os.path.join(HOME, "chromium")
 dir_name = ""
 
 if not util.is_online():
-  print("You seem to be offline. I won't be able to do much. Aborting.")
-  sys.exit(1)
+    print("You seem to be offline. I won't be able to do much. Aborting.")
+    sys.exit(1)
 
 refresh_sudo()
 
@@ -39,29 +47,29 @@ os.chdir(HOME)
 
 fetched = util.ensure_depot_tools(options)
 if not fetched:
-  if not options.verbose:
-    print(TRY_VERBOSE_MESSAGE)
-  sys.exit(1)
+    if not options.verbose:
+        print(TRY_VERBOSE_MESSAGE)
+    sys.exit(1)
 
 refresh_sudo()
 
 # Create base directory
 
 if not os.path.exists(BASE_DIR):
-  os.mkdir(BASE_DIR)
+    os.mkdir(BASE_DIR)
 
 # Print info about PATH
 
-shell = os.environ['SHELL'].rsplit('/', 1) [-1]
+shell = os.environ["SHELL"].rsplit("/", 1)[-1]
 rc_file = os.path.join(HOME, "." + shell + "rc")
 rc_file_contents = open(rc_file, "r").read()
 if "depot_tools" not in rc_file_contents:
-  print("We recommend adding this line to your file '" + rc_file + "':\n")
-  new_path = "PATH=$PATH:" + os.path.join(HOME, "depot_tools")
-  if shell == 'bash':
-    print("\t" + new_path + "\n")
-  else:
-    print("\texport " + new_path + "\n")
+    print("We recommend adding this line to your file '" + rc_file + "':\n")
+    new_path = "PATH=$PATH:" + os.path.join(HOME, "depot_tools")
+    if shell == "bash":
+        print("\t" + new_path + "\n")
+    else:
+        print("\texport " + new_path + "\n")
 
 refresh_sudo()
 
@@ -70,25 +78,33 @@ refresh_sudo()
 os.chdir(BASE_DIR)
 
 if os.path.exists(".gclient") and not os.path.exists("src"):
-  print("I see remnants of a checkout attempt, but no checkout. " + \
-      "I am going to delete the .gclient directory.")
-  os.system("rm -rf .gclient")
+    print(
+        "I see remnants of a checkout attempt, but no checkout. "
+        + "I am going to delete the .gclient directory."
+    )
+    os.system("rm -rf .gclient")
 
 if os.path.exists("src"):
-  print("Code seems already checked out, skipping that part.")
+    print("Code seems already checked out, skipping that part.")
 else:
-  flags = ["--nohooks"]
-  if not options.history:
-    flags.append("--no-history")
-  fetch_command = "" + os.path.join(HOME, "depot_tools", "fetch") + " " + \
-      " ".join(flags) + " " + "chromium"
-  util.run(fetch_command, "Fetching the source code...", options)
+    flags = ["--nohooks"]
+    if not options.history:
+        flags.append("--no-history")
+    fetch_command = (
+        ""
+        + os.path.join(HOME, "depot_tools", "fetch")
+        + " "
+        + " ".join(flags)
+        + " "
+        + "chromium"
+    )
+    util.run(fetch_command, "Fetching the source code...", options)
 
 if not os.path.exists("src"):
-  util.print_failure("Fetching the code has failed, aborting. Sorry about that.")
-  if not options.verbose:
-    print(TRY_VERBOSE_MESSAGE)
-  sys.exit(1)
+    util.print_failure("Fetching the code has failed, aborting. Sorry about that.")
+    if not options.verbose:
+        print(TRY_VERBOSE_MESSAGE)
+    sys.exit(1)
 
 refresh_sudo()
 
@@ -118,17 +134,28 @@ os.system("git config user.email " + getpass.getuser() + "@chromium.org")
 
 # Build
 
-sc = util.run("gn gen " + util.get_out_dir() + " --args='" + " ".join(util.common_gn_args()) + "'",
-    "Preparing for the first build...", options)
+sc = util.run(
+    "gn gen "
+    + util.get_out_dir()
+    + " --args='"
+    + " ".join(util.common_gn_args())
+    + "'",
+    "Preparing for the first build...",
+    options,
+)
 if sc != 0:
-  util.print_failure("gn step failed, aborting.")
-  sys.exit(sc)
+    util.print_failure("gn step failed, aborting.")
+    sys.exit(sc)
 
-sc = util.run("autoninja -C " + util.get_out_dir() + " chrome", "Doing the first build...", options)
+sc = util.run(
+    "autoninja -C " + util.get_out_dir() + " chrome",
+    "Doing the first build...",
+    options,
+)
 # TODO: Catch Ctrl-C, abort cleanly.
 if sc != 0:
-  util.print_failure("Compilation failed, aborting.")
-  sys.exit(sc)
+    util.print_failure("Compilation failed, aborting.")
+    sys.exit(sc)
 
 # The end
 

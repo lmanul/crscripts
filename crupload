@@ -8,16 +8,16 @@ import sys
 os.chdir(util.get_chromium_src_dir())
 
 if util.get_current_branch() == "master":
-  print("On master branch, not uploading.")
-  sys.exit(1)
+    print("On master branch, not uploading.")
+    sys.exit(1)
 
 child = subprocess.Popen(["git", "diff", "--exit-code", "--quiet"])
 streamdata = child.communicate()[0]
 rc = child.returncode
 
 if rc != 0:
-  print("Please commit pending changes first.")
-  sys.exit(1)
+    print("Please commit pending changes first.")
+    sys.exit(1)
 
 print("Formatting...")
 os.system("git cl format")
@@ -27,8 +27,8 @@ streamdata = child.communicate()[0]
 rc = child.returncode
 
 if rc != 0:
-  print("Committing format changes...")
-  os.system("git commit --all --amend --no-edit")
+    print("Committing format changes...")
+    os.system("git commit --all --amend --no-edit")
 
 print("Uploading...")
 # Bypass questions

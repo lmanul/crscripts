@@ -3,10 +3,9 @@
 import os
 import util
 
-creator_file = os.path.join(util.get_out_dir(), "/qtcreator_project", 
-    "all.creator")
+creator_file = os.path.join(util.get_out_dir(), "/qtcreator_project", "all.creator")
 if not os.path.exists(creator_file):
-  os.system("crgenide")
+    os.system("crgenide")
 
 os.chdir(util.get_chromium_src_dir())
 os.system("qtcreator " + util.get_out_dir() + "/qtcreator_project/all.creator &")

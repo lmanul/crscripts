@@ -8,4 +8,4 @@ editor = sys.argv[1] if len(sys.argv) > 1 else ""
 
 cl = util.get_issue_number()
 if cl:
-  os.system("creditopenfilesincl " + cl + " " + editor)
+    os.system("creditopenfilesincl " + cl + " " + editor)

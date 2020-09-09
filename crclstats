@@ -7,29 +7,34 @@ import os
 import sys
 import util
 
+
 def date_to_key(d):
-  return ".".join([str(d.year), str(d.month).zfill(2), str(d.day).zfill(2)])
+    return ".".join([str(d.year), str(d.month).zfill(2), str(d.day).zfill(2)])
+
 
 def date_from_key(k):
-  parts = k.split(".")
-  return datetime.datetime(int(parts[0]), int(parts[1]), int(parts[2]))
+    parts = k.split(".")
+    return datetime.datetime(int(parts[0]), int(parts[1]), int(parts[2]))
+
 
 # TODO: Several users at once
 if len(sys.argv) < 2:
-  email = getpass.getuser()
-  print("No argument given, using '" + email + "'.")
+    email = getpass.getuser()
+    print("No argument given, using '" + email + "'.")
 else:
-  email = sys.argv[1]
+    email = sys.argv[1]
 
 if "@" not in email:
-  email = email + "@chromium.org"
+    email = email + "@chromium.org"
 
 downloaded_file_name = "stats.html"
 
-os.system("wget -q -O " + downloaded_file_name + " "
-          "\"https://chromium-review.googlesource.com/changes/"
-          "?O=81&S=0&n=500&q=status:merged+owner:" + email + ""
-          "+branch:master\"")
+os.system(
+    "wget -q -O " + downloaded_file_name + " "
+    '"https://chromium-review.googlesource.com/changes/'
+    "?O=81&S=0&n=500&q=status:merged+owner:" + email + ""
+    '+branch:master"'
+)
 
 raw_content = open(downloaded_file_name).readlines()
 # For some reason the first line doesn't make any sense.
@@ -37,24 +42,27 @@ raw_content = "\n".join(raw_content[1:])
 
 data = json.loads(raw_content)
 
-relevant_cls = [c for c in data if \
-    c["branch"] == "master" and \
-    c["project"] == "chromium/src" and \
-    c["status"] == "MERGED"]
+relevant_cls = [
+    c
+    for c in data
+    if c["branch"] == "master"
+    and c["project"] == "chromium/src"
+    and c["status"] == "MERGED"
+]
 
 items = []
 days = {}
 for cl in relevant_cls:
-  (y, m, d) = cl["submitted"].split(" ")[0].split("-")
-  d = datetime.datetime(int(y), int(m), int(d))
-  key = date_to_key(d)
-  if key not in days:
-    days[key] = [0, 0, 0]
-  days[key][0] += 1
-  if "insertions" in cl:
-    days[key][1] += cl["insertions"]
-  if "deletions" in cl:
-    days[key][2] += cl["deletions"]
+    (y, m, d) = cl["submitted"].split(" ")[0].split("-")
+    d = datetime.datetime(int(y), int(m), int(d))
+    key = date_to_key(d)
+    if key not in days:
+        days[key] = [0, 0, 0]
+    days[key][0] += 1
+    if "insertions" in cl:
+        days[key][1] += cl["insertions"]
+    if "deletions" in cl:
+        days[key][2] += cl["deletions"]
 
 weeks = {}
 
@@ -63,49 +71,50 @@ day_keys = sorted(list(days.keys()))
 # Get the first Monday before the first recoded CL.
 first_monday = date_from_key(day_keys[0])
 while first_monday.isoweekday() != 1:
-  first_monday = first_monday - datetime.timedelta(days=1)
+    first_monday = first_monday - datetime.timedelta(days=1)
 
 last_monday = date_from_key(day_keys[len(day_keys) - 1])
 while last_monday.isoweekday() != 1:
-  last_monday = last_monday - datetime.timedelta(days=1)
+    last_monday = last_monday - datetime.timedelta(days=1)
 
 current_monday = first_monday
 while current_monday <= last_monday:
-  cl_count = 0
-  ins_count = 0
-  del_count = 0
-  for i in range(0, 7):
-    d = current_monday + datetime.timedelta(days=i)
-    k = date_to_key(d)
-    if k in days:
-      cl_count +=  days[k][0]
-      ins_count += days[k][1]
-      del_count += days[k][2]
-  weeks[date_to_key(current_monday)] = [cl_count, ins_count, del_count]
-  current_monday = current_monday + datetime.timedelta(days = 7)
+    cl_count = 0
+    ins_count = 0
+    del_count = 0
+    for i in range(0, 7):
+        d = current_monday + datetime.timedelta(days=i)
+        k = date_to_key(d)
+        if k in days:
+            cl_count += days[k][0]
+            ins_count += days[k][1]
+            del_count += days[k][2]
+    weeks[date_to_key(current_monday)] = [cl_count, ins_count, del_count]
+    current_monday = current_monday + datetime.timedelta(days=7)
 
 days_out = []
 for d in days:
-  days_out.append(d + ":" + ":".join([str(a) for a in days[d]]))
+    days_out.append(d + ":" + ":".join([str(a) for a in days[d]]))
 
 weeks_out = []
 for w in weeks:
-  weeks_out.append(w + ":" + ":".join([str(a) for a in weeks[w]]))
+    weeks_out.append(w + ":" + ":".join([str(a) for a in weeks[w]]))
 
-charts_js = open(os.path.join(
-    util.get_crscripts_dir(),"data/Chart.bundle.min.js")).read()
-username = email[0:email.find("@")]
+charts_js = open(
+    os.path.join(util.get_crscripts_dir(), "data/Chart.bundle.min.js")
+).read()
+username = email[0 : email.find("@")]
 out_file = username + ".html"
 
 out = ""
 
-out += "<html><head><meta charset=\"utf-8\"/>"
+out += '<html><head><meta charset="utf-8"/>'
 out += "<script>" + charts_js + "</script>"
 out += "<script>const days = '" + "|".join(days_out) + "';</script>"
 out += "<script>const weeks = '" + "|".join(weeks_out) + "';</script>"
 out += "</head><body>"
-out += "<div class=\"chart\"><canvas id=\"weeks\"></canvas></div>"
-out += "<div class=\"chart\"><canvas id=\"days\"></canvas></div>"
+out += '<div class="chart"><canvas id="weeks"></canvas></div>'
+out += '<div class="chart"><canvas id="days"></canvas></div>'
 
 out += """<script>
 

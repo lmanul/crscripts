@@ -10,10 +10,13 @@ import util
 from optparse import OptionParser
 
 parser = OptionParser()
-parser.add_option("-l", "--login-manager", dest="loginmanager",
-                  action="store_true",
-                  help="use the login manager so that the out-of-box " + \
-                       "experience is included")
+parser.add_option(
+    "-l",
+    "--login-manager",
+    dest="loginmanager",
+    action="store_true",
+    help="use the login manager so that the out-of-box " + "experience is included",
+)
 
 (options, args) = util.get_options_and_args(parser)
 
@@ -23,86 +26,103 @@ product = f.read().strip()
 f.close()
 should_use_swift_shader = "carbon" in product.lower()
 if should_use_swift_shader:
-  print("Computer model is '" + product + "', using swift shaders")
+    print("Computer model is '" + product + "', using swift shaders")
 
 HOME = os.path.expanduser("~")
 TEST_PATH_KEY = "test_user_profile_path"
 
+
 def get_id_of_touch_device():
-  xinput = subprocess.check_output(shlex.split("xinput list")).decode()
-  touch_device_pattern = re.compile('.*\s+id=(\d+)\s+.*')
-  for l in xinput.split("\n"):
-    if "finger touch" in l.lower():
-      matches = touch_device_pattern.match(l)
-      if matches:
-        return int(matches.group(1))
-  return -1
+    xinput = subprocess.check_output(shlex.split("xinput list")).decode()
+    touch_device_pattern = re.compile(".*\s+id=(\d+)\s+.*")
+    for l in xinput.split("\n"):
+        if "finger touch" in l.lower():
+            matches = touch_device_pattern.match(l)
+            if matches:
+                return int(matches.group(1))
+    return -1
+
 
 test_user_profile_path = config[TEST_PATH_KEY] if TEST_PATH_KEY in config else None
 if not test_user_profile_path:
-  test_user_profile_path = os.path.join(HOME, "tmp", "test-sandbox")
+    test_user_profile_path = os.path.join(HOME, "tmp", "test-sandbox")
 
 util.ensure_goma_installed()
 
 os.chdir(os.path.join(HOME, "chromium", "src"))
-cmd = "gn gen " + util.get_out_dir() + " --args='" + " ".join(util.common_gn_args()) + "'"
+cmd = (
+    "gn gen " + util.get_out_dir() + " --args='" + " ".join(util.common_gn_args()) + "'"
+)
 status_code = util.run(cmd, "Preparing to build...", options)
 if status_code != 0:
-  util.print_failure("gn step failed, aborting.")
-  sys.exit(status_code)
+    util.print_failure("gn step failed, aborting.")
+    sys.exit(status_code)
 
 jobs = util.get_job_count()
-cmd = ("ninja -j " + str(jobs) + " -C " + \
-    util.get_out_dir() + " chrome chrome_sandbox")
-status_code = util.run(cmd, "Compiling with " + str(jobs) + " jobs, this may take a while", options)
+cmd = "ninja -j " + str(jobs) + " -C " + util.get_out_dir() + " chrome chrome_sandbox"
+status_code = util.run(
+    cmd, "Compiling with " + str(jobs) + " jobs, this may take a while", options
+)
 if status_code != 0:
-  util.print_failure("Compilation failed, aborting.")
-  if not options.verbose:
-    print("Please use -v to see failures.")
-  sys.exit(status_code)
+    util.print_failure("Compilation failed, aborting.")
+    if not options.verbose:
+        print("Please use -v to see failures.")
+    sys.exit(status_code)
 
 sbin_target = "/usr/local/sbin/chrome-devel-sandbox"
 if not os.path.exists(sbin_target):
-  os.system("sudo cp " + util.get_out_dir() + "/chrome_sandbox " + sbin_target)
-  os.system("sudo chown root:root /usr/local/sbin/chrome-devel-sandbox")
-  os.system("sudo chmod 4755 /usr/local/sbin/chrome-devel-sandbox")
+    os.system("sudo cp " + util.get_out_dir() + "/chrome_sandbox " + sbin_target)
+    os.system("sudo chown root:root /usr/local/sbin/chrome-devel-sandbox")
+    os.system("sudo chmod 4755 /usr/local/sbin/chrome-devel-sandbox")
 
 touch_device_id = get_id_of_touch_device()
 
 extra_flags = []
 if touch_device_id != -1:
-  print("Touch device detected with id '" + str(touch_device_id) + "', "
-        "using it in the sandbox")
-  extra_flags.append("--touch_devices=" + str(touch_device_id))
+    print(
+        "Touch device detected with id '" + str(touch_device_id) + "', "
+        "using it in the sandbox"
+    )
+    extra_flags.append("--touch_devices=" + str(touch_device_id))
 if "extra_flags" in config:
-  extra_flags += config["extra_flags"].split(" ")
+    extra_flags += config["extra_flags"].split(" ")
 
 print(extra_flags)
 
-#TODO: Make the data dir configurable
+# TODO: Make the data dir configurable
 # --ash-debug-shortcuts allows Ctrl-Alt_Shift-T for switching to tablet
 # mode.
-cmd = util.get_out_dir() + "/chrome --user-data-dir=" + test_user_profile_path + \
-    (" --login-manager" if options.loginmanager else "") + \
-    (" --ash-debug-shortcuts") + \
-    (" --ash-dev-shortcuts") + \
-    (" --enable-ui-devtools") + \
-    (" --show-taps") + \
-    (" --use-gl=swiftshader" if should_use_swift_shader else "") + \
-    (" --use-first-display-as-internal") + \
-    (" " + " ".join(extra_flags)) + \
-    (" --enable-features=" + ",".join(config["enabled_features"].split(",")) if "enabled_features" in config else "")
-message = ("Running chrome, a new window will open. Shortcuts:\n"
-           "\tCtrl-Alt-Shift-T  toggle tablet mode\n"
-           "\tCtrl-Alt-Shift-P  toggle showing repaints\n"
-           "\tCtrl-Alt-Shift-W  print window hierarchy\n"
-           "\tCtrl-Alt-Shift-L  print layer hierarchy\n"
-           "\tCtrl-Alt-Shift-V  print view hierarchy\n"
-           "\tCtrl-Alt-Z        toggle chromevox\n"
-           "\tAlt-Shift-S       open status tray\n"
-           "\tCtrl-Shift-D      toggle a second display\n"
-           "\n"
-           "Inspector URL: chrome-devtools://devtools/bundled/inspector.html?ws=localhost:9223/0\n")
+cmd = (
+    util.get_out_dir()
+    + "/chrome --user-data-dir="
+    + test_user_profile_path
+    + (" --login-manager" if options.loginmanager else "")
+    + (" --ash-debug-shortcuts")
+    + (" --ash-dev-shortcuts")
+    + (" --enable-ui-devtools")
+    + (" --show-taps")
+    + (" --use-gl=swiftshader" if should_use_swift_shader else "")
+    + (" --use-first-display-as-internal")
+    + (" " + " ".join(extra_flags))
+    + (
+        " --enable-features=" + ",".join(config["enabled_features"].split(","))
+        if "enabled_features" in config
+        else ""
+    )
+)
+message = (
+    "Running chrome, a new window will open. Shortcuts:\n"
+    "\tCtrl-Alt-Shift-T  toggle tablet mode\n"
+    "\tCtrl-Alt-Shift-P  toggle showing repaints\n"
+    "\tCtrl-Alt-Shift-W  print window hierarchy\n"
+    "\tCtrl-Alt-Shift-L  print layer hierarchy\n"
+    "\tCtrl-Alt-Shift-V  print view hierarchy\n"
+    "\tCtrl-Alt-Z        toggle chromevox\n"
+    "\tAlt-Shift-S       open status tray\n"
+    "\tCtrl-Shift-D      toggle a second display\n"
+    "\n"
+    "Inspector URL: chrome-devtools://devtools/bundled/inspector.html?ws=localhost:9223/0\n"
+)
 # Some other options to consider:
 # --touch-devices=[get ID from 'xinput list']
 # --force-device-scale-factor=0.75
@@ -111,5 +131,5 @@ message = ("Running chrome, a new window will open. Shortcuts:\n"
 # --animation-duration-scale
 # --secondary-display-layout="r,0" --ash-host-window-bounds="800,0+800-800x800"
 if not options.verbose:
-  message += "Re-run with '--verbose' to show debug output."
+    message += "Re-run with '--verbose' to show debug output."
 util.run(cmd, message, options)

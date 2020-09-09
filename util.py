@@ -2,7 +2,6 @@ import json
 import multiprocessing
 import ntpath
 import os
-import platform
 import re
 import shlex
 import shutil
@@ -12,7 +11,8 @@ import sys
 import time
 import urllib.request
 
-from multiprocessing.dummy import Pool as ThreadPool
+import distro
+
 from optparse import OptionParser
 
 SILENT = " > /dev/null 2>&1"
@@ -125,7 +125,7 @@ def is_google_machine():
     hostname = socket.gethostname()
     if "corp.google.com" in hostname:
         return True
-    if "rodete" in " ".join(platform.dist()):
+    if "rodete" in " ".join(distro.linux_distribution()):
         return True
     return False
 

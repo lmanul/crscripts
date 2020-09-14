@@ -1,13 +1,13 @@
 #!/usr/bin/python3
 
 import os
-import util
+import crutil
 import sys
 
 from optparse import OptionParser
 
 parser = OptionParser()
-(options, args) = util.get_options_and_args(parser)
+(options, args) = crutil.get_options_and_args(parser)
 
 if len(args) == 0:
     print(
@@ -23,7 +23,7 @@ board = args[0]
 HOME = os.path.expanduser("~")
 BASE_DIR = os.path.join(HOME, "chromiumos")
 
-if not util.is_online():
+if not crutil.is_online():
     print("You seem to be offline. I won't be able to do much. Aborting.")
     sys.exit(1)
 
@@ -33,7 +33,7 @@ os.system("sudo apt -y install lvm2 thin-provisioning-tools")
 
 os.chdir(HOME)
 
-fetched = util.ensure_depot_tools(options)
+fetched = crutil.ensure_depot_tools(options)
 if not fetched:
     if not options.verbose:
         print(TRY_VERBOSE_MESSAGE)
@@ -58,7 +58,7 @@ else:
         "https://chromium.googlesource.com/external/repo.git"
     )
 print("Syncing source code...")
-os.system("repo sync -j" + str(util.get_job_count()))
+os.system("repo sync -j" + str(crutil.get_job_count()))
 
 print("Setting up the '" + board + "'board...")
 os.system("cros_sdk -- ../../chromite/bin/setup_board --board=" + board)

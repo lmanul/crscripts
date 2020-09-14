@@ -5,7 +5,7 @@ import os
 import re
 import shlex
 import subprocess
-import util
+import crutil
 
 running = subprocess.check_output(shlex.split("ps aux")).decode()
 username = getpass.getuser()

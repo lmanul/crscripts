@@ -5,7 +5,7 @@ import os
 import re
 import subprocess
 import sys
-import util
+import crutil
 
 from optparse import OptionParser
 
@@ -18,9 +18,9 @@ parser.add_option(
     help="use the login manager so that the out-of-box " + "experience is included",
 )
 
-(options, args) = util.get_options_and_args(parser)
+(options, args) = crutil.get_options_and_args(parser)
 
-config = util.read_config_from_file()
+config = crutil.read_config_from_file()
 f = open("/sys/class/dmi/id/product_family")
 product = f.read().strip()
 f.close()
@@ -47,31 +47,31 @@ test_user_profile_path = config[TEST_PATH_KEY] if TEST_PATH_KEY in config else N
 if not test_user_profile_path:
     test_user_profile_path = os.path.join(HOME, "tmp", "test-sandbox")
 
-util.ensure_goma_installed()
+crutil.ensure_goma_installed()
 
 os.chdir(os.path.join(HOME, "chromium", "src"))
 cmd = (
-    "gn gen " + util.get_out_dir() + " --args='" + " ".join(util.common_gn_args()) + "'"
+    "gn gen " + crutil.get_out_dir() + " --args='" + " ".join(crutil.common_gn_args()) + "'"
 )
-status_code = util.run(cmd, "Preparing to build...", options)
+status_code = crutil.run(cmd, "Preparing to build...", options)
 if status_code != 0:
-    util.print_failure("gn step failed, aborting.")
+    crutil.print_failure("gn step failed, aborting.")
     sys.exit(status_code)
 
-jobs = util.get_job_count()
-cmd = "ninja -j " + str(jobs) + " -C " + util.get_out_dir() + " chrome chrome_sandbox"
-status_code = util.run(
+jobs = crutil.get_job_count()
+cmd = "ninja -j " + str(jobs) + " -C " + crutil.get_out_dir() + " chrome chrome_sandbox"
+status_code = crutil.run(
     cmd, "Compiling with " + str(jobs) + " jobs, this may take a while", options
 )
 if status_code != 0:
-    util.print_failure("Compilation failed, aborting.")
+    crutil.print_failure("Compilation failed, aborting.")
     if not options.verbose:
         print("Please use -v to see failures.")
     sys.exit(status_code)
 
 sbin_target = "/usr/local/sbin/chrome-devel-sandbox"
 if not os.path.exists(sbin_target):
-    os.system("sudo cp " + util.get_out_dir() + "/chrome_sandbox " + sbin_target)
+    os.system("sudo cp " + crutil.get_out_dir() + "/chrome_sandbox " + sbin_target)
     os.system("sudo chown root:root /usr/local/sbin/chrome-devel-sandbox")
     os.system("sudo chmod 4755 /usr/local/sbin/chrome-devel-sandbox")
 
@@ -93,7 +93,7 @@ print(extra_flags)
 # --ash-debug-shortcuts allows Ctrl-Alt_Shift-T for switching to tablet
 # mode.
 cmd = (
-    util.get_out_dir()
+    crutil.get_out_dir()
     + "/chrome --user-data-dir="
     + test_user_profile_path
     + (" --login-manager" if options.loginmanager else "")
@@ -132,4 +132,4 @@ message = (
 # --secondary-display-layout="r,0" --ash-host-window-bounds="800,0+800-800x800"
 if not options.verbose:
     message += "Re-run with '--verbose' to show debug output."
-util.run(cmd, message, options)
+crutil.run(cmd, message, options)

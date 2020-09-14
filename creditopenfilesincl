@@ -2,9 +2,9 @@
 
 import os
 import sys
-import util
+import crutil
 
-config = util.read_config_from_file()
+config = crutil.read_config_from_file()
 
 if len(sys.argv) > 1:
     cl = int(sys.argv[1])
@@ -35,7 +35,7 @@ else:
 home = os.path.expanduser("~")
 cr_dir = os.path.join(home, "chromium", "src")
 os.chdir(cr_dir)
-files_to_edit = " ".join(util.get_open_files_for_cl(cl))
+files_to_edit = " ".join(crutil.get_open_files_for_cl(cl))
 command = editor + " " + files_to_edit
 if editor in ["gedit", "qtcreator"]:
     # gedit creates spurious stderr stuff
@@ -45,4 +45,4 @@ os.system(command)
 
 # Don't overwrite the config file for now. Let users change things by hand if
 # they need.
-# util.save_config(config)
+# crutil.save_config(config)

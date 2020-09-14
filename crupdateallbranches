@@ -1,16 +1,16 @@
 #!/usr/bin/python3
 
 import os
-import util
+import crutil
 import sys
 
-os.system(os.path.join(util.get_crscripts_dir(), "crupdate"))
+os.system(os.path.join(crutil.get_crscripts_dir(), "crupdate"))
 
 print("Now merging the updated code with all branches...")
 
 try:
-    os.chdir(util.get_chromium_src_dir())
-    for b in util.get_branches():
+    os.chdir(crutil.get_chromium_src_dir())
+    for b in crutil.get_branches():
         if "(" in b and ")" in b:
             # This is most likely a branch detached from master. Skip.
             continue
@@ -23,6 +23,6 @@ except:
 
 os.system("git checkout master")
 
-if util.get_current_branch() != "master":
+if crutil.get_current_branch() != "master":
     print("There were some merge issues, please resolve them and try again")
     sys.exit(1)

@@ -3,16 +3,16 @@
 import shlex
 import subprocess
 import sys
-import util
+import crutil
 
-cl = util.get_issue_number()
+cl = crutil.get_issue_number()
 
 if not cl:
     sys.exit(0)
 
 print("\n### CL " + str(cl))
 
-open_files = util.get_open_files_for_cl(cl)
+open_files = crutil.get_open_files_for_cl(cl)
 desc = subprocess.check_output(shlex.split("git cl description -d")).decode()
 
 print("\n" + desc)

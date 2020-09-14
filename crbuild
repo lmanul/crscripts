@@ -4,7 +4,7 @@ import os
 import re
 import subprocess
 import sys
-import util
+import crutil
 
 HOME = os.path.expanduser("~")
 TEST_USER_PROFILE_PATH = os.path.join(HOME, "tmp", "test-chromium")
@@ -45,31 +45,31 @@ os.chdir(os.path.join(HOME, "chromium", "src"))
 # TODO: Check the exec bit is set instead of just setting it each time
 os.system("chmod +x buildtools/linux64/gn")
 cmd = (
-    "gn gen " + util.get_out_dir() + " --args='" + " ".join(util.common_gn_args()) + "'"
+    "gn gen " + crutil.get_out_dir() + " --args='" + " ".join(crutil.common_gn_args()) + "'"
 )
-status_code = util.run(cmd, "Preparing to build...", options)
+status_code = crutil.run(cmd, "Preparing to build...", options)
 if status_code != 0:
-    util.print_failure("gn step failed, aborting.")
+    crutil.print_failure("gn step failed, aborting.")
     sys.exit(status_code)
 
 targets = "chrome chrome_sandbox"
 if not options.full and options.testsonly:
-    targets = " ".join(util.find_all_test_targets(options))
+    targets = " ".join(crutil.find_all_test_targets(options))
 elif len(args) > 0:
     # Explicit target passed as argument
     targets = " ".join(args)
 elif options.full:
-    targets = " ".join(util.find_all_non_third_party_targets(options))
+    targets = " ".join(crutil.find_all_non_third_party_targets(options))
 
-jobs = util.get_job_count()
-cmd = "ninja -j " + str(jobs) + " -C " + util.get_out_dir() + " " + targets
-status_code = util.run(
+jobs = crutil.get_job_count()
+cmd = "ninja -j " + str(jobs) + " -C " + crutil.get_out_dir() + " " + targets
+status_code = crutil.run(
     cmd, "Compiling with " + str(jobs) + " jobs, this may take a while...\n", options
 )
 if status_code == 0:
     print("All done.")
 else:
-    util.print_failure("Compilation failed, aborting.")
+    crutil.print_failure("Compilation failed, aborting.")
     if not options.verbose:
         print("Please use '-v' to see actual failures.")
 sys.exit(status_code)

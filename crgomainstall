@@ -2,9 +2,9 @@
 
 import os
 import sys
-import util
+import crutil
 
-goma_dir = util.get_goma_dir()
+goma_dir = crutil.get_goma_dir()
 
 if os.path.exists(goma_dir):
     print(goma_dir + " already exists. Please remove it if you'd like to reinstall.")

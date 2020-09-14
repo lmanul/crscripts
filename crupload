@@ -1,13 +1,13 @@
 #!/usr/bin/python3
 
 import os
-import util
+import crutil
 import subprocess
 import sys
 
-os.chdir(util.get_chromium_src_dir())
+os.chdir(crutil.get_chromium_src_dir())
 
-if util.get_current_branch() == "master":
+if crutil.get_current_branch() == "master":
     print("On master branch, not uploading.")
     sys.exit(1)
 

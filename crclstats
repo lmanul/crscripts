@@ -5,7 +5,7 @@ import getpass
 import json
 import os
 import sys
-import util
+import crutil
 
 
 def date_to_key(d):
@@ -101,7 +101,7 @@ for w in weeks:
     weeks_out.append(w + ":" + ":".join([str(a) for a in weeks[w]]))
 
 charts_js = open(
-    os.path.join(util.get_crscripts_dir(), "data/Chart.bundle.min.js")
+    os.path.join(crutil.get_crscripts_dir(), "data/Chart.bundle.min.js")
 ).read()
 username = email[0 : email.find("@")]
 out_file = username + ".html"

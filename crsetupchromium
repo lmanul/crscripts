@@ -4,7 +4,7 @@ import getpass
 import os
 import socket
 import sys
-import util
+import crutil
 
 from optparse import OptionParser
 
@@ -22,7 +22,7 @@ parser.add_option(
     help="Download the full repo history (longer fetch)",
 )
 
-(options, args) = util.get_options_and_args(parser)
+(options, args) = crutil.get_options_and_args(parser)
 
 
 def refresh_sudo():
@@ -35,7 +35,7 @@ HOME = os.path.expanduser("~")
 BASE_DIR = os.path.join(HOME, "chromium")
 dir_name = ""
 
-if not util.is_online():
+if not crutil.is_online():
     print("You seem to be offline. I won't be able to do much. Aborting.")
     sys.exit(1)
 
@@ -45,7 +45,7 @@ os.chdir(HOME)
 
 # Fetch depot_tools
 
-fetched = util.ensure_depot_tools(options)
+fetched = crutil.ensure_depot_tools(options)
 if not fetched:
     if not options.verbose:
         print(TRY_VERBOSE_MESSAGE)
@@ -98,10 +98,10 @@ else:
         + " "
         + "chromium"
     )
-    util.run(fetch_command, "Fetching the source code...", options)
+    crutil.run(fetch_command, "Fetching the source code...", options)
 
 if not os.path.exists("src"):
-    util.print_failure("Fetching the code has failed, aborting. Sorry about that.")
+    crutil.print_failure("Fetching the code has failed, aborting. Sorry about that.")
     if not options.verbose:
         print(TRY_VERBOSE_MESSAGE)
     sys.exit(1)
@@ -116,7 +116,7 @@ os.chdir("src")
 os.system("gclient metrics --opt-in")
 os.system("gclient sync")
 
-util.ensure_goma_installed()
+crutil.ensure_goma_installed()
 refresh_sudo()
 
 # Run the hooks
@@ -124,9 +124,9 @@ refresh_sudo()
 os.chdir(BASE_DIR)
 os.chdir("src")
 cmd = "build/install-build-deps.sh --no-prompt"
-util.run(cmd, "Installing build deps...", options)
+crutil.run(cmd, "Installing build deps...", options)
 
-util.run("gclient runhooks", "Running the hooks...", options)
+crutil.run("gclient runhooks", "Running the hooks...", options)
 
 # Configure the user email
 
@@ -134,27 +134,27 @@ os.system("git config user.email " + getpass.getuser() + "@chromium.org")
 
 # Build
 
-sc = util.run(
+sc = crutil.run(
     "gn gen "
-    + util.get_out_dir()
+    + crutil.get_out_dir()
     + " --args='"
-    + " ".join(util.common_gn_args())
+    + " ".join(crutil.common_gn_args())
     + "'",
     "Preparing for the first build...",
     options,
 )
 if sc != 0:
-    util.print_failure("gn step failed, aborting.")
+    crutil.print_failure("gn step failed, aborting.")
     sys.exit(sc)
 
-sc = util.run(
-    "autoninja -C " + util.get_out_dir() + " chrome",
+sc = crutil.run(
+    "autoninja -C " + crutil.get_out_dir() + " chrome",
     "Doing the first build...",
     options,
 )
 # TODO: Catch Ctrl-C, abort cleanly.
 if sc != 0:
-    util.print_failure("Compilation failed, aborting.")
+    crutil.print_failure("Compilation failed, aborting.")
     sys.exit(sc)
 
 # The end

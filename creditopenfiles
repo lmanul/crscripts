@@ -2,10 +2,10 @@
 
 import os
 import sys
-import util
+import crutil
 
 editor = sys.argv[1] if len(sys.argv) > 1 else ""
 
-cl = util.get_issue_number()
+cl = crutil.get_issue_number()
 if cl:
     os.system("creditopenfilesincl " + cl + " " + editor)

@@ -7,11 +7,11 @@ import re
 import shlex
 import subprocess
 import sys
-import util
+import crutil
 
 from optparse import OptionParser
 
-(options, args) = util.get_options_and_args()
+(options, args) = crutil.get_options_and_args()
 
 KNOWN_MAPPINGS = {
     "ash/app_list": "ash/app_list:app_list_unittests",
@@ -60,16 +60,16 @@ def process_one_target_arg(target_arg):
     TEST_USER_PROFILE_PATH = os.path.join(HOME, "tmp", "test-chromium")
     # Even though our target OS isn't necessarily actually Chrome OS, adding this
     # gives access to more build targets.
-    gn_args = util.common_gn_args() + ['target_os = "chromeos"']
+    gn_args = crutil.common_gn_args() + ['target_os = "chromeos"']
 
     if options.dryrun:
         print("Dry run, not actually running any tests.\n")
 
-    os.chdir(util.get_chromium_src_dir())
+    os.chdir(crutil.get_chromium_src_dir())
 
     if (
-        not os.path.exists(util.get_out_dir())
-        or len(os.listdir(util.get_out_dir())) == 0
+        not os.path.exists(crutil.get_out_dir())
+        or len(os.listdir(crutil.get_out_dir())) == 0
     ):
         print(
             "Please do a build first so that I can figure out the list of "
@@ -77,7 +77,7 @@ def process_one_target_arg(target_arg):
         )
         sys.exit(0)
 
-    all_test_targets = util.find_all_test_targets(options)
+    all_test_targets = crutil.find_all_test_targets(options)
     if list_only:
         print("This is what I know about:\n\t" + "\n\t".join(all_test_targets))
         sys.exit(0)
@@ -178,20 +178,20 @@ def process_one_target_arg(target_arg):
     print("")
     print_rebuild_warning()
 
-    cmd = "gn gen  " + util.get_out_dir() + "  --args='" + " ".join(gn_args) + "'"
-    util.run(cmd, "Preparing to build...", options)
+    cmd = "gn gen  " + crutil.get_out_dir() + "  --args='" + " ".join(gn_args) + "'"
+    crutil.run(cmd, "Preparing to build...", options)
 
     cmd = (
         "autoninja -j "
-        + str(util.get_job_count())
+        + str(crutil.get_job_count())
         + " -C  "
-        + util.get_out_dir()
+        + crutil.get_out_dir()
         + "  "
         + " ".join(test_targets)
     )
-    status_code = util.run(cmd, "Compiling, this may take a while...", options)
+    status_code = crutil.run(cmd, "Compiling, this may take a while...", options)
     if status_code != 0:
-        util.print_failure(
+        crutil.print_failure(
             "Compilation failed, aborting. Re-run with --verbose " "to see failures."
         )
         sys.exit(status_code)
@@ -207,7 +207,7 @@ def process_one_target_arg(target_arg):
                 test_filter = "*" + target_arg + "." + test_method + "*"
         cmd = (
             "./"
-            + util.get_out_dir()
+            + crutil.get_out_dir()
             + "/"
             + (t.split(":")[1] if ":" in t else t)
             + (' --gtest_filter="' + test_filter + '"' if test_filter else "")

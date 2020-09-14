@@ -2,10 +2,10 @@
 
 import os
 import sys
-import util
+import crutil
 
 file = sys.argv[1] if len(sys.argv) > 1 else None
 
-branch = util.get_current_branch()
+branch = crutil.get_current_branch()
 
 os.system("git diff origin " + branch + (" -- " + file if file else ""))

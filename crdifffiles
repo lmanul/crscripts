@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 
 import os
-import util
+import crutil
 
-branch = util.get_current_branch()
+branch = crutil.get_current_branch()
 
 os.system("git diff --name-only " + branch + " origin")

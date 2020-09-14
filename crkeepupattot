@@ -5,13 +5,13 @@ import os
 import socket
 import sys
 import time
-import util
+import crutil
 
 MIN_INTERVAL_S = 30 * 60
 SLEEP_INTERVAL_S = 20
 
 hostname = socket.gethostname()
-os.chdir(util.get_chromium_src_dir())
+os.chdir(crutil.get_chromium_src_dir())
 
 last_compile_time = None
 
@@ -24,16 +24,16 @@ while True:
         print("It's time to sync & compile!")
         should_compile = True
 
-    if os.path.exists(os.path.join(util.get_chromium_dir(), "stop")):
-        print("I found a 'stop' file in " + util.get_chromium_dir() + ", aborting.")
+    if os.path.exists(os.path.join(crutil.get_chromium_dir(), "stop")):
+        print("I found a 'stop' file in " + crutil.get_chromium_dir() + ", aborting.")
         should_compile = False
 
-    if os.path.exists(os.path.join(util.get_chromium_dir(), "stop_" + hostname)):
+    if os.path.exists(os.path.join(crutil.get_chromium_dir(), "stop_" + hostname)):
         print(
             "I found a 'stop' file suffixed with my host name '"
             + hostname
             + "' in "
-            + util.get_chromium_dir()
+            + crutil.get_chromium_dir()
             + ", aborting."
         )
         should_compile = False
@@ -42,15 +42,15 @@ while True:
         # Set the new timestamp first, so that if the compilation takes more than
         # the min interval, we will start again immediately after finishing.
         last_compile_time = datetime.datetime.now()
-        os.system(os.path.join(util.get_crscripts_dir(), "crupdateallbranches"))
-        if util.get_current_branch() != "master":
+        os.system(os.path.join(crutil.get_crscripts_dir(), "crupdateallbranches"))
+        if crutil.get_current_branch() != "master":
             print(
                 "We should be on master at this point,"
                 " you probably need to resolve conflicts first."
             )
             sys.exit(1)
-        os.system(os.path.join(util.get_crscripts_dir(), "crgomarun"))
-        os.system(os.path.join(util.get_crscripts_dir(), "crbuild -f"))
+        os.system(os.path.join(crutil.get_crscripts_dir(), "crgomarun"))
+        os.system(os.path.join(crutil.get_crscripts_dir(), "crbuild -f"))
         sys.stdout.write("\nSleeping until next compilation (Ctrl-C to stop now).")
         sys.stdout.flush()
     else:

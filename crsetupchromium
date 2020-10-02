@@ -125,6 +125,11 @@ os.chdir(BASE_DIR)
 os.chdir("src")
 cmd = "build/install-build-deps.sh --no-prompt"
 crutil.run(cmd, "Installing build deps...", options)
+os.system("sudo apt install libffi7")
+# This is a little sensitive but seems to work fine. Not sure why the build
+# system isn't using the version that's available.
+os.system("sudo ln -s /usr/lib/x86_64-linux-gnu/libffi.so.7 "
+          "/usr/lib/x86_64-linux-gnu/libffi.so.6")
 
 crutil.run("gclient runhooks", "Running the hooks...", options)
 

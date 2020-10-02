@@ -43,20 +43,16 @@ def get_chromium_src_dir():
 def get_crscripts_dir():
     return os.path.dirname(os.path.realpath(__file__))
 
-
 def get_goma_dir():
     return os.path.join(os.path.expanduser("~"), "goma")
 
-
 def get_out_dir():
     return "out/Default"
-
 
 def get_job_count():
     n_cpus = multiprocessing.cpu_count()
     multi = CPU_TO_JOB_MULTIPLIER_GOMA if is_goma_running() else CPU_TO_JOB_MULTIPLIER
     return n_cpus * multi
-
 
 def get_options_and_args(parser=None):
     if not parser:
@@ -78,10 +74,8 @@ def get_options_and_args(parser=None):
 
     return parser.parse_args()
 
-
 def system_silent(command, options):
     return os.system(command + ("" if options.verbose else SILENT))
-
 
 def run(command, description, options):
     print(description)
@@ -98,7 +92,6 @@ def run(command, description, options):
             return child.wait()
         return system_silent(command, options)
 
-
 # Returns whether a process containing the given name is running.
 def is_process_running(process):
     s = subprocess.Popen(["ps", "axw"], stdout=subprocess.PIPE)
@@ -106,7 +99,6 @@ def is_process_running(process):
         if re.search(process, x.decode()):
             return True
     return False
-
 
 def is_online():
     host = "8.8.8.8"
@@ -119,7 +111,6 @@ def is_online():
     except Exception as ex:
         return False
 
-
 def is_google_machine():
     # Testing for "corp.google.com" in the hostname isn't sufficient.
     hostname = socket.gethostname()
@@ -129,14 +120,12 @@ def is_google_machine():
         return True
     return False
 
-
 def get_current_branch():
     return (
         subprocess.check_output(shlex.split("git rev-parse --abbrev-ref HEAD"))
         .decode()
         .strip()
     )
-
 
 def get_branches():
     BRANCH_LINE_PATTERN = re.compile("\**\s*([a-zA-z0-9\_-]+)")
@@ -148,7 +137,6 @@ def get_branches():
             continue
         branches.append(matches.group(1))
     return branches
-
 
 def ensure_goma_installed():
     if not is_google_machine():
@@ -169,14 +157,8 @@ def ensure_goma_installed():
                 "!!!!!\n\ngoma installation failed. Are there network/auth issues?\n\n!!!!!"
             )
 
-
 def is_goma_running():
     return is_process_running("compiler_proxy")
-
-
-def get_goma_dir():
-    return os.path.join(os.path.expanduser("~"), "goma")
-
 
 def common_gn_args():
     args = [
@@ -208,7 +190,6 @@ def common_gn_args():
         args.append("use_goma=false")
     return args
 
-
 def format_remaining_time(seconds):
     if seconds < 2:
         return "< 1s"
@@ -226,10 +207,8 @@ def format_remaining_time(seconds):
     output += str(s) + "s"
     return output
 
-
 def display_progress(percent, what, eta_seconds):
     cols = shutil.get_terminal_size().columns
-    sys.stdout.write("\033[F")  # Clear the previous print
     if percent > 66.6:
         color_format = COLOR_FORMAT_GREEN_PERCENT
     elif percent > 33.3:
@@ -239,19 +218,19 @@ def display_progress(percent, what, eta_seconds):
 
     eta = " " + format_remaining_time(eta_seconds)
 
-    sys.stdout.write(color_format.format(percent))
+    progress_line = ""
+    progress_line += color_format.format(percent)
     filler_size = cols - len("xx.xx% ") - len(eta)
     if percent == 100:
         filler_size -= 1
-    sys.stdout.write(" ")
+    progress_line += " "
     filler_done_size = int(percent / 100.0 * float(filler_size))
     filler_todo_size = filler_size - filler_done_size
     if filler_size > 0:
-        sys.stdout.write("#" * filler_done_size)
-        sys.stdout.write("." * filler_todo_size)
-    sys.stdout.write(eta + "\n")
-    sys.stdout.flush()
-
+        progress_line += "#" * filler_done_size
+        progress_line += "." * filler_todo_size
+    progress_line += eta
+    print(progress_line, end="\r")  # Go back to the start of the line
 
 def monitor_compile_progress(child_process):
     print("")

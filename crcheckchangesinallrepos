@@ -1,0 +1,5 @@
+#!/usr/bin/python3
+
+import crutil
+
+crutil.check_for_local_changes_in_all_repos()

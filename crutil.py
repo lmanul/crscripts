@@ -433,7 +433,7 @@ def ensure_depot_tools(options):
     return True
 
 
-def check_for_local_changes_in_all_repos():
+def get_repos_with_local_changes():
     os.chdir(get_chromium_src_dir())
     repos = []
     for path, _, _ in os.walk(os.getcwd()):
@@ -447,6 +447,17 @@ def check_for_local_changes_in_all_repos():
         rc = child.returncode
         if rc != 0:
             repos_with_local_changes.append(repo)
+    return repos_with_local_changes
+
+def reset_changes_in_all_repos():
+    repos_with_local_changes = get_repos_with_local_changes()
+    for repo in repos_with_local_changes:
+        os.chdir(repo)
+        print("Doing a hard reset in " + repo + "...")
+        os.system("git reset --hard HEAD")
+
+def check_for_local_changes_in_all_repos():
+    repos_with_local_changes = get_repos_with_local_changes()
     if len(repos_with_local_changes) != 0:
         print(
             "These repositories have local changes, please commit or "
